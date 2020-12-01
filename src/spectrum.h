@@ -8,13 +8,17 @@
 using namespace std;
 
 class spectrum {
-    vector<pair<float, float>> peak_intensities;
-    vector<float> unit_bins;
-
-    float mass;
-    string peptide;
-
 public:
+    string peptide;
+    float precursor_mass;
+    int charge;
+
+    // peak entries correspond to intensities 1 to 1 at each position.
+    vector<float> peaks;
+    vector<float> intensities;
+
+    vector<float> bins;
+
     spectrum();
 
 private:

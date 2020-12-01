@@ -13,7 +13,7 @@ Find/Research suitable (rather simplistic) algorithm for spectrum scoring (exper
 
 ### Second
 
-Implement datastructures to support mass spectrum input
+Implement datastructures to support precursor_mass spectrum input
 * read raw msp. file input into datastructure
 * index data and save it compressed
 * find smart way to retrieve data pieces from indexed/compressed database

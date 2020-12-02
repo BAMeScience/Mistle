@@ -1,15 +1,19 @@
 #include <iostream>
 #include "spectrum.h"
 #include "msp_reader.h"
+#include "library.h"
 
 using namespace std;
 
 int main() {
     cout << "Welcome, welcome" << endl;
-    vector<spectrum*> library = msp_reader::read_file(R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\PyroFur_Complete_simulatedSpectra\pyrofur_2019.msp)");
+    string msp_file = R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\PyroFur_Complete_simulatedSpectra\pyrofur_2019.msp)";
     //vector<spectrum*> library = msp_reader::read_file(R"(C:\Users\ynowatzk\Desktop\data\9MM\simulated_spectra\Brevibacillus+laterosporus.msp)");
 
-    spectrum *first = library[0];
+    library *lib = new library(msp_file);
+
+
+    spectrum *first = lib->spectrum_list[0];
     cout << first->peptide << endl;
     cout << "peak_positions: ";
     for (float p : first->peak_positions) {
@@ -24,10 +28,7 @@ int main() {
         cout << i << " ";
     }
     cout << endl;
-
-    for (spectrum* s : library) {
-        delete s;
-    }
+    delete lib;
     return 0;
 }
 

@@ -25,7 +25,7 @@ public:
     bool bin_peaks();
 
 private:
-    static float normalize_intensity(float intensity);
+    static float rescale_intensity(float intensity);
 };
 
 

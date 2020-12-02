@@ -14,7 +14,8 @@ bool spectrum::bin_peaks() {
 
     for (int i = 0; i < peak_positions.size(); ++i) {
         int bin = int(peak_positions[i]) - BIN_MIN_MZ; // this should never be < 0, but should we catch this?
-        float intensity = normalize_intensity(intensities[i]); //todo is this may be normalizd already
+        //float intensity = rescale_intensity(intensities[i]); //todo how to normalize/rescale??
+        float intensity = intensities[i];
 
         bins[bin] = intensity;
     }
@@ -23,6 +24,6 @@ bool spectrum::bin_peaks() {
     return true;
 }
 
-float spectrum::normalize_intensity(float intensity) { //todo cross check spectrast
+float spectrum::rescale_intensity(float intensity) { //todo cross check spectrast
     return sqrt(intensity);
 }

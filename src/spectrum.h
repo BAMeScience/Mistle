@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 
+
 using namespace std;
 
 class spectrum {
@@ -13,16 +14,18 @@ public:
     float precursor_mass;
     int charge;
 
-    // peak entries correspond to intensities 1 to 1 at each position.
-    vector<float> peaks;
+    // peak positions correspond to intensities 1 to 1 for each vector entry.
+    vector<float> peak_positions;
     vector<float> intensities;
 
     vector<float> bins;
 
     spectrum();
 
-private:
     bool bin_peaks();
+
+private:
+    static float normalize_intensity(float intensity);
 };
 
 

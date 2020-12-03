@@ -15,7 +15,6 @@ library::library(string &path) {
 
 bool library::load_library_from_file(string &path) {
 
-    //todo multiple file extensions, if endswith .msp do ...
     string extension = path.substr(path.rfind('.') + 1, string::npos);
     cout << "Loading library from file" << endl;
     if (extension == "msp") {

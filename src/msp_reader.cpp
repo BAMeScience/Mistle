@@ -38,6 +38,7 @@ vector<spectrum *> msp_reader::read_file(string &path, msp_read_mode read_mode) 
                 c_spectrum = new spectrum();
                 c_spectrum->name = value;
                 c_spectrum->peptide = value.substr(0, value.find('/'));
+                c_spectrum->charge = stoi(value.substr(value.rfind('/') + 1, string::npos));
             } else if (tag == "MW") {
                 c_spectrum->precursor_mass = stof(value);
             } else if (tag == "Comment") {
@@ -59,7 +60,7 @@ vector<spectrum *> msp_reader::read_file(string &path, msp_read_mode read_mode) 
             c_spectrum->peak_positions.push_back(peak);
             c_spectrum->intensities.push_back(intensity);
         }
-        c_spectrum->bin_peaks();
+        c_spectrum->bin_peaks(false,true);
         spectrum_list.push_back(c_spectrum);
 
     }

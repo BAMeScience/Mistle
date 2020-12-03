@@ -23,7 +23,8 @@ public:
 
     spectrum();
 
-    bool bin_peaks();
+    bool bin_peaks(bool root_rescale=false, bool normalize=false);
+    bool normalize_bins(float magnitude=-1);
 
 private:
     static float rescale_intensity(float intensity);

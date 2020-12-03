@@ -23,7 +23,7 @@ vector<spectrum *> mgf_reader::read_file(string path) {
 
         if (line == "END IONS") {
             // Post-process and save the current spectrum
-            c_spectrum->bin_peaks();
+            c_spectrum->bin_peaks(true,true);
             spectrum_list.push_back(c_spectrum);
             continue;
         }

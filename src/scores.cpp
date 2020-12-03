@@ -1,6 +1,6 @@
-#include "scoring_handler.h"
+#include "scores.h"
 
-float scoring_handler::dot_product(vector<float> &target_bins, vector<float> &other_bins) {
+float scores::dot_product(vector<float> &target_bins, vector<float> &other_bins) {
     float dot = 0;
 
     for (int i = 0; i < target_bins.size(); ++i) {

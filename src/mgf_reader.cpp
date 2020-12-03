@@ -16,49 +16,55 @@ vector<spectrum *> mgf_reader::read_file(string path) {
         cerr << "Could not open file at " << path << endl;
     }
 
+    spectrum *c_spectrum = nullptr;
     while (!infile.eof()) {
+        string line;
+        getline(infile, line);
 
+        if (line == "END IONS") {
+            // Post-process and save the current spectrum
+            c_spectrum->bin_peaks();
+            spectrum_list.push_back(c_spectrum);
+            continue;
+        }
+
+        if (line == "BEGIN IONS") {
+            c_spectrum = new spectrum();
+            continue;
+        }
+
+        // split up line to identify comment tags
         string tag, value;
-        spectrum *c_spectrum = nullptr;
-        while (tag != "Num peaks") { // what if no colon -> colon_pos == string::npos
-            string line;
-            getline(infile, line);
+        size_t separator_pos = line.find('=');
 
-            size_t colon_pos = line.find(':');
+        if (separator_pos != string::npos) {
+            tag = line.substr(0, separator_pos);
+            value = line.substr(separator_pos + 1, string::npos);
 
-            tag = line.substr(0, colon_pos);
-            value = line.substr(colon_pos + 2, string::npos);
-            // parse information
-            if (tag == "Name") {
-                c_spectrum = new spectrum();
-                c_spectrum->peptide = value.substr(0, value.find('/'));
-            } else if (tag == "MW") {
-                c_spectrum->precursor_mass = stof(value);
-            } else if (tag == "Comment") {
+            //parse information
+            if (tag == "TITLE") {
+                c_spectrum->name = value;
+            } else if (tag == "PEPMASS") {
+                c_spectrum->precursor_mass = stof(value); //todo check if that's actually true
+            } else if (tag == "RTINSECONDS") {
 
+            } else if (tag == "CHARGE") {
+                c_spectrum->charge = stoi(value);
             }
         }
-        //else case: tag = Num peak_positions
-        int num_peaks = stoi(value);
-        for (int i = 0; i < num_peaks; ++i) {
-            string line;
-            getline(infile, line);
-
-            // parse peak_positions and intensities
-
-            std::size_t tab_pos = line.find('\t');
-            float peak = stof(line.substr(0, tab_pos));
-            float intensity = stof(line.substr(tab_pos + 1, line.find('\t')));
-
-            c_spectrum->peak_positions.push_back(peak);
-            c_spectrum->intensities.push_back(intensity);
+        else {
+                // No separator: Assume peak information is noted down in the line
+                if (line.empty())
+                    continue;
+                std::size_t space_pos = line.find(' ');
+                if (space_pos == string::npos)
+                    continue;
+                float pos = stof(line.substr(0, space_pos));
+                c_spectrum->peak_positions.push_back(pos);
+                float intensity = stof(line.substr(space_pos, string::npos));
+                c_spectrum->intensities.push_back(intensity);
+            }
         }
-        c_spectrum->bin_peaks();
-        spectrum_list.push_back(c_spectrum);
-
-    }
-
-
     infile.close();
     return spectrum_list;
 }

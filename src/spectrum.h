@@ -10,6 +10,7 @@ using namespace std;
 
 class spectrum {
 public:
+    string name;
     string peptide;
     float precursor_mass;
     int charge;

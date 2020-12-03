@@ -24,6 +24,6 @@ bool spectrum::bin_peaks() {
     return true;
 }
 
-float spectrum::rescale_intensity(float intensity) { //todo cross check spectrast
+float spectrum::rescale_intensity(float intensity) { //todo cross check spectraST
     return sqrt(intensity);
 }

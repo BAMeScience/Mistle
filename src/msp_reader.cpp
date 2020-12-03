@@ -7,7 +7,7 @@ msp_reader::msp_reader() {
 
 }
 
-vector<spectrum *> msp_reader::read_file(string path, msp_read_mode read_mode) {
+vector<spectrum *> msp_reader::read_file(string &path, msp_read_mode read_mode) {
 
     vector<spectrum *> spectrum_list;
     fstream infile;
@@ -17,21 +17,26 @@ vector<spectrum *> msp_reader::read_file(string path, msp_read_mode read_mode) {
         cerr << "Could not open file at " << path << endl;
     }
 
+    string line;
     while (!infile.eof()) {
 
-        string tag, value = "";
+        string tag, value;
         spectrum *c_spectrum = nullptr;
         while (tag != "Num peaks") { // what if no colon -> colon_pos == string::npos
-            string line;
+            if (infile.eof())
+                exit(12);
             getline(infile, line);
 
+            // split up line to identify comment tags
             size_t colon_pos = line.find(':');
 
             tag = line.substr(0, colon_pos);
             value = line.substr(colon_pos + 2, string::npos);
+
             // parse information
             if (tag == "Name") {
                 c_spectrum = new spectrum();
+                c_spectrum->name = value;
                 c_spectrum->peptide = value.substr(0, value.find('/'));
             } else if (tag == "MW") {
                 c_spectrum->precursor_mass = stof(value);

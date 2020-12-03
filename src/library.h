@@ -8,8 +8,9 @@ using namespace std;
 class library {
 public:
     library();
-    library(string path);
-    bool load_library_from_file(string path);
+    library(string &path);
+    ~library();
+    bool load_library_from_file(string &path);
 
     vector<spectrum*> spectrum_list;
 private:

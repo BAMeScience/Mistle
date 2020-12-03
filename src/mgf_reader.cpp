@@ -1,14 +1,13 @@
-#include "msp_reader.h"
-#include <iostream>
+#include "mgf_reader.h"
 #include <fstream>
+#include <iostream>
 
-
-msp_reader::msp_reader() {
+mgf_reader::mgf_reader() {
 
 }
 
-vector<spectrum *> msp_reader::read_file(string path, msp_read_mode read_mode) {
-
+vector<spectrum *> mgf_reader::read_file(string path) {
+    //todo w.i.p.
     vector<spectrum *> spectrum_list;
     fstream infile;
 
@@ -19,7 +18,7 @@ vector<spectrum *> msp_reader::read_file(string path, msp_read_mode read_mode) {
 
     while (!infile.eof()) {
 
-        string tag, value = "";
+        string tag, value;
         spectrum *c_spectrum = nullptr;
         while (tag != "Num peaks") { // what if no colon -> colon_pos == string::npos
             string line;

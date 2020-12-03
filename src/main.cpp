@@ -28,6 +28,8 @@ int main() {
         cout << i << " ";
     }
     cout << endl;
+
+    cout << "# spec: " << lib->spectrum_list.size() << endl;
     delete lib;
     return 0;
 }

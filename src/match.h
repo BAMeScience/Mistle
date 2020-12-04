@@ -12,6 +12,7 @@ public:
 
     float dot_product;
     int hit_rank;
+    int query_index; //todo implement
 
     match();
     match(spectrum *search_spectrum, spectrum *matched_spectrum, float dot_product, int hit_rank);

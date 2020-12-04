@@ -28,6 +28,17 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
 
         bins[bin] += intensity; //+= accumulate if multiple peaks fall into the sam bin
         magnitude += (intensity * intensity);
+        if (intensity_bin_spanning_factor > 0) {
+            float neighbor_intensity = intensity * intensity_bin_spanning_factor;
+            if (bin > 0) {
+                bins[bin-1] += neighbor_intensity;
+                magnitude += neighbor_intensity;
+            }
+            if (bin < BIN_MAX_MZ) {
+                bins[bin+1] += neighbor_intensity;
+                magnitude += neighbor_intensity;
+            }
+        }
     }
 
     if (normalize) {

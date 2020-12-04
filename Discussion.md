@@ -33,6 +33,10 @@ Pull out the big boys
 * taxonomic/functional profiling
 * Let's see how far we can get
 
-
+## Open Questions
+### Reproduce SpectraST results
+* why are my results different
+* how do they check mz-difference in search and why
+* weird bin numbers, where does the + 1 come from
 
 

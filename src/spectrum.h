@@ -20,6 +20,7 @@ public:
     vector<float> intensities;
 
     vector<float> bins;
+    float intensity_bin_spanning_factor = 0.5; //factor of intensity carried over to neighboring bins to account for mz-shifts
 
     spectrum();
 

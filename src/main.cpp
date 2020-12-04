@@ -21,7 +21,7 @@ int main() {
     //library *lib = new library();
 
 
-    spectrum *first = search_lib->spectrum_list[0];
+    spectrum *first = search_lib->spectrum_list[1];
     cout << first->peptide << endl;
     cout << "peak_positions: ";
     for (float p : first->peak_positions) {
@@ -43,11 +43,11 @@ int main() {
     cout << "# search specs: " << search_lib->spectrum_list.size() << endl;
 
     cout << "Target spectrum: " << endl;
-    spectrum *target = search_lib->spectrum_list[0];
+    spectrum *target = search_lib->spectrum_list[1];
     cout << "target: " << target->name << " " << target->precursor_mass << " " << target->charge << endl;
     float max_dot = 0;
 
-    spectrum *best_candidate = search_lib->spectrum_list[0];
+    spectrum *best_candidate = nullptr;
     for (int i = 0; i < lib->spectrum_list.size(); ++i) {
         spectrum *candidate = lib->spectrum_list[i];
         if (abs(target->precursor_mass - candidate->precursor_mass) > 3 || target->charge!=candidate->charge) {
@@ -57,8 +57,8 @@ int main() {
             max_dot = scores::dot_product(candidate->bins, target->bins);
             best_candidate = candidate;
         }
-        if (candidate->peptide == "INKAIEFPIDDLKK") {
-            cout << "spectrast candidate:" << candidate->peptide << " " << candidate->precursor_mass << " " << candidate->charge << " dot: " << scores::dot_product(search_lib->spectrum_list[0]->bins, candidate->bins) << endl;
+        if (candidate->peptide == "EFAKLRGYR") {
+            cout << "spectrast candidate: " << candidate->peptide << " " << candidate->precursor_mass << " " << candidate->charge << " dot: " << scores::dot_product(search_lib->spectrum_list[0]->bins, candidate->bins) << endl;
         }
     }
     cout << "my candidate: " << best_candidate->peptide << " " << best_candidate->precursor_mass << " " << best_candidate->charge << " dot: " << max_dot << endl;

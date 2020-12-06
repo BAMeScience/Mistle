@@ -7,7 +7,7 @@ using namespace std;
 
 class match {
 public:
-    spectrum *search_spectrum;
+    spectrum *query_spectrum;
     spectrum *matched_spectrum;
 
     float dot_product;

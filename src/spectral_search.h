@@ -1,11 +1,11 @@
-#ifndef SIMPLE_EXAMPLE_SEARCH_H
-#define SIMPLE_EXAMPLE_SEARCH_H
+#ifndef SIMPLE_EXAMPLE_SPECTRAL_SEARCH_H
+#define SIMPLE_EXAMPLE_SPECTRAL_SEARCH_H
 #include "library.h"
 #include "match.h"
 
 using namespace std;
 
-class search {
+class spectral_search {
     library *search_lib;
     library *target_lib;
 
@@ -13,14 +13,16 @@ class search {
     float mz_tolerance=3.0;
 
 public:
-    search();
-    search(library *search_lib);
+    spectral_search();
+    explicit spectral_search(library *search_lib);
 
     bool search_target_library(library *target_lib);
+    vector<match> get_results();
+    bool save_results_to_file(string &path, string delimiter="\t");
 
 private:
     bool is_candidate_suitable(spectrum *candidate_spectrum, spectrum *query_spectrum); //Checking if charge and mass conditions are fullfilled to warrant a closer look
 };
 
 
-#endif //SIMPLE_EXAMPLE_SEARCH_H
+#endif //SIMPLE_EXAMPLE_SPECTRAL_SEARCH_H

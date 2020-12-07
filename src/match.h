@@ -11,6 +11,7 @@ public:
     spectrum *matched_spectrum;
 
     float dot_product;
+    float mass_difference;
     int hit_rank;
     int query_index; //todo implement
 

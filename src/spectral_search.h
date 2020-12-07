@@ -17,8 +17,9 @@ public:
     explicit spectral_search(library *search_lib);
 
     bool search_target_library(library *target_lib);
+    vector<match> search_specific_by_name(string query_name, library *target_lib, int num_matches);
     vector<match> get_results();
-    bool save_results_to_file(string &path, string delimiter="\t");
+    bool save_results_to_file(string path, string delimiter="\t");
 
 private:
     bool is_candidate_suitable(spectrum *candidate_spectrum, spectrum *query_spectrum); //Checking if charge and mass conditions are fullfilled to warrant a closer look

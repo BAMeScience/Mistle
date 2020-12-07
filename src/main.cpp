@@ -30,6 +30,8 @@ int main() {
         cout << matches[i].query_spectrum->name << " " << matches[i].matched_spectrum->peptide << " " << matches[i].dot_product << endl;
     }
 
+    search.save_results_to_file("./out.csv");
+
 
     return 0;
 }

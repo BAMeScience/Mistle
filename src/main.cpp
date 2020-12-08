@@ -17,13 +17,40 @@ int main() {
 
 
     library *search_lib = new library(mgf_file);
-    spectral_search search(search_lib);
 
+    spectrum *one,*two;
+    for (spectrum *s : search_lib->spectrum_list) {
+        if (s->name == "824.836730957031_212.9232_2") {
+            one = s;
+        }
+        if (s->name == "508.785949707031_252.8919_2") {
+            two = s;
+        }
+    }
+
+
+    spectral_search search(search_lib);
 
     library *lib = new library(msp_file);
     //library *lib = new library();
 
+
+    spectrum *one_ST, *two_ST;
+    for (spectrum *s : lib->spectrum_list) {
+        if (s->name == "INKAIEFPIDDLKK/2") {
+            one_ST = s;
+            cout << "one: st: 0.223 my: " << scores::dot_product(one->bins, one_ST->bins) << endl;
+        }
+        if (s->name == "KHLEQHPK/2") {
+            two_ST = s;
+            cout << "two: st: 0.774 my: " << scores::dot_product(two->bins, two_ST->bins) << endl;
+        }
+    }
+
+    exit(12);
+
     search.search_target_library(lib);
+
     vector<match> matches = search.get_results();
 
     for (int i = 0; i < 10; ++i) {

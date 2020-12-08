@@ -16,7 +16,7 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
 
     for (int i = 0; i < peak_positions.size(); ++i) {
         int bin = int(peak_positions[i]) - BIN_MIN_MZ; // this should never be < 0, but should we catch this?
-        if (bin < BIN_MIN_MZ || bin < 180 || bin > BIN_MAX_MZ) {
+        if (bin < BIN_MIN_MZ || bin > BIN_MAX_MZ) { // TODO spectraST light ion, cut_off. bin < 180 ??
             //TODO what would spectrast do?
             //cout << "Warning peak out of bin range :: discarding intensity" << endl;
             continue;

@@ -40,5 +40,10 @@ Pull out the big boys
 * weird bin numbers, where does the + 1 come from
 * using sqrt(x) to deemphasize dominant peaks -> does spectrast do this with Prosit output too, if so, does that make sense?
 * spectraST dot-bias = 0.0 for all psms.
-* BIG Q: peak neighbor-spanning for both query target spectra, or which one?? 
+* BIG Q: peak neighbor-spanning for both query target spectra, or which one??
+* try run spectrast -sR (for caching) 
+
+### Improvements so far
+* capture best hit, don't sort all hits (twice)
+* don't divide / maginitudes in dot-calc, do it before hand
 

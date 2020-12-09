@@ -15,8 +15,8 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
     float magnitude = 0;
 
     for (int i = 0; i < peak_positions.size(); ++i) {
-        int bin = int(peak_positions[i]) - BIN_MIN_MZ; // this should never be < 0, but should we catch this?
-        if (bin < BIN_MIN_MZ || bin > BIN_MAX_MZ) { // TODO spectraST light ion, cut_off. bin < 180 ??
+        int bin = int(peak_positions[i]) - BIN_MIN_MZ;
+        if (bin < 0  || bin < 180 || bin > BIN_MAX_MZ) { // TODO spectraST light ion, cut_off. bin < 180 ??
             //TODO what would spectrast do?
             //cout << "Warning peak out of bin range :: discarding intensity" << endl;
             continue;
@@ -27,22 +27,23 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
             intensity = sqrt(intensity);
 
         bins[bin] += intensity; //+= accumulate if multiple peaks fall into the sam bin
-        magnitude += (intensity * intensity);
+        magnitude += (intensity * intensity); // TODO error not the same if two hit the same bin, sum up squares
         if (intensity_bin_spanning_factor > 0) {
             float neighbor_intensity = intensity * intensity_bin_spanning_factor;
             if (bin > 0) {
                 bins[bin-1] += neighbor_intensity;
-                magnitude += neighbor_intensity;
+                magnitude += (neighbor_intensity * neighbor_intensity);
             }
             if (bin < BIN_MAX_MZ) {
                 bins[bin+1] += neighbor_intensity;
-                magnitude += neighbor_intensity;
+                magnitude += (neighbor_intensity * neighbor_intensity);
             }
         }
     }
 
     if (normalize) {
-        return normalize_bins(sqrt(magnitude));
+        magnitude = sqrt(magnitude); //TODO error here!!!!
+        return normalize_bins();
     }
     return true;
 }

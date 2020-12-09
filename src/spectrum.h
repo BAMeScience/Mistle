@@ -21,7 +21,7 @@ public:
 
     vector<float> bins;
     //factor of intensity carried over to neighboring bins to account for mz-shifts
-    float intensity_bin_spanning_factor = 0.5f; //set to 1.f to turn off
+    float intensity_bin_spanning_factor = 0.5f; //set to -1.f to turn off
 
     spectrum();
 

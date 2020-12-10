@@ -42,6 +42,9 @@ Pull out the big boys
 * spectraST dot-bias = 0.0 for all psms.
 * BIG Q: peak neighbor-spanning for both query target spectra, or which one??
 * try run spectrast -sR (for caching) 
+*
+* Puzzling: 786.912536621094_3658.89820000002_2 match to AMANLLSNILNENR/2
+* Why does spectrast have 0.4+ while I have 0.2
 
 ### Improvements so far
 * capture best hit, don't sort all hits (twice)

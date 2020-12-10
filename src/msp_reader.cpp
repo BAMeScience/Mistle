@@ -57,6 +57,7 @@ vector<spectrum *> msp_reader::read_file(string &path, msp_read_mode read_mode) 
             float peak = stof(line.substr(0, tab_pos));
             float intensity = stof(line.substr(tab_pos + 1, line.find('\t')));
 
+
             c_spectrum->peak_positions.push_back(peak);
             c_spectrum->intensities.push_back(intensity);
         }

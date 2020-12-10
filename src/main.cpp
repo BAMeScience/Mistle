@@ -9,25 +9,41 @@
 
 int main() {
     cout << "Welcome, welcome" << endl;
-    string s = "string \2s dssd\n";
-    cout << "2 test: " << "\2" << s << endl;
-    string msp_file = R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\PyroFur_Complete_simulatedSpectra\pyrofur_2019.msp)";
+    string s = "5.791719e-05\t";
+    string s2 = "0.11605187";
+    //string line = '1155.619 5.791719e-05    "b11/0.0ppm"\n';
+    float f = stof(s);
+    bool isf = f >0.00005;
+    vector<float> v;
+    v.push_back(0.01);
+    v.push_back(0.00001);
+    v.push_back(f);
+
+    cout << "2 test: " << "\2 " << v[0] << " " << v[1] << " " << v[2] << " " << (v[2] > 0.001) << endl;
+    string msp_file = R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\PyroFur_Complete_simulatedSpectra\PyroFur_reproduced.msp)";
     string mgf_file = R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\PyroFur_SearchFile\pfu_velos.mgf)";
     //vector<spectrum*> library = msp_reader::read_file(R"(C:\Users\ynowatzk\Desktop\data\9MM\simulated_spectra\Brevibacillus+laterosporus.msp)");
 
 
     library *search_lib = new library(mgf_file);
 
-    spectrum *one,*two;
+    spectrum *one,*two, *three;
     for (spectrum *s : search_lib->spectrum_list) {
-        if (s->name == "824.836730957031_212.9232_2") {
+        /*if (s->name == "824.836730957031_212.9232_2") {
             one = s;
-        }
+        }*/
         if (s->name == "508.785949707031_252.8919_2") {
             two = s;
         }
+        if (s->name == "786.912536621094_3658.89820000002_2") {
+            three = s;
+        }
     }
 
+    for (float b : three->bins) {
+        cout << " " << b;
+    }
+    cout << endl;
 
     spectral_search search(search_lib);
 
@@ -35,22 +51,35 @@ int main() {
     //library *lib = new library();
 
 
-    spectrum *one_ST, *two_ST;
+    spectrum *one_ST, *two_ST, *three_ST;
     for (spectrum *s : lib->spectrum_list) {
-        if (s->name == "INKAIEFPIDDLKK/2") {
+        /*if (s->name == "INKAIEFPIDDLKK/2") {
             one_ST = s;
-            cout << "one: st: 0.223 my: " << scores::dot_product(one->bins, one_ST->bins) << endl;
-        }
+            cout << "one: st: (not) 0.223 my: " << scores::dot_product(one->bins, one_ST->bins) << endl;
+        }*/
         if (s->name == "KHLEQHPK/2") {
             two_ST = s;
-            cout << "two: st: 0.774 my: " << scores::dot_product(two->bins, two_ST->bins) << endl;
+            cout << "two: st: 0.730 my: " << scores::dot_product(two->bins, two_ST->bins) << endl;
+        }
+        if (s->name == "AMANLLSNILNENR/2") {
+            three_ST=s;
+            cout << "three st: 0.489 my: " << scores::dot_product(three->bins, three_ST->bins) << endl;
         }
     }
+
+    for (float i : three_ST->intensities) {
+        cout << " " << i;
+    }
+    cout << endl;
+
+    for (float b : three_ST->bins) {
+        cout << " " << b;
+    }
+    cout << endl;
 
     exit(12);
 
     search.search_target_library(lib);
-
     vector<match> matches = search.get_results();
 
     for (int i = 0; i < 10; ++i) {

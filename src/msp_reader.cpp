@@ -1,6 +1,7 @@
 #include "msp_reader.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 
 msp_reader::msp_reader() {
@@ -48,14 +49,25 @@ vector<spectrum *> msp_reader::read_file(string &path, msp_read_mode read_mode) 
         //else case: tag = Num peak_positions
         int num_peaks = stoi(value);
         for (int i = 0; i < num_peaks; ++i) {
-            string line;
-            getline(infile, line);
+            getline(infile, value, '\t');
+            float peak = stof(value);
+            getline(infile, value, '\t');
+            float intensity = stof(value);
+
+            getline(infile, value);
+
+
+
 
             // parse peak_positions and intensities
 
-            std::size_t tab_pos = line.find('\t');
+            /*std::size_t tab_pos = line.find('\t');
             float peak = stof(line.substr(0, tab_pos));
             float intensity = stof(line.substr(tab_pos + 1, line.find('\t')));
+            */
+            if (c_spectrum->name == "AMANLLSNILNENR/2") {
+                cout << peak << " " << intensity << endl;
+            }
 
 
             c_spectrum->peak_positions.push_back(peak);

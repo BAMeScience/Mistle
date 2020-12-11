@@ -22,9 +22,9 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
 
             continue;
         }
-        //if (abs(float(bin) - precursor_mass) < 20)
-        //    continue;
-        //float intensity = rescale_intensity(intensities[i]); //todo how to normalize/rescale??
+        if (abs(float(bin) - precursor_mass) < 10)
+            continue;
+
         float intensity = intensities[i];
         if (root_rescale)
             intensity = sqrt(intensity);

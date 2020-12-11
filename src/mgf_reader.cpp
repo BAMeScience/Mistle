@@ -1,6 +1,7 @@
 #include "mgf_reader.h"
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 mgf_reader::mgf_reader() {
 
@@ -53,17 +54,32 @@ vector<spectrum *> mgf_reader::read_file(string path) {
                 c_spectrum->charge = stoi(value);
             }
         }
-        else {
+        else {  // TODO make sure this works with long numbers. Otherwise implement like in msp reader
                 // No separator: Assume peak information is noted down in the line
+
+
                 if (line.empty())
                     continue;
+
                 std::size_t space_pos = line.find(' ');
                 if (space_pos == string::npos)
                     continue;
+
+
                 float pos = stof(line.substr(0, space_pos));
                 c_spectrum->peak_positions.push_back(pos);
+
+
                 float intensity = stof(line.substr(space_pos, string::npos));
                 c_spectrum->intensities.push_back(intensity);
+
+
+                /*
+                 * alternatively run (but it is slower)
+                istringstream ss(line);
+                float pos, intensity;
+                 ss >> pos >> intensity;
+                */
             }
         }
     infile.close();

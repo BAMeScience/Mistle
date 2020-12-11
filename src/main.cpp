@@ -1,5 +1,6 @@
 #include <iostream>
 #include <numeric>
+#include <cmath>
 #include "spectrum.h"
 #include "msp_reader.h"
 #include "scores.h"
@@ -9,17 +10,8 @@
 
 int main() {
     cout << "Welcome, welcome" << endl;
-    string s = "5.791719e-05\t";
-    string s2 = "0.11605187";
-    //string line = '1155.619 5.791719e-05    "b11/0.0ppm"\n';
-    float f = stof(s);
-    bool isf = f >0.00005;
-    vector<float> v;
-    v.push_back(0.01);
-    v.push_back(0.00001);
-    v.push_back(f);
 
-    cout << "2 test: " << "\2 " << v[0] << " " << v[1] << " " << v[2] << " " << (v[2] > 0.001) << endl;
+
     string msp_file = R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\PyroFur_Complete_simulatedSpectra\PyroFur_reproduced.msp)";
     string mgf_file = R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\PyroFur_SearchFile\pfu_velos.mgf)";
     //vector<spectrum*> library = msp_reader::read_file(R"(C:\Users\ynowatzk\Desktop\data\9MM\simulated_spectra\Brevibacillus+laterosporus.msp)");
@@ -40,10 +32,6 @@ int main() {
         }
     }
 
-    for (float b : three->bins) {
-        cout << " " << b;
-    }
-    cout << endl;
 
     spectral_search search(search_lib);
 
@@ -67,15 +55,7 @@ int main() {
         }
     }
 
-    for (float i : three_ST->intensities) {
-        cout << " " << i;
-    }
-    cout << endl;
 
-    for (float b : three_ST->bins) {
-        cout << " " << b;
-    }
-    cout << endl;
 
     exit(12);
 

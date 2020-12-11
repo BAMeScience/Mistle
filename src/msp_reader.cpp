@@ -8,6 +8,7 @@ msp_reader::msp_reader() {
 
 }
 
+
 vector<spectrum *> msp_reader::read_file(string &path, msp_read_mode read_mode) {
 
     vector<spectrum *> spectrum_list;
@@ -65,9 +66,6 @@ vector<spectrum *> msp_reader::read_file(string &path, msp_read_mode read_mode) 
             float peak = stof(line.substr(0, tab_pos));
             float intensity = stof(line.substr(tab_pos + 1, line.find('\t')));
             */
-            if (c_spectrum->name == "AMANLLSNILNENR/2") {
-                cout << peak << " " << intensity << endl;
-            }
 
 
             c_spectrum->peak_positions.push_back(peak);

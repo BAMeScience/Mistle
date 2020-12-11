@@ -27,6 +27,6 @@ float scores::dot_product(vector<float> &target_bins, vector<float> &other_bins)
     m2 = sqrt(m2);
 
     cout << m1 << " " << m2 << " " << dot << " " << dot / (m1 * m2) << endl;*/
-    cout << " no. " << num_bins << " ";
+    //cout << " no. " << num_bins << " ";
     return dot;
 }

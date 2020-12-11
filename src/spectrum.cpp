@@ -8,6 +8,7 @@ spectrum::spectrum() {
 
 }
 
+
 bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
     int num_bins = BIN_MAX_MZ - BIN_MIN_MZ; // spectrast + 1 // why?
 
@@ -22,8 +23,11 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
 
             continue;
         }
-        if (abs(float(bin) - precursor_mass) < 10)
+        /*if (abs(float(bin) - precursor_mass) < 10) //TODO why is this a thing?
+            continue;*/
+        if (remove_charge_reduced_precursor && spectrast_isNearPrecursor(peak_positions[i])) {
             continue;
+        }
 
         float intensity = intensities[i];
         if (root_rescale)
@@ -42,8 +46,8 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
     }
 
     if (normalize) {
-        /*normalize_bins();
-        float min_cut = 0.05f; //TODO undirty or delete this
+        normalize_bins();
+        /*float min_cut = 0.01f; //TODO undirty or delete this
         for (float &i : bins) {
             if (i<min_cut) {
                 i = 0.f;
@@ -57,6 +61,37 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
 float spectrum::rescale_intensity(float intensity) { //todo cross check spectraST
     return sqrt(intensity);
 }
+
+
+bool spectrum::spectrast_isNearPrecursor(double mz) {
+
+    if (precursor_mass < 0.0001) return (false); // m_parentMz not set, can't determine
+
+    /*if (m_fragType != "ETD" && m_fragType != "ETD-SA" && m_fragType != "ETD-HR") {
+        if (mz > m_parentMz - 60.0 && mz < m_parentMz + 20.0) {
+            return (true);
+        }
+    } else {*/
+
+    int lowCharge = charge; //TODO this is the tool I am dealing with
+    int highCharge = charge;
+    //    if (m_parentCharge == 0) {
+    // remove all possible charge-reduced precursors for precursor charge up to 6.
+    lowCharge = 3;
+    highCharge = 6;
+    //}
+
+    for (int parentCharge = lowCharge; parentCharge <= highCharge; parentCharge++) {
+        double parentMass = precursor_mass * parentCharge;
+        for (int c = parentCharge; c >= 1; c--) {
+            if (mz >= (parentMass - 20.0) / (double)c && mz <= (parentMass + 6.0) / (double)c) {
+                return (true);
+            }
+        }
+    }
+    return (false);
+}
+
 
 bool spectrum::normalize_bins(float magnitude) {
     if (magnitude < 0.f) { // Default, magnitude not specified

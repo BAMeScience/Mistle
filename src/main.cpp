@@ -1,6 +1,7 @@
 #include <iostream>
 #include <numeric>
 #include <cmath>
+#include <chrono>
 #include "spectrum.h"
 #include "msp_reader.h"
 #include "scores.h"
@@ -21,9 +22,9 @@ int main() {
 
     spectrum *one,*two, *three;
     for (spectrum *s : search_lib->spectrum_list) {
-        /*if (s->name == "824.836730957031_212.9232_2") {
+        if (s->name == "521.822143554688_251.90179999998_2") {
             one = s;
-        }*/
+        }
         if (s->name == "508.785949707031_252.8919_2") {
             two = s;
         }
@@ -32,8 +33,8 @@ int main() {
         }
     }
 
-
     spectral_search search(search_lib);
+
 
     library *lib = new library(msp_file);
     //library *lib = new library();
@@ -41,10 +42,10 @@ int main() {
 
     spectrum *one_ST, *two_ST, *three_ST;
     for (spectrum *s : lib->spectrum_list) {
-        /*if (s->name == "INKAIEFPIDDLKK/2") {
+        if (s->name == "KFAIEIAGAK/2") {
             one_ST = s;
-            cout << "one: st: (not) 0.223 my: " << scores::dot_product(one->bins, one_ST->bins) << endl;
-        }*/
+            cout << "one: st: 0.449 my: " << scores::dot_product(one->bins, one_ST->bins) << endl;
+        }
         if (s->name == "KHLEQHPK/2") {
             two_ST = s;
             cout << "two: st: 0.730 my: " << scores::dot_product(two->bins, two_ST->bins) << endl;
@@ -57,9 +58,14 @@ int main() {
 
 
 
-    exit(12);
-
+    auto start = chrono::high_resolution_clock::now();
     search.search_target_library(lib);
+    auto stop = chrono::high_resolution_clock::now();
+    auto duration = duration_cast<chrono::seconds>(stop - start);
+
+    cout << "Search Time: " <<  duration.count() << " seconds" << endl;
+
+
     vector<match> matches = search.get_results();
 
     for (int i = 0; i < 10; ++i) {

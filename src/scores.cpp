@@ -8,10 +8,10 @@ float scores::dot_product(vector<float> &target_bins, vector<float> &other_bins)
 
     for (int i = 0; i < target_bins.size(); ++i) {
         dot += target_bins[i] * other_bins[i];
-        if (target_bins[i] * other_bins[i] > 0) {
+        /*if (target_bins[i] * other_bins[i] > 0) {
             //cout << target_bins[i] << " * " << other_bins[i] << " = " << target_bins[i] * other_bins[i] << endl;
             ++num_bins;
-        }
+        }*/
     } //TODO try and compare runtime for iterator
 
     /*float m1 = 0;

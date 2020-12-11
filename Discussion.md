@@ -50,3 +50,8 @@ Pull out the big boys
 * capture best hit, don't sort all hits (twice)
 * don't divide / maginitudes in dot-calc, do it before hand
 
+### The benchmark (pyrofur)
+spectrast:
+* normal mode: 10min (suspect, that ST expects mz-sorted query file)
+* RAM mode: 105 seconds (sp4 dot only, unbinned, req. ca. 1GB RAM)
+

@@ -19,7 +19,7 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
         if (bin < 0 || bin > bins.size()) { // TODO spectraST light ion, cut_off. bin < 180 ??
             //TODO what would spectrast do?
             //cout << "Warning peak out of bin range :: discarding intensity" << endl;
-            //bin = 0;
+            bin = 0;
 
             continue;
         }

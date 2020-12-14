@@ -42,21 +42,21 @@ int main() {
 
     spectrum *one_ST, *two_ST, *three_ST;
     for (spectrum *s : lib->spectrum_list) {
-        if (s->name == "KFAIEIAGAK/2") {
+        if (s->name == "AAQKAVEIGR/2") {
             one_ST = s;
-            cout << "one: st: 0.449 my: " << scores::dot_product(one->bins, one_ST->bins) << endl;
+            cout << "one: st: 0.274 my: " << scores::dot_product(one->bins, one_ST->bins) << endl;
         }
         if (s->name == "KHLEQHPK/2") {
             two_ST = s;
-            cout << "two: st: 0.730 my: " << scores::dot_product(two->bins, two_ST->bins) << endl;
+            cout << "two: st: 0.669 my: " << scores::dot_product(two->bins, two_ST->bins) << endl;
         }
         if (s->name == "AMANLLSNILNENR/2") {
             three_ST=s;
-            cout << "three st: 0.489 my: " << scores::dot_product(three->bins, three_ST->bins) << endl;
+            cout << "three st: 0.464 my: " << scores::dot_product(three->bins, three_ST->bins) << endl;
         }
     }
 
-
+    exit(12);
 
     auto start = chrono::high_resolution_clock::now();
     search.search_target_library(lib);

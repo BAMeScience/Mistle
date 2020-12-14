@@ -18,6 +18,7 @@ public:
     int num_matched_peaks;
 
     match();
+    match(spectrum *search_spectrum, spectrum *matched_spectrum);
     match(spectrum *search_spectrum, spectrum *matched_spectrum, float dot_product, int hit_rank);
 
 };

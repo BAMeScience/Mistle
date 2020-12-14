@@ -16,7 +16,7 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
 
     for (int i = 0; i < peak_positions.size(); ++i) {
         int bin = int(peak_positions[i]) - BIN_MIN_MZ;
-        if (bin < 0 || bin > BIN_MAX_MZ) { // TODO spectraST light ion, cut_off. bin < 180 ??
+        if (bin < 0 || bin > bins.size()) { // TODO spectraST light ion, cut_off. bin < 180 ??
             //TODO what would spectrast do?
             //cout << "Warning peak out of bin range :: discarding intensity" << endl;
             //bin = 0;
@@ -39,14 +39,13 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
             if (bin > 0) {
                 bins[bin-1] += neighbor_intensity;
             }
-            if (bin < BIN_MAX_MZ) {
+            if (bin < bins.size()) {
                 bins[bin+1] += neighbor_intensity;
             }
         }
     }
 
     if (normalize) {
-        normalize_bins();
         /*float min_cut = 0.01f; //TODO undirty or delete this
         for (float &i : bins) {
             if (i<min_cut) {

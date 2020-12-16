@@ -56,7 +56,6 @@ int main() {
         }
     }
 
-    exit(12);
 
     auto start = chrono::high_resolution_clock::now();
     search.search_target_library(lib);

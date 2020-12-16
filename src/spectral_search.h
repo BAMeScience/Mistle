@@ -22,7 +22,7 @@ public:
     bool search_target_library(library *target_lib);
     vector<match> get_results();
     bool save_results_to_file(string path, string delimiter="\t");
-    bool read_results_from_file(string path, char delimiter='\t');
+    bool read_results_from_file(string path, char delimiter='\t', bool read_dot=false);
 
     /*
      * (Re-)scoring of matches

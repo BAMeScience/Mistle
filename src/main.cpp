@@ -19,6 +19,8 @@ int main() {
 
 
     library *search_lib = new library(mgf_file);
+    library *lib = new library(msp_file);
+
 
     spectrum *one,*two, *three;
     for (spectrum *s : search_lib->spectrum_list) {
@@ -33,12 +35,20 @@ int main() {
         }
     }
 
-    spectral_search search(search_lib);
+    /*
+     * SEARCH
+     */
 
+    spectral_search search(search_lib, lib);
 
-    library *lib = new library(msp_file);
+    //Rescoring of spectrast results
+    cout << "Reading in" << endl;
+    search.read_results_from_file(R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\results\reproduced\spectrast_matches.tsv)");
+    cout << "Rescoring" << endl;
+    search.rescore_matches();
+    cout << "Saving" << endl;
+    search.save_results_to_file(R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\results\reproduced\spectrast_rescored.tsv)");
     //library *lib = new library();
-
 
     spectrum *one_ST, *two_ST, *three_ST;
     for (spectrum *s : lib->spectrum_list) {
@@ -55,6 +65,8 @@ int main() {
             cout << "three st: 0.464 my: " << scores::dot_product(three->bins, three_ST->bins) << endl;
         }
     }
+
+
 
 
     auto start = chrono::high_resolution_clock::now();

@@ -43,12 +43,11 @@ int main() {
 
     //Rescoring of spectrast results
     cout << "Reading in" << endl;
-    search.read_results_from_file(R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\results\reproduced\spectrast_matches.tsv)");
+    search.read_results_from_file(R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\results\reproduced\sp5_neighbors_matches.tsv)");
     cout << "Rescoring" << endl;
     search.rescore_matches();
     cout << "Saving" << endl;
-    search.save_results_to_file(R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\results\reproduced\spectrast_rescored.tsv)");
-    //library *lib = new library();
+    search.save_results_to_file(R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\results\reproduced\sp5_neighbors_rescored.tsv)");
 
     spectrum *one_ST, *two_ST, *three_ST;
     for (spectrum *s : lib->spectrum_list) {
@@ -70,7 +69,7 @@ int main() {
 
 
     auto start = chrono::high_resolution_clock::now();
-    search.search_target_library(lib);
+    search.search_target_library();
     auto stop = chrono::high_resolution_clock::now();
     auto duration = duration_cast<chrono::seconds>(stop - start);
 

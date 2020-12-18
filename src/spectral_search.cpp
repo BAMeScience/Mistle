@@ -118,7 +118,7 @@ bool spectral_search::rescore_matches() {
 
 bool spectral_search::search_target_library() {
     cout << "Begin searching target library" << endl;
-
+    search_results.clear();
 
     for (int i = 0; i < query_lib->spectrum_list.size(); ++i) {
         spectrum* query_spectrum = query_lib->spectrum_list[i];

@@ -45,6 +45,15 @@ Pull out the big boys
 *
 * Puzzling: 786.912536621094_3658.89820000002_2 match to AMANLLSNILNENR/2
 * Why does spectrast have 0.4+ while I have 0.2
+*
+* peaks in precusor region might be "sequence non-specific neutral losses of the precursor"
+
+### Scoring
+* dot-product seems to be the go to method for spectral search
+* dot-product oversensitive to dominant peaks (2*peak size => 4*dot)
+    * square root intensities
+    * dot bias
+
 
 ### Improvements so far
 * capture best hit, don't sort all hits (twice)

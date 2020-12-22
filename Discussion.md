@@ -53,6 +53,11 @@ Pull out the big boys
 * dot-product oversensitive to dominant peaks (2*peak size => 4*dot)
     * square root intensities
     * dot bias
+*
+* Later: Tackle mods and chimeric spectra (MS Fragger method?)
+* MS Fragger: Complementary ions (?)
+* Narrow window searches 
+* ProteoStorm = MS-Fragger with 2-step. First tryptic. Then semi-tryptic (just more peaks in the same spectrum)
 
 
 ### Improvements so far
@@ -64,3 +69,9 @@ spectrast:
 * normal mode: 10min (suspect, that ST expects mz-sorted query file)
 * RAM mode: 105 seconds (sp4 dot only, unbinned, req. ca. 1GB RAM)
 
+### Post-Christmas TODOs
+* Include OpenMS (look at handout on their git) !! Has everything I want
+* Install Tools like Proteostorm, MS-Fragger
+* See where we could implement spectral matching into the source code
+* Probably, make own fragment ion index with MS-Fragger as role model
+* Compare to Proteostorm/MSFragger/Spectrast

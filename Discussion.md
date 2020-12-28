@@ -71,6 +71,7 @@ spectrast:
 
 ### Post-Christmas TODOs
 * Include OpenMS (look at handout on their git) !! Has everything I want
+    * ! PROBLEM: Windows/Linux and required tools (even cmake is an issue) !
 * Install Tools like Proteostorm, MS-Fragger
 * See where we could implement spectral matching into the source code
 * Probably, make own fragment ion index with MS-Fragger as role model

@@ -1,0 +1,10 @@
+#ifndef SIMPLE_EXAMPLE_FRAGMENT_ION_INDEX_H
+#define SIMPLE_EXAMPLE_FRAGMENT_ION_INDEX_H
+
+
+class fragment_ion_index {
+
+};
+
+
+#endif //SIMPLE_EXAMPLE_FRAGMENT_ION_INDEX_H

@@ -1,0 +1,10 @@
+#ifndef SIMPLE_EXAMPLE_FRAGMENT_ION_BIN_H
+#define SIMPLE_EXAMPLE_FRAGMENT_ION_BIN_H
+
+
+class fragment_ion_bin {
+
+};
+
+
+#endif //SIMPLE_EXAMPLE_FRAGMENT_ION_BIN_H

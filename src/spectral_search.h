@@ -2,6 +2,7 @@
 #define SIMPLE_EXAMPLE_SPECTRAL_SEARCH_H
 #include "library.h"
 #include "match.h"
+#include "fragment_ion_index.h"
 
 using namespace std;
 
@@ -22,6 +23,9 @@ public:
      */
     bool search_target_library();
     bool search_target_library(library *target_lib);
+
+    bool search_fragment_ion_index(fragment_ion_index *index);
+
     vector<match> get_results();
     bool save_results_to_file(string path, string delimiter="\t");
     bool read_results_from_file(string path, char delimiter='\t', bool read_dot=false, bool has_header=true);

@@ -6,6 +6,7 @@
 using namespace std;
 
 class fragment_ion_index {
+public:
     vector<fragment_ion_bin> bins;
 
 

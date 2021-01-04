@@ -149,3 +149,23 @@ bool spectral_search::search_target_library() {
     return true;
 }
 
+bool spectral_search::search_fragment_ion_index(fragment_ion_index *index) {
+    //TODO naive search loop
+    vector<match> match_list;
+
+    spectrum *spectrum = query_lib->spectrum_list[0];
+
+    for (int i = 0; i < spectrum->bins.size(); ++i) {
+        float intensity = spectrum->bins[i];
+        if (intensity > 0) {
+            fragment_ion_bin bin = index->bins[i];
+            for (int j = 0; j < bin.fragment_ids.size(); ++j) {
+                //TODO extract parent information, check precursor mass and score intensity
+
+            }
+        }
+    }
+
+    return false;
+}
+

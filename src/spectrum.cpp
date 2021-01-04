@@ -106,3 +106,64 @@ bool spectrum::normalize_bins(float magnitude) {
 
     return true;
 }
+
+bool spectrum::bin_peaks_sparse(bool root_rescale, bool normalize) {
+
+    binned_peaks.clear();
+    binned_intensities.clear();
+
+    for (int i = 0; i < peak_positions.size(); ++i) {
+
+        //Determine bin
+        int bin = int(peak_positions[i]) - BIN_MIN_MZ;
+        if (bin < 0 || bin > BIN_MAX_MZ) { //TODO drop upper border (probably)
+            continue;
+        }
+        if (remove_charge_reduced_precursor && spectrast_isNearPrecursor(peak_positions[i])) {
+            continue;
+        }
+
+        //Retrieve and scale intensity
+        float intensity = intensities[i];
+        if (root_rescale)
+            intensity = sqrt(intensity);
+
+        //Update existing bin (if possible)
+        bool bin_existed = false;
+        for (int j = 0; j < binned_peaks.size(); ++j) {
+            if (binned_peaks[j] == bin) {
+                bin_existed = true;
+                binned_intensities[j] += intensity;
+            }
+        }
+
+        //Add new bin
+        if (!bin_existed) {
+            binned_peaks.push_back(bin);
+            binned_intensities.push_back(intensity);
+        }
+    }
+
+    //Note: Neighboring bins are ignored in sparse bin representation
+
+    //Normalize sparse bins
+    if (normalize) {
+        return normalize_bins();
+    }
+    return true;
+}
+
+bool spectrum::normalize_sparse_bins(float magnitude) {
+    if (magnitude < 0.f) { // Default, magnitude not specified
+        magnitude = 0.f;
+        for (float &i : binned_intensities) {
+            magnitude += i*i;
+        }
+        magnitude = sqrt(magnitude);
+    }
+    for (float &i : binned_intensities) {
+        i = i / magnitude;
+    }
+
+    return true;
+}

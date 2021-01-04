@@ -27,7 +27,11 @@ public:
     /*
      * Binning and rescaling intensities
      */
-    vector<float> bins;
+    vector<float> bins; //vector over all bins (including zeros)
+    vector<int> binned_peaks; //vector listing existing peaks binned
+    vector<float> binned_intensities; //vector listing intensities corresponding to binned peaks
+
+
     //factor of intensity carried over to neighboring bins to account for mz-shifts
     float intensity_bin_spanning_factor = 0.5f; //set to -1.f to turn off
     bool remove_charge_reduced_precursor = true; //TODO uses spectrast magic function
@@ -35,7 +39,9 @@ public:
     spectrum();
 
     bool bin_peaks(bool root_rescale=false, bool normalize=false);
+    bool bin_peaks_sparse(bool root_rescale=false, bool normalize=false);
     bool normalize_bins(float magnitude=-1.f);
+    bool normalize_sparse_bins(float magnitude=-1.f);
 
 private:
     static float rescale_intensity(float intensity);

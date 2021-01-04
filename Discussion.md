@@ -71,6 +71,10 @@ spectrast:
 
 ### Post-Christmas TODOs
 * Include OpenMS (look at handout on their git) !! Has everything I want
+    * challenging BUILD Windows/Linux
+    * First try to get external project example running in \OpenMS\share\OpenMS\examples\external_code\
+    * Then copy/migrate code and integrate my specific application
+    * Compare results, reproducing once again, what I have done and what spectraST does
 * Install Tools like Proteostorm, MS-Fragger
 * See where we could implement spectral matching into the source code
 * Probably, make own fragment ion index with MS-Fragger as role model

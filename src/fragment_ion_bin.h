@@ -4,9 +4,14 @@
 
 using namespace std;
 
+struct fragment {
+    int parent_id;
+    float intensity;
+};
+
 class fragment_ion_bin {
 public:
-    vector<long> fragment_ids;
+    vector<fragment> fragment_list;
 
     bool score();
 

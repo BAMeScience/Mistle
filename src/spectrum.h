@@ -10,6 +10,7 @@ using namespace std;
 
 class spectrum {
 public:
+    int id;
     string name;
     string peptide;
     float precursor_mass;
@@ -42,6 +43,9 @@ public:
     bool bin_peaks_sparse(bool root_rescale=false, bool normalize=false);
     bool normalize_bins(float magnitude=-1.f);
     bool normalize_sparse_bins(float magnitude=-1.f);
+
+    //Compare
+    bool operator <(const spectrum &other) const;
 
 private:
     static float rescale_intensity(float intensity);

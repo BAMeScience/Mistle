@@ -159,7 +159,7 @@ bool spectral_search::search_fragment_ion_index(fragment_ion_index *index) {
         float intensity = spectrum->bins[i];
         if (intensity > 0) {
             fragment_ion_bin bin = index->bins[i];
-            for (int j = 0; j < bin.fragment_ids.size(); ++j) {
+            for (int j = 0; j < bin.fragment_list.size(); ++j) {
                 //TODO extract parent information, check precursor mass and score intensity
 
             }

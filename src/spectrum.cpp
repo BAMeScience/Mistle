@@ -148,7 +148,7 @@ bool spectrum::bin_peaks_sparse(bool root_rescale, bool normalize) {
 
     //Normalize sparse bins
     if (normalize) {
-        return normalize_bins();
+        return normalize_sparse_bins();
     }
     return true;
 }
@@ -166,4 +166,8 @@ bool spectrum::normalize_sparse_bins(float magnitude) {
     }
 
     return true;
+}
+
+bool spectrum::operator<(const spectrum &other) const {
+    return id < other.id;
 }

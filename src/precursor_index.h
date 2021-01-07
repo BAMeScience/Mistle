@@ -11,7 +11,7 @@ class precursor_index {
 
 public:
 
-    explicit precursor_index(vector<spectrum*> spectra);
+    explicit precursor_index(vector<spectrum*> &spectra);
 
     int get_size();
     int get_lower_bound(float min_mass);

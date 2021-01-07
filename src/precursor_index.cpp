@@ -2,7 +2,7 @@
 #include <utility>
 #include "precursor_index.h"
 
-precursor_index::precursor_index(vector<spectrum *> spectrum_list) : spectra(std::move(spectrum_list)) {
+precursor_index::precursor_index(vector<spectrum *> &spectrum_list) : spectra(spectrum_list) {
     sort(spectra.begin(), spectra.end(), [](const spectrum *a, const spectrum *b) {
         return *a < *b;
     }); //TODO add comparator

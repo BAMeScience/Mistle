@@ -153,7 +153,7 @@ bool spectral_search::search_target_library() {
 }
 
 bool spectral_search::search_fragment_ion_index() {
-    //TODO naive search loop
+
     precursor_index *precursor_index = target_lib->precursor_index;
     fragment_ion_index *fragment_ion_index = target_lib->fragment_ion_index;
 
@@ -161,7 +161,7 @@ bool spectral_search::search_fragment_ion_index() {
      * Begin spectral search
      */
     cout << "Searching fragment ion index" << endl;
-    spectrum *spectrum = query_lib->spectrum_list[0]; //TODO test
+    spectrum *spectrum = query_lib->spectrum_list[11]; //TODO test
 
     // Determine range of candidate spectra
     int lower_index = precursor_index->get_lower_bound(spectrum->precursor_mass - mz_tolerance);

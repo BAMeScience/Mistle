@@ -4,7 +4,7 @@
 fragment_ion_index::fragment_ion_index(precursor_index *parent_index) {
 
 
-    fragment_bins = vector<fragment_bin>(BIN_MAX_MZ); //TODO remove/determine actual max #bins
+    fragment_bins = vector<fragment_bin>(BIN_MAX_MZ + 1); //TODO remove/determine actual max #bins
     for (int i = 0; i < parent_index->get_size(); ++i) {
         spectrum *c_spectrum = parent_index->get_spectrum(i);
 

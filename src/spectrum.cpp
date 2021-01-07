@@ -10,7 +10,7 @@ spectrum::spectrum() {
 
 
 bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
-    int num_bins = BIN_MAX_MZ - BIN_MIN_MZ; // spectrast + 1 // why?
+    int num_bins = BIN_MAX_MZ - BIN_MIN_MZ; // spectrast + 1 // TODO maybe smart
 
     bins = vector<float>(num_bins, 0.0);
 
@@ -129,16 +129,16 @@ bool spectrum::bin_peaks_sparse(bool root_rescale, bool normalize) {
             intensity = sqrt(intensity);
 
         //Update existing bin (if possible)
-        bool bin_existed = false;
+        bool bin_exists = false;
         for (int j = 0; j < binned_peaks.size(); ++j) {
             if (binned_peaks[j] == bin) {
-                bin_existed = true;
+                bin_exists = true;
                 binned_intensities[j] += intensity;
             }
         }
 
         //Add new bin
-        if (!bin_existed) {
+        if (!bin_exists) {
             binned_peaks.push_back(bin);
             binned_intensities.push_back(intensity);
         }
@@ -168,6 +168,10 @@ bool spectrum::normalize_sparse_bins(float magnitude) {
     return true;
 }
 
+//bool operator<(const spectrum &one, const spectrum &other) {
+//    return one.id < other.id;
+//}
+
 bool spectrum::operator<(const spectrum &other) const {
-    return id < other.id;
+    return precursor_mass < other.precursor_mass;
 }

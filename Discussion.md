@@ -79,3 +79,8 @@ spectrast:
 * See where we could implement spectral matching into the source code
 * Probably, make own fragment ion index with MS-Fragger as role model
 * Compare to Proteostorm/MSFragger/Spectrast
+
+
+### Implementation
+* TODO: consider charges
+* TODO: binary searches

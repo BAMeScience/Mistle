@@ -7,11 +7,11 @@ using namespace std;
 
 class precursor_index {
 
-    vector<spectrum*> spectra;
+    vector<spectrum*> spectra; //todo one for each charge
 
 public:
 
-    explicit precursor_index(vector<spectrum*> &spectra);
+    explicit precursor_index(vector<spectrum*> spectra);
 
     int get_size();
     int get_lower_bound(float min_mass);

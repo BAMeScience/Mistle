@@ -117,11 +117,11 @@ bool spectral_search::rescore_matches() {
 }
 
 bool spectral_search::search_target_library() {
+    search_results.clear();
     if (target_lib->is_indexed) {
         return search_fragment_ion_index();
     }
     cout << "Begin searching target library" << endl;
-    search_results.clear();
 
     for (int i = 0; i < query_lib->spectrum_list.size(); ++i) {
         spectrum* query_spectrum = query_lib->spectrum_list[i];
@@ -160,11 +160,12 @@ bool spectral_search::search_fragment_ion_index() {
     /*
      * Begin spectral search
      */
+    cout << "Searching fragment ion index" << endl;
     spectrum *spectrum = query_lib->spectrum_list[0]; //TODO test
 
     // Determine range of candidate spectra
     int lower_index = precursor_index->get_lower_bound(spectrum->precursor_mass - mz_tolerance);
-    int upper_index = precursor_index->get_lower_bound(spectrum->precursor_mass + mz_tolerance);
+    int upper_index = precursor_index->get_upper_bound(spectrum->precursor_mass + mz_tolerance);
 
     if (lower_index < 0 || upper_index < 0) { //precursor out of bounds
         exit(12);

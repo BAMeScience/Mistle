@@ -20,20 +20,8 @@ int main() {
 
     library *search_lib = new library(mgf_file);
     library *lib = new library(msp_file);
+    lib->build_library_index();
 
-
-    spectrum *one,*two, *three;
-    for (spectrum *s : search_lib->spectrum_list) {
-        if (s->name == "521.822143554688_251.90179999998_2") {
-            one = s;
-        }
-        if (s->name == "508.785949707031_252.8919_2") {
-            two = s;
-        }
-        if (s->name == "786.912536621094_3658.89820000002_2") {
-            three = s;
-        }
-    }
 
     /*
      * SEARCH
@@ -41,6 +29,7 @@ int main() {
 
     spectral_search search(search_lib, lib);
 
+    /*
     //Rescoring of spectrast results
     cout << "Reading in" << endl;
     search.read_results_from_file(R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\results\reproduced\sp5_neighbors_matches.tsv)");
@@ -48,26 +37,15 @@ int main() {
     search.rescore_matches();
     cout << "Saving" << endl;
     search.save_results_to_file(R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\results\reproduced\sp5_neighbors_rescored.tsv)");
-
-    spectrum *one_ST, *two_ST, *three_ST;
-    for (spectrum *s : lib->spectrum_list) {
-        if (s->name == "AAQKAVEIGR/2") {
-            one_ST = s;
-            cout << "one: st: 0.274 my: " << scores::dot_product(one->bins, one_ST->bins) << endl;
-        }
-        if (s->name == "KHLEQHPK/2") {
-            two_ST = s;
-            cout << "two: st: 0.669 my: " << scores::dot_product(two->bins, two_ST->bins) << endl;
-        }
-        if (s->name == "AMANLLSNILNENR/2") {
-            three_ST=s;
-            cout << "three st: 0.464 my: " << scores::dot_product(three->bins, three_ST->bins) << endl;
-        }
-    }
+    */
 
 
+    cout << "Testing fragment ion index" << endl;
+    search.search_target_library();
+    search.save_results_to_file("FIIndex.csv");
+    exit(12);
 
-
+    /*
     auto start = chrono::high_resolution_clock::now();
     search.search_target_library();
     auto stop = chrono::high_resolution_clock::now();
@@ -84,6 +62,6 @@ int main() {
 
     search.save_results_to_file("./out.csv");
 
-
+    */
     return 0;
 }

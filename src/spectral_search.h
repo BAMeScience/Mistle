@@ -23,8 +23,7 @@ public:
      */
     bool search_target_library();
     bool search_target_library(library *target_lib);
-
-    bool search_fragment_ion_index(fragment_ion_index *index);
+    bool search_fragment_ion_index();
 
     vector<match> get_results();
     bool save_results_to_file(string path, string delimiter="\t");

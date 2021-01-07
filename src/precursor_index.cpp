@@ -27,3 +27,15 @@ int precursor_index::get_upper_bound(float max_mass) {
         }
     }
 }
+
+int precursor_index::get_size() {
+    return spectra.size();
+}
+
+spectrum *precursor_index::get_spectrum(int i) {
+    return spectra[i];
+}
+
+float precursor_index::get_max_precursor_mass() {
+    return spectra.back()->precursor_mass;
+}

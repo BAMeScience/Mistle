@@ -6,13 +6,18 @@
 using namespace std;
 
 class precursor_index {
-public:
+
     vector<spectrum*> spectra;
+
+public:
 
     explicit precursor_index(vector<spectrum*> &spectra);
 
+    int get_size();
     int get_lower_bound(float min_mass);
     int get_upper_bound(float max_mass);
+    float get_max_precursor_mass();
+    spectrum *get_spectrum(int i);
 };
 
 

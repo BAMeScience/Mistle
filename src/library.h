@@ -2,6 +2,8 @@
 #define SIMPLE_EXAMPLE_LIBRARY_H
 #include <vector>
 #include "spectrum.h"
+#include "precursor_index.h"
+#include "fragment_ion_index.h"
 
 using namespace std;
 
@@ -12,9 +14,14 @@ public:
     ~library();
     bool load_library_from_file(string &path);
 
-    vector<spectrum*> spectrum_list;
-private:
+    bool build_library_index();
 
+    vector<spectrum*> spectrum_list;
+    precursor_index* precursor_index;
+    fragment_ion_index* fragment_ion_index;
+    bool is_indexed = false;
+
+private:
 
 };
 

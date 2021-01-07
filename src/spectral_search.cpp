@@ -117,6 +117,9 @@ bool spectral_search::rescore_matches() {
 }
 
 bool spectral_search::search_target_library() {
+    if (target_lib->is_indexed) {
+        return search_fragment_ion_index();
+    }
     cout << "Begin searching target library" << endl;
     search_results.clear();
 
@@ -149,23 +152,54 @@ bool spectral_search::search_target_library() {
     return true;
 }
 
-bool spectral_search::search_fragment_ion_index(fragment_ion_index *index) {
+bool spectral_search::search_fragment_ion_index() {
     //TODO naive search loop
-    vector<match> match_list;
+    precursor_index *precursor_index = target_lib->precursor_index;
+    fragment_ion_index *fragment_ion_index = target_lib->fragment_ion_index;
 
-    spectrum *spectrum = query_lib->spectrum_list[0];
+    /*
+     * Begin spectral search
+     */
+    spectrum *spectrum = query_lib->spectrum_list[0]; //TODO test
 
-    for (int i = 0; i < spectrum->bins.size(); ++i) {
-        float intensity = spectrum->bins[i];
-        if (intensity > 0) {
-            fragment_ion_bin bin = index->bins[i];
-            for (int j = 0; j < bin.fragment_list.size(); ++j) {
-                //TODO extract parent information, check precursor mass and score intensity
+    // Determine range of candidate spectra
+    int lower_index = precursor_index->get_lower_bound(spectrum->precursor_mass - mz_tolerance);
+    int upper_index = precursor_index->get_lower_bound(spectrum->precursor_mass + mz_tolerance);
 
-            }
-        }
+    if (lower_index < 0 || upper_index < 0) { //precursor out of bounds
+        exit(12);
     }
 
-    return false;
-}
+    // Init candidate scores
+    vector<float> scores(upper_index - lower_index, 0.f);
 
+    //Update scores by matching all peaks using the fragment ion index
+    for (int i = 0; i < spectrum->binned_peaks.size(); ++i) {
+        // Open ion mass bin for corresponding peak
+        fragment_bin ion_bin = fragment_ion_index->fragment_bins[spectrum->binned_peaks[i]];
+
+        //Iterate through fragments and find those with candidate parent spectra todo binary search
+        for (int j = 0; j < ion_bin.size(); ++j) {
+            fragment frag = ion_bin[j];
+            if (frag.parent_id >= lower_index) { //TODO improve alot
+                if (frag.parent_id > upper_index) {
+                    break;
+                }
+
+                scores[frag.parent_id - lower_index] += frag.intensity * spectrum->binned_intensities[i];
+            }
+        }
+
+    }
+
+    // Prepare best-scoring PSM
+    int max_elem = max_element(scores.begin(), scores.end()) - scores.begin();
+    float dot = scores[max_elem];
+    int parent_index = max_elem + lower_index;
+    match top_match(spectrum, precursor_index->get_spectrum(parent_index), dot, 1);
+
+    search_results.push_back(top_match);
+    // TODO end loop
+
+    return true;
+}

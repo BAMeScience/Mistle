@@ -36,3 +36,10 @@ library::~library() {
     }*/
     spectrum_list.clear();
 }
+
+bool library::build_library_index() {
+    precursor_index = new class precursor_index(spectrum_list);
+    fragment_ion_index = new class fragment_ion_index(precursor_index);
+    is_indexed = true;
+    return false;
+}

@@ -40,8 +40,13 @@ int main() {
     */
 
 
-    cout << "Testing fragment ion index" << endl;
+    cout << "Searching fragment ion index" << endl;
+    auto start = chrono::high_resolution_clock::now();
     search.search_target_library();
+    auto stop = chrono::high_resolution_clock::now();
+    auto duration = duration_cast<chrono::seconds>(stop - start);
+
+    cout << "Search Time: " <<  duration.count() << " seconds" << endl;
     search.save_results_to_file("FIIndex.csv");
     exit(12);
 

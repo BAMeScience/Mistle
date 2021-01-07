@@ -29,7 +29,7 @@ int precursor_index::get_upper_bound(float max_mass) {
             return i-1;
         }
     }
-    return spectra.size();
+    return spectra.size() - 1;
 }
 
 int precursor_index::get_size() {

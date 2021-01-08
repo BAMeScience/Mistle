@@ -47,6 +47,8 @@ public:
     //Compare
     //friend bool operator<(const spectrum &one, const spectrum &other);
     bool operator<(const spectrum &other) const;
+    bool operator<(pair<int,float> charge_mass_tuple) const;
+    bool operator<=(pair<int,float> charge_mass_tuple) const;
 
 private:
     static float rescale_intensity(float intensity);

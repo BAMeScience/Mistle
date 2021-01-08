@@ -170,8 +170,12 @@ bool spectral_search::search_fragment_ion_index() {
         spectrum *query_spectrum = query_lib->spectrum_list[i];
 
         // Determine range of candidate spectra
-        int lower_index = precursor_index->get_lower_bound(query_spectrum->charge, query_spectrum->precursor_mass - mz_tolerance);
-        int upper_index = precursor_index->get_upper_bound(query_spectrum->charge, query_spectrum->precursor_mass + mz_tolerance, lower_index);
+        int lower_index = precursor_index->get_lower_bound(query_spectrum->charge,
+                                                           query_spectrum->precursor_mass - mz_tolerance);
+
+        int upper_index = precursor_index->get_upper_bound(query_spectrum->charge,
+                                                                 query_spectrum->precursor_mass + mz_tolerance);
+
 
         if (lower_index < 0 || upper_index < 0 || lower_index > upper_index) { //precursor out of bounds
             continue; //Skipping, No match in precursor mass range found

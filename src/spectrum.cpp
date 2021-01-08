@@ -175,3 +175,11 @@ bool spectrum::normalize_sparse_bins(float magnitude) {
 bool spectrum::operator<(const spectrum &other) const {
     return charge < other.charge || (charge == other.charge && precursor_mass < other.precursor_mass);
 }
+
+bool spectrum::operator<(pair<int, float> charge_mass_tuple) const {
+    return charge < charge_mass_tuple.first || (charge == charge_mass_tuple.first && precursor_mass < charge_mass_tuple.second);
+}
+
+bool spectrum::operator<=(pair<int, float> charge_mass_tuple) const {
+    return charge < charge_mass_tuple.first || (charge == charge_mass_tuple.first && precursor_mass <= charge_mass_tuple.second);
+}

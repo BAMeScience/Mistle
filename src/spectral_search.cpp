@@ -172,7 +172,6 @@ bool spectral_search::search_fragment_ion_index() {
         // Determine range of candidate spectra
         int lower_index = precursor_index->get_lower_bound(query_spectrum->charge,
                                                            query_spectrum->precursor_mass - mz_tolerance);
-
         int upper_index = precursor_index->get_upper_bound(query_spectrum->charge,
                                                                  query_spectrum->precursor_mass + mz_tolerance);
 

@@ -33,6 +33,16 @@ int precursor_index::get_lower_bound(int charge, float min_mass) {
     return lb;
 }
 
+
+int precursor_index::get_upper_bound(int charge, float max_mass) {
+
+    int ub = std::upper_bound(spectra.begin(), spectra.end(), make_pair(charge, max_mass), [](pair<int, float> mass_charge_tuple, spectrum *s) {
+        return  !(*s <= mass_charge_tuple);
+    }) - spectra.begin();
+
+    return ub - 1;
+}
+
 //Old lower bound search using a naive loop
 int precursor_index::get_lower_bound_naive(int charge, float min_mass) {
     for (int i = 0; i < spectra.size(); ++i) {
@@ -43,7 +53,6 @@ int precursor_index::get_lower_bound_naive(int charge, float min_mass) {
     return spectra.size();
 }
 
-//TODO replace with binary search
 int precursor_index::get_upper_bound_naive(int charge, float max_mass, int lower_bound) {
     for (int i = lower_bound; i < spectra.size(); ++i) {
         if (spectra[i]->charge > charge || (spectra[i]->charge == charge && spectra[i]->precursor_mass > max_mass)) {
@@ -51,13 +60,4 @@ int precursor_index::get_upper_bound_naive(int charge, float max_mass, int lower
         }
     }
     return spectra.size() - 1;
-}
-
-int precursor_index::get_upper_bound(int charge, float max_mass) {
-
-    int ub = std::upper_bound(spectra.begin(), spectra.end(), make_pair(charge, max_mass), [](pair<int, float> mass_charge_tuple, spectrum *s) {
-        return  !(*s <= mass_charge_tuple);
-    }) - spectra.begin();
-
-    return ub - 1;
 }

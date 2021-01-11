@@ -156,13 +156,12 @@ bool spectral_search::search_fragment_ion_index() {
 
     precursor_index *precursor_index = target_lib->precursor_index;
     fragment_ion_index *fragment_ion_index = target_lib->fragment_ion_index;
-    //vector<float> scores;
-    /*
-     * Begin spectral search
-     */
+
+
     cout << "Searching fragment ion index" << endl;
 
     for (int i = 0; i < query_lib->spectrum_list.size(); ++i) {
+        // Show progress
         if (i % 1000 == 0) {
             cout << "progress: " << i << " of " << query_lib->spectrum_list.size() << " " << (float(i) / query_lib->spectrum_list.size()) * 100 << " %" << endl;
         }
@@ -175,29 +174,28 @@ bool spectral_search::search_fragment_ion_index() {
         int upper_index = precursor_index->get_upper_bound(query_spectrum->charge,
                                                                  query_spectrum->precursor_mass + mz_tolerance);
 
-
-        if (lower_index < 0 || upper_index < 0 || lower_index > upper_index) { //precursor out of bounds
-            continue; //Skipping, No match in precursor mass range found
+        if (lower_index < 0 || upper_index < 0 || lower_index > upper_index) { // No matching precursor masses
+            continue;
         }
 
         // Init candidate scores
-        //scores.resize(upper_index - lower_index + 1, 0.f);
         vector<float> dot_scores(upper_index - lower_index + 1, 0.f);
 
-        //Update scores by matching all peaks using the fragment ion index
+        // Update scores by matching all peaks using the fragment ion index
         for (int j = 0; j < query_spectrum->binned_peaks.size(); ++j) {
+
             // Open ion mass bin for corresponding peak
             fragment_bin ion_bin = fragment_ion_index->fragment_bins[query_spectrum->binned_peaks[j]];
 
-            //Iterate through fragments and find those with candidate parent spectra todo binary search
-            for (auto fragment : ion_bin) {
-                if (fragment.parent_id >= lower_index) { //TODO improve alot
-                    if (fragment.parent_id > upper_index) {
-                        break;
-                    }
+            // Determine starting point of lower parent index inside bin
+            int lower_index_inside_bin = std::lower_bound(ion_bin.begin(), ion_bin.end(), lower_index, [](fragment f, int idx) {
+                return f.parent_id < idx;
+            }) - ion_bin.begin();
 
-                    dot_scores[fragment.parent_id - lower_index] += fragment.intensity * query_spectrum->binned_intensities[j];
-                }
+            //Update scores for all parents with fragments in the range
+            for (int k = lower_index_inside_bin; k < ion_bin.size() && ion_bin[k].parent_id <= upper_index; ++k) {
+                fragment f = ion_bin[k];
+                dot_scores[f.parent_id - lower_index] += f.intensity * query_spectrum->binned_intensities[j];
             }
 
         }
@@ -209,8 +207,6 @@ bool spectral_search::search_fragment_ion_index() {
         match top_match(query_spectrum, precursor_index->get_spectrum(parent_index), dot, 1);
 
         search_results.push_back(top_match);
-        // TODO end loop
-
     }
     return true;
 }

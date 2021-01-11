@@ -15,7 +15,7 @@ public:
     explicit precursor_index(vector<spectrum*> &spectra);
 
     int get_size();
-    int get_lower_bound(int charge, float min_mass);
+    int get_lower_bound(int charge, float mass);
     int get_upper_bound(int charge, float max_mass);
     float get_max_precursor_mass();
     spectrum *get_spectrum(int i);

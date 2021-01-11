@@ -26,8 +26,8 @@ float precursor_index::get_max_precursor_mass() {
 
 int precursor_index::get_lower_bound(int charge, float min_mass) {
 
-    int lb = std::lower_bound(spectra.begin(), spectra.end(), make_pair(charge, min_mass), [](spectrum *s, pair<int, float> mass_charge_tuple) {
-        return  *s < mass_charge_tuple;
+    int lb = std::lower_bound(spectra.begin(), spectra.end(), make_pair(charge, min_mass), [](spectrum *s, pair<int, float> charge_mass_tuple) {
+        return *s < charge_mass_tuple;
     }) - spectra.begin();
 
     return lb;
@@ -36,8 +36,8 @@ int precursor_index::get_lower_bound(int charge, float min_mass) {
 
 int precursor_index::get_upper_bound(int charge, float max_mass) {
 
-    int ub = std::upper_bound(spectra.begin(), spectra.end(), make_pair(charge, max_mass), [](pair<int, float> mass_charge_tuple, spectrum *s) {
-        return  !(*s <= mass_charge_tuple);
+    int ub = std::upper_bound(spectra.begin(), spectra.end(), make_pair(charge, max_mass), [](pair<int, float> charge_mass_tuple, spectrum *s) {
+        return  !(*s <= charge_mass_tuple);
     }) - spectra.begin();
 
     return ub - 1;

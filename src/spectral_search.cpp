@@ -169,10 +169,8 @@ bool spectral_search::search_fragment_ion_index() {
         spectrum *query_spectrum = query_lib->spectrum_list[i];
 
         // Determine range of candidate spectra
-        int lower_index = precursor_index->get_lower_bound(query_spectrum->charge,
-                                                           query_spectrum->precursor_mass - mz_tolerance);
-        int upper_index = precursor_index->get_upper_bound(query_spectrum->charge,
-                                                                 query_spectrum->precursor_mass + mz_tolerance);
+        int lower_index = precursor_index->get_lower_bound(query_spectrum->charge,query_spectrum->precursor_mass - mz_tolerance);
+        int upper_index = precursor_index->get_upper_bound(query_spectrum->charge,query_spectrum->precursor_mass + mz_tolerance);
 
         if (lower_index < 0 || upper_index < 0 || lower_index > upper_index) { // No matching precursor masses
             continue;
@@ -187,7 +185,7 @@ bool spectral_search::search_fragment_ion_index() {
             // Open ion mass bin for corresponding peak
             fragment_bin ion_bin = fragment_ion_index->fragment_bins[query_spectrum->binned_peaks[j]];
 
-            // Determine starting point of lower parent index inside bin
+            // Determine starting point of lowest (candidate) parent index inside bin
             int lower_index_inside_bin = std::lower_bound(ion_bin.begin(), ion_bin.end(), lower_index, [](fragment f, int idx) {
                 return f.parent_id < idx;
             }) - ion_bin.begin();

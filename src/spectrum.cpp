@@ -168,10 +168,6 @@ bool spectrum::normalize_sparse_bins(float magnitude) {
     return true;
 }
 
-//bool operator<(const spectrum &one, const spectrum &other) {
-//    return one.id < other.id;
-//}
-
 bool spectrum::operator<(const spectrum &other) const {
     return charge < other.charge || (charge == other.charge && precursor_mass < other.precursor_mass);
 }

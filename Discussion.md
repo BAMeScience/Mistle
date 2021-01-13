@@ -69,6 +69,11 @@ spectrast:
 * normal mode: 10min (suspect, that ST expects mz-sorted query file)
 * RAM mode: 105 seconds (sp4 dot only, unbinned, req. ca. 1GB RAM)
 
+* my standard search 50 seconds
+
+* my indexed search: 12 seconds, req. ca. 600 MB Ram (approx)
+
+
 ### Post-Christmas TODOs
 * Include OpenMS (look at handout on their git) !! Has everything I want
     * challenging BUILD Windows/Linux

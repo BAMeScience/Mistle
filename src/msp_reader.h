@@ -17,7 +17,7 @@ class msp_reader {
 public:
     msp_reader();
 
-    static vector<spectrum*> read_file(string &path, msp_read_mode read_mode=DETAILED);
+    static bool read_file(string &path, vector<spectrum*> &output_spectra, msp_read_mode read_mode=DETAILED);
 
 
 };

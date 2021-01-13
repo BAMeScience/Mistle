@@ -7,14 +7,13 @@ mgf_reader::mgf_reader() {
 
 }
 
-vector<spectrum *> mgf_reader::read_file(string path) {
-    //todo w.i.p.
-    vector<spectrum *> spectrum_list;
+bool mgf_reader::read_file(string path, vector<spectrum *> &output_spectra) {
+
     fstream infile;
 
     infile.open(path, ios::in);
     if (!infile) {
-        cerr << "Could not open file at " << path << endl;
+        return false;
     }
 
     spectrum *c_spectrum = nullptr;
@@ -27,7 +26,7 @@ vector<spectrum *> mgf_reader::read_file(string path) {
             //c_spectrum->intensity_bin_spanning_factor = -1.f; //TODO figure out if neighbor_spanning here
             //c_spectrum->bin_peaks(true,true);
             c_spectrum->bin_peaks_sparse(true, true);
-            spectrum_list.push_back(c_spectrum);
+            output_spectra.push_back(c_spectrum);
             continue;
         }
 
@@ -84,5 +83,5 @@ vector<spectrum *> mgf_reader::read_file(string path) {
             }
         }
     infile.close();
-    return spectrum_list;
+    return true;
 }

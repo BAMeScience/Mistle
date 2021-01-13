@@ -8,10 +8,8 @@ msp_reader::msp_reader() {
 
 }
 
+bool msp_reader::read_file(string &path, vector<spectrum *> &output_spectra, msp_read_mode read_mode) {
 
-vector<spectrum *> msp_reader::read_file(string &path, msp_read_mode read_mode) {
-
-    vector<spectrum *> spectrum_list;
     fstream infile;
 
     infile.open(path, ios::in);
@@ -26,7 +24,7 @@ vector<spectrum *> msp_reader::read_file(string &path, msp_read_mode read_mode) 
         spectrum *c_spectrum = nullptr;
         while (tag != "Num peaks") { // what if no colon -> colon_pos == string::npos
             if (infile.eof())
-                exit(12);
+                return false;
             getline(infile, line);
 
             // split up line to identify comment tags
@@ -74,11 +72,12 @@ vector<spectrum *> msp_reader::read_file(string &path, msp_read_mode read_mode) 
         //c_spectrum->intensity_bin_spanning_factor = -1.f; //TODO figure out if neighbor_spanning here
         //c_spectrum->bin_peaks(true,true);
         c_spectrum->bin_peaks_sparse(true, true);
-        spectrum_list.push_back(c_spectrum);
+        output_spectra.push_back(c_spectrum);
 
     }
 
 
     infile.close();
-    return spectrum_list;
+    return true;
 }
+

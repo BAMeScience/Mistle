@@ -8,7 +8,7 @@ class mgf_reader {
 public:
     mgf_reader();
 
-    static vector<spectrum*> read_file(string path);
+    static bool read_file(string path, vector<spectrum *> &output_spectra);
 };
 
 

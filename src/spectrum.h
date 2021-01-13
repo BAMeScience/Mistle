@@ -13,6 +13,7 @@ public:
     int id;
     string name;
     string peptide;
+    //string species;
     float precursor_mass;
     int charge;
 

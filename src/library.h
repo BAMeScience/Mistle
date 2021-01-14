@@ -13,7 +13,7 @@ public:
     library(string &path);
     ~library();
 
-    bool load_spectra_from_file(string &path);
+    bool load_spectra_from_file(string path);
     bool load_library_from_directory(string &path);
 
     bool build_library_index();

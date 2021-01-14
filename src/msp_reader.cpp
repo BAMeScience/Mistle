@@ -19,7 +19,6 @@ bool msp_reader::read_file(string &path, vector<spectrum *> &output_spectra, msp
 
     string line;
     while (!infile.eof()) {
-
         string tag, value;
         spectrum *c_spectrum = nullptr;
         while (tag != "Num peaks") { // what if no colon -> colon_pos == string::npos

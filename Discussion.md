@@ -85,7 +85,7 @@ spectrast:
 * Probably, make own fragment ion index with MS-Fragger as role model
 * Compare to Proteostorm/MSFragger/Spectrast
 
+### February TODO's
+* Get the OpenMS library working
+* Test performance on 9MM (BAM server)
 
-### Implementation
-* TODO: consider charges
-* TODO: binary searches

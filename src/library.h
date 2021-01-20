@@ -19,8 +19,8 @@ public:
     bool build_library_index();
 
     vector<spectrum*> spectrum_list;
-    precursor_index* precursor_index;
-    fragment_ion_index* fragment_ion_index;
+    precursor_index* precursor_idx;
+    fragment_ion_index* fragment_ion_idx;
     bool is_indexed = false;
 
 private:

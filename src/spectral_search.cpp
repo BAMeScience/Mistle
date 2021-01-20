@@ -154,8 +154,8 @@ bool spectral_search::search_target_library() {
 
 bool spectral_search::search_fragment_ion_index() {
 
-    precursor_index *precursor_index = target_lib->precursor_index;
-    fragment_ion_index *fragment_ion_index = target_lib->fragment_ion_index;
+    precursor_index *precursor_index = target_lib->precursor_idx;
+    fragment_ion_index *fragment_ion_index = target_lib->fragment_ion_idx;
 
 
     cout << "Searching fragment ion index" << endl;

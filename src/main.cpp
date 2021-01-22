@@ -14,8 +14,9 @@ int main() {
 
 
     //string msp_file = R"(C:\Users\ynowatzk\Desktop\data\9MM\simulated_spectra\)";
-    string msp_file = R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\PyroFur_Complete_simulatedSpectra\PyroFur_reproduced.msp)";
-    string mgf_file = R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\PyroFur_SearchFile\pfu_velos.mgf)"; //
+    //string msp_file = R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\PyroFur_Complete_simulatedSpectra\PyroFur_reproduced.msp)";
+    string msp_file = "/home/ynowatzk/data/pyro_fur/PyroFur_reproduced.msp";
+    string mgf_file = "/home/ynowatzk/data/pyro_fur/pfu_velos_unix.mgf"; //
     //vector<spectrum*> library = msp_reader::read_file(R"(C:\Users\ynowatzk\Desktop\data\9MM\simulated_spectra\Brevibacillus+laterosporus.msp)");
 
 

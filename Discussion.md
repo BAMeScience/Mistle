@@ -88,4 +88,17 @@ spectrast:
 ### February TODO's
 * Get the OpenMS library working
 * Test performance on 9MM (BAM server)
-
+* Look into paralization, splitting up ion-mass index by parent masses.
+  * look at *buffer watcher scheduling*
+  * idea: group queries (feasible number) by parent masses.
+  * load ion-mass index specified for the parentmass
+  * run all these queries parallel
+  * look at SeqAN Dream-Yara
+* Parallel computing in registers SIMD
+  * computing the dot product on bit vectors in one operation for multiple data points (smaller bit vectors inside)
+  * look at knuts VL
+  * figure out what scoring suites best for performance
+* Mass shift claibration on marker peptide
+  * some implementation in OpenMS
+* Intensity scaling/scoring
+  * check OpenMS here too

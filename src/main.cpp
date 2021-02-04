@@ -7,20 +7,20 @@
 #include "scores.h"
 #include "spectral_search.h"
 #include "library.h"
-#include <OpenMS/KERNEL/FeatureMap.h>
-#include <OpenMS/CHEMISTRY/AASequence.h>
+//#include <OpenMS/KERNEL/FeatureMap.h>
+//#include <OpenMS/CHEMISTRY/AASequence.h>
 
-using namespace OpenMS;
+//using namespace OpenMS;
 //using namespace OpenMSExternal;
 
 
 int main() {
     cout << "Welcome, welcome" << endl;
-    FeatureMap fm;
-    Feature feature;
-    PeakSpectrum p;
+    //FeatureMap fm;
+    //Feature feature;
+    //PeakSpectrum p;
 
-    fm.push_back(feature);
+    //fm.push_back(feature);
 
     //string msp_file = R"(C:\Users\ynowatzk\Desktop\data\9MM\simulated_spectra\)";
     //string msp_file = R"(C:\Users\ynowatzk\Desktop\data\pyrococcus_furiosus\PyroFur_Complete_simulatedSpectra\PyroFur_reproduced.msp)";

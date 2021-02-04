@@ -102,3 +102,14 @@ spectrast:
   * some implementation in OpenMS
 * Intensity scaling/scoring
   * check OpenMS here too
+  
+### Problems over problems
+How to make the sub-indexes for 300GB MS2
+* load in batches, make bins and index for the mass windows
+  * issue: decide on bins beforehand 
+  * issue: update FIindexes on the fly
+* go through input multiple times and regard only window of peptides and build full subindex in 1 go
+  * issue: 2000 bins makes 2000 times going over 300GB
+  * issue: decide on bins beforhand
+* sort file beforehand, then only bit by bit 
+  * issue: ugly + doubles data

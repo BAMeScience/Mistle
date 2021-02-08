@@ -18,6 +18,7 @@ public:
     msp_reader();
 
     static bool read_file(string &path, vector<spectrum*> &output_spectra, msp_read_mode read_mode=DETAILED);
+    static bool read_file_precursors(string &path, vector<precursor *> &precursor_list);
 
 
 };

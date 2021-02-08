@@ -8,6 +8,23 @@
 
 using namespace std;
 
+
+struct precursor {
+    int id = 1000;
+    int rank = 1000;
+    float mass;
+    int charge;
+    //string name;
+    //string peptide;
+    precursor() {};
+    precursor(int id, float mass, int charge, string name, string peptide="") : id(id), mass(mass), charge(charge) {};
+
+    bool operator<(const precursor &other) const {
+        return charge < other.charge || (charge == other.charge && mass < other.mass);
+    };
+
+};
+
 class spectrum {
 public:
     int id;

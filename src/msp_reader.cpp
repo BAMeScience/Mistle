@@ -15,6 +15,7 @@ bool msp_reader::read_file(string &path, vector<spectrum *> &output_spectra, msp
     infile.open(path, ios::in);
     if (!infile) {
         cerr << "Could not open file at " << path << endl;
+        return false;
     }
 
     string line;
@@ -73,6 +74,57 @@ bool msp_reader::read_file(string &path, vector<spectrum *> &output_spectra, msp
         c_spectrum->bin_peaks_sparse(true, true);
         output_spectra.push_back(c_spectrum);
 
+    }
+
+
+    infile.close();
+    return true;
+}
+
+bool msp_reader::read_file_precursors(string &path, vector<precursor *> &precursor_list) {
+
+    fstream infile;
+
+    infile.open(path, ios::in);
+    if (!infile) {
+        cerr << "Could not open file at " << path << endl;
+        return false;
+    }
+
+    string line;
+    while (!infile.eof()) {
+        string tag, value;
+        precursor *parent;
+        while (tag != "Num peaks") { // what if no colon -> colon_pos == string::npos
+            if (infile.eof())
+                return false;
+            getline(infile, line);
+
+            // split up line to identify comment tags
+            size_t colon_pos = line.find(':');
+
+            tag = line.substr(0, colon_pos);
+            value = line.substr(colon_pos + 2, string::npos);
+
+            // parse information
+            if (tag == "Name") {
+                parent = new precursor();
+                //parent->name = value;
+                //parent->peptide = value.substr(0, value.find('/'));
+                parent->charge = stoi(value.substr(value.rfind('/') + 1, string::npos));
+            } else if (tag == "MW") {
+                parent->mass = stof(value);
+            } else if (tag == "Comment") {
+
+            }
+        }
+        //else case: tag = Num peak_positions
+        int num_peaks = stoi(value);
+        for (int i = 0; i < num_peaks; ++i) {
+            //Skip lines
+            getline(infile, value);
+        }
+        precursor_list.push_back(parent);
     }
 
 

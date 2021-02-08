@@ -25,11 +25,17 @@ int main() {
 
     //string msp_file = "/home/ynowatzk/data/pyro_fur/PyroFur_reproduced.msp";
     string msp_file = "/home/ynowatzk/data/9MM/msp/";
-    string mgf_file = "/home/ynowatzk/data/9MM/mgf/9MM_FASPht.mgf"; //
+    string mgf_file = "/home/ynowatzk/data/9MM/mgf/9MM_FASP.mgf"; //
 
 
     library *search_lib = new library(mgf_file);
+
+    auto start = chrono::high_resolution_clock::now();
     library *lib = new library(msp_file);
+    auto stop = chrono::high_resolution_clock::now();
+    auto duration = duration_cast<chrono::seconds>(stop - start);
+    cout << "Loading Time: " <<  duration.count() << " seconds" << endl;
+
     lib->build_library_index();
 
 
@@ -51,10 +57,10 @@ int main() {
 
 
     cout << "Searching fragment ion index" << endl;
-    auto start = chrono::high_resolution_clock::now();
+    start = chrono::high_resolution_clock::now();
     search.search_target_library();
-    auto stop = chrono::high_resolution_clock::now();
-    auto duration = duration_cast<chrono::seconds>(stop - start);
+    stop = chrono::high_resolution_clock::now();
+    duration = duration_cast<chrono::seconds>(stop - start);
 
     cout << "Search Time: " <<  duration.count() << " seconds" << endl;
     search.save_results_to_file("FIIndex.csv");

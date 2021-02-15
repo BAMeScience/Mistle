@@ -3,7 +3,6 @@
 
 #include "spectrum.h"
 
-using namespace std;
 
 class match {
 public:

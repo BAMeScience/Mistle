@@ -4,13 +4,12 @@
 #include "match.h"
 #include "fragment_ion_index.h"
 
-using namespace std;
 
 class spectral_search {
     library *query_lib;
     library *target_lib;
 
-    vector<match> search_results;
+    std::vector<match> search_results;
     float mz_tolerance=3.0;
 
 public:
@@ -25,9 +24,9 @@ public:
     bool search_target_library(library *target_lib);
     bool search_fragment_ion_index();
 
-    vector<match> get_results();
-    bool save_results_to_file(string path, string delimiter="\t");
-    bool read_results_from_file(string path, char delimiter='\t', bool read_dot=false, bool has_header=true);
+    std::vector<match> get_results();
+    bool save_results_to_file(std::string path, std::string delimiter="\t");
+    bool read_results_from_file(std::string path, char delimiter='\t', bool read_dot=false, bool has_header=true);
 
     /*
      * (Re-)scoring of matches

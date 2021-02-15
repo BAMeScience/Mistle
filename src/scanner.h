@@ -4,8 +4,6 @@
 #include <string>
 #include "spectrum.h"
 
-using namespace std;
-
 class scanner {
 private:
 
@@ -15,16 +13,16 @@ private:
 
 public:
     scanner();
-    bool scan_directory(string path);
-    bool scan_file(string path);
+    bool scan_directory(std::string path);
+    bool scan_file(std::string path);
 
     bool analyze();
-    bool save_precursor_distribution_to_file(string path, string delimiter="\t");
+    bool save_precursor_distribution_to_file(std::string path, std::string delimiter="\t");
 
     bool print_scan_results();
 
-    vector<precursor*> parents;
-    vector<spectrum*> specs;
+    std::vector<precursor*> parents;
+    std::vector<spectrum*> specs;
 };
 
 

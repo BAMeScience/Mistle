@@ -3,6 +3,8 @@
 #include <iostream>
 #include <sstream>
 
+using namespace std;
+
 mgf_reader::mgf_reader() {
 
 }

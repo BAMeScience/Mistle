@@ -3,16 +3,14 @@
 #include <vector>
 #include "spectrum.h"
 
-using namespace std;
-
 class precursor_index {
 
     // Contains all spectrum references, sorted first by charge, then by precursor mass
-    vector<spectrum*> spectra;
+    std::vector<spectrum*> spectra;
 
 public:
 
-    explicit precursor_index(vector<spectrum*> &spectra);
+    explicit precursor_index(std::vector<spectrum*> &spectra);
 
     int get_size();
     int get_lower_bound(int charge, float mass);

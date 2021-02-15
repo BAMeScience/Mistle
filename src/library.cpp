@@ -6,6 +6,8 @@
 #include "msp_reader.h"
 #include "mgf_reader.h"
 
+using namespace std;
+
 library::library() {
 
 }

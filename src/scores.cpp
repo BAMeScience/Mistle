@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iostream>
 
+using namespace std;
+
 float scores::dot_product(vector<float> &target_bins, vector<float> &other_bins) {
     float dot = 0.f;
     int num_bins = 0;

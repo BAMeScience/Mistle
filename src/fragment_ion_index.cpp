@@ -1,6 +1,8 @@
 #include "fragment_ion_index.h"
 #include "DefineConstants.h"
 
+using namespace std;
+
 fragment_ion_index::fragment_ion_index(precursor_index *parent_index) {
 
 

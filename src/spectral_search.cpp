@@ -4,6 +4,8 @@
 #include "spectral_search.h"
 #include "scores.h"
 
+using namespace std;
+
 spectral_search::spectral_search() {
 
 }

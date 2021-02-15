@@ -3,7 +3,6 @@
 
 #include "spectrum.h"
 
-using namespace std;
 
 enum msp_read_mode {
     DETAILED = 0,
@@ -15,16 +14,16 @@ enum msp_read_mode {
 
 class msp_reader {
 
-static fstream infile;
+static std::fstream infile;
 
 
 public:
 
-    static bool read_file(string &path, vector<spectrum*> &output_spectra, msp_read_mode read_mode=DETAILED);
-    static bool read_file_precursors(string &path, vector<precursor *> &precursor_list);
+    static bool read_file(std::string &path, std::vector<spectrum*> &output_spectra, msp_read_mode read_mode=DETAILED);
+    static bool read_file_precursors(std::string &path, std::vector<precursor *> &precursor_list);
 
-    static bool read_spectra_from_positions(string &path, vector<precursor *> &precursor_list, vector<spectrum*> &output_spectra);
-    static spectrum* read_spectrum_from_buffer(string buffer);
+    static bool read_spectra_from_positions(std::string &path, std::vector<precursor *> &precursor_list, std::vector<spectrum*> &output_spectra);
+    static spectrum* read_spectrum_from_buffer(std::string buffer);
 
 
 };

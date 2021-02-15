@@ -6,8 +6,6 @@
 #include <string>
 
 
-using namespace std;
-
 
 struct precursor {
     int id = 1000;
@@ -17,10 +15,10 @@ struct precursor {
 
     unsigned long offset_begin;
     unsigned long offset_end;
-    string name;
+    std::string name;
     //string peptide;
     precursor() {};
-    precursor(int id, float mass, int charge, string name, string peptide="") : id(id), mass(mass), charge(charge) {};
+    precursor(int id, float mass, int charge, std::string name, std::string peptide="") : id(id), mass(mass), charge(charge) {};
 
     bool operator<(const precursor &other) const {
         return charge < other.charge || (charge == other.charge && mass < other.mass);
@@ -31,8 +29,8 @@ struct precursor {
 class spectrum {
 public:
     int id;
-    string name;
-    string peptide;
+    std::string name;
+    std::string peptide;
     //string species;
     float precursor_mass;
     int charge;
@@ -43,15 +41,15 @@ public:
      * pos[i] corresponds to intensity[i]
      */
 
-    vector<float> peak_positions;
-    vector<float> intensities;
+    std::vector<float> peak_positions;
+    std::vector<float> intensities;
 
     /*
      * Binning and rescaling intensities
      */
-    vector<float> bins; //vector over all bins (including zeros)
-    vector<int> binned_peaks; //vector listing existing peaks binned
-    vector<float> binned_intensities; //vector listing intensities corresponding to binned peaks
+    std::vector<float> bins; //vector over all bins (including zeros)
+    std::vector<int> binned_peaks; //vector listing existing peaks binned
+    std::vector<float> binned_intensities; //vector listing intensities corresponding to binned peaks
 
 
     //factor of intensity carried over to neighboring bins to account for mz-shifts
@@ -68,8 +66,8 @@ public:
     //Compare
     //friend bool operator<(const spectrum &one, const spectrum &other);
     bool operator<(const spectrum &other) const;
-    bool operator<(pair<int,float> charge_mass_tuple) const;
-    bool operator<=(pair<int,float> charge_mass_tuple) const;
+    bool operator<(std::pair<int,float> charge_mass_tuple) const;
+    bool operator<=(std::pair<int,float> charge_mass_tuple) const;
 
 private:
     static float rescale_intensity(float intensity);

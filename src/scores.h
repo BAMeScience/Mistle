@@ -2,11 +2,9 @@
 #define SIMPLE_EXAMPLE_SCORES_H
 #include <vector>
 
-using namespace std;
-
 class scores {
 public:
-    static float dot_product(vector<float> &target_bins, vector<float> &other_bins);
+    static float dot_product(std::vector<float> &target_bins, std::vector<float> &other_bins);
 };
 
 

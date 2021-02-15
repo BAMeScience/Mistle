@@ -3,7 +3,6 @@
 #include <vector>
 #include "precursor_index.h"
 
-using namespace std;
 
 struct fragment {
     int parent_id;
@@ -13,12 +12,12 @@ struct fragment {
 };
 
 
-typedef vector<fragment> fragment_bin;
+typedef std::vector<fragment> fragment_bin;
 
 
 class fragment_ion_index {
 public:
-    vector<fragment_bin> fragment_bins;
+    std::vector<fragment_bin> fragment_bins;
 
     explicit fragment_ion_index(precursor_index *parent_index);
 };

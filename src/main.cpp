@@ -13,6 +13,7 @@
 //using namespace OpenMS;
 //using namespace OpenMSExternal;
 
+using namespace std;
 
 int main() {
     cout << "Welcome, welcome" << endl;

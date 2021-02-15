@@ -4,6 +4,9 @@
 #include "spectrum.h"
 #include "DefineConstants.h"
 
+using namespace std;
+
+
 spectrum::spectrum() {
 
 }

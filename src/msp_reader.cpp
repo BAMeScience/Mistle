@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 
+using namespace std;
 
 std::fstream msp_reader::infile;
 

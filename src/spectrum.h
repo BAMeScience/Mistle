@@ -14,7 +14,10 @@ struct precursor {
     int rank = 1000;
     float mass;
     int charge;
-    //string name;
+
+    unsigned long offset_begin;
+    unsigned long offset_end;
+    string name;
     //string peptide;
     precursor() {};
     precursor(int id, float mass, int charge, string name, string peptide="") : id(id), mass(mass), charge(charge) {};

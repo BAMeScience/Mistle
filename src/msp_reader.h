@@ -12,13 +12,19 @@ enum msp_read_mode {
     SPARSE
 };
 
+
 class msp_reader {
 
+static fstream infile;
+
+
 public:
-    msp_reader();
 
     static bool read_file(string &path, vector<spectrum*> &output_spectra, msp_read_mode read_mode=DETAILED);
     static bool read_file_precursors(string &path, vector<precursor *> &precursor_list);
+
+    static bool read_spectra_from_positions(string &path, vector<precursor *> &precursor_list, vector<spectrum*> &output_spectra);
+    static spectrum* read_spectrum_from_buffer(string buffer);
 
 
 };

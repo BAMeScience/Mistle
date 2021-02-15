@@ -24,7 +24,7 @@ int main() {
 
 
     //string msp_file = "/home/ynowatzk/data/pyro_fur/PyroFur_reproduced.msp";
-    string msp_file = "/home/ynowatzk/data/9MM/msp/";
+    string msp_file = "/home/ynowatzk/data/9MM/msp/Brevibacillus+laterosporus.msp";
     string mgf_file = "/home/ynowatzk/data/9MM/mgf/9MM_FASP.mgf"; //
 
 

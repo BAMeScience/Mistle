@@ -24,6 +24,7 @@ public:
     bool print_scan_results();
 
     vector<precursor*> parents;
+    vector<spectrum*> specs;
 };
 
 

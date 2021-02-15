@@ -26,7 +26,7 @@ bool scanner::scan_file(string path) {
     string extension = path.substr(path.rfind('.') + 1, string::npos);
 
     if (extension == "msp") {
-        if (!msp_reader::read_file_precursors(path, parents)) {
+        if (!msp_reader::read_file_precursors_efficient(path, parents)) {
             cout << "Error reading file: " << path << endl;
             return false;
         }

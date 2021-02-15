@@ -8,7 +8,7 @@
 
 
 struct precursor {
-    int id = 1000;
+    unsigned int id = 1000;
     int rank = 1000;
     float mass;
     int charge;
@@ -18,7 +18,7 @@ struct precursor {
     std::string name;
     //string peptide;
     precursor() {};
-    precursor(int id, float mass, int charge, std::string name, std::string peptide="") : id(id), mass(mass), charge(charge) {};
+    precursor(unsigned int id, float mass, int charge, std::string name, std::string peptide="") : id(id), mass(mass), charge(charge) {};
 
     bool operator<(const precursor &other) const {
         return charge < other.charge || (charge == other.charge && mass < other.mass);

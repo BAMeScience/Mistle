@@ -125,6 +125,9 @@ bool msp_reader::read_file_precursors(string &path, vector<precursor *> &precurs
         parent->offset_end = infile.tellg();
         precursor_list.push_back(parent);
     }
+    infile.clear();
+    infile.seekg(0, ios::end);
+    precursor_list.back()->offset_end = infile.tellg();
 
 
     infile.close();
@@ -143,8 +146,8 @@ bool msp_reader::read_spectra_from_positions(string &path, vector<precursor *> &
         std::string s;
         //cout << precursor_list[i]->name << endl;
         //cout << start << " " <<  end << " " << end - start << endl;
-        if (end > 1844674407)
-            continue;
+        //if (end > 1844674407)
+        //    continue;
         s.resize(end - start);
         infile.read(&s[0], end - start);
 

@@ -74,3 +74,7 @@ bool library::build_library_index() {
     return false;
 }
 
+library::library(vector<spectrum *> &spectra) {
+    spectrum_list = spectra;
+}
+

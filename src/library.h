@@ -10,6 +10,7 @@ class library {
 public:
     library();
     library(std::string &path);
+    library(std::vector<spectrum*> &spectra);
     ~library();
 
     bool load_spectra_from_file(std::string path);

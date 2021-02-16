@@ -103,7 +103,7 @@ bool msp_reader::read_spectra_from_positions(string &path, vector<precursor *> &
     return false;
 }
 
-spectrum *msp_reader::read_spectrum_from_buffer(string buffer) {
+spectrum *msp_reader::read_spectrum_from_buffer(const string& buffer) {
 
     string line, tag, value;
     spectrum *c_spectrum = nullptr;

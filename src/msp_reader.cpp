@@ -81,6 +81,7 @@ bool msp_reader::read_file(string &path, vector<spectrum *> &output_spectra, msp
 
 bool msp_reader::read_spectra_from_positions(string &path, vector<precursor *> &precursor_list, vector<spectrum *> &output_spectra) {
 
+    output_spectra.reserve(precursor_list.size());
     infile.open(path);
     for (int i = 0; i < precursor_list.size(); ++i) {
 

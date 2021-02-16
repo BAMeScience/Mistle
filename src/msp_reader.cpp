@@ -99,6 +99,8 @@ bool msp_reader::read_spectra_from_positions(string &path, vector<precursor *> &
 
         output_spectra.push_back(read_spectrum_from_buffer(s));
 
+        delete output_spectra.back();
+        output_spectra.pop_back();
     }
 
     return false;

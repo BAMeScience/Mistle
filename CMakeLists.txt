@@ -9,3 +9,4 @@ set(SOURCE_FILES src/spectrum.cpp src/msp_reader.cpp src/scores.cpp src/library.
 # Add executable target with source files listed in SOURCE_FILES variable
 add_executable(test_executable src/main.cpp ${SOURCE_FILES})
 add_executable(quick_scan src/quick_scan.cpp ${SOURCE_FILES} src/scanner.cpp src/scanner.h)
+add_executable(build_index src/build_index.cpp ${SOURCE_FILES} src/indexing_manager.cpp src/indexing_manager.h)

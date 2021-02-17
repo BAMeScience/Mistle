@@ -2,6 +2,7 @@
 
 This document is meant to discuss ideas and progress for the project.
 
+
 ## Outline
 
 ### First

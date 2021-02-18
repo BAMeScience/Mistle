@@ -2,6 +2,8 @@
 #include <iostream>
 #include <utility>
 #include <filesystem>
+#include <fstream>
+#include "msp_reader.h"
 
 using namespace std;
 
@@ -24,10 +26,16 @@ indexing_manager::indexing_manager(string path) : path(path) {
 bool indexing_manager::build_indices() {
     cout << "Manager too busy to answer phone. Calling back later" << endl;
 
+    /*
+     * Prepare in/output
+     */
+    set_up_output_streams();
+
+
     for (int i = 0; i < lib_files.size(); ++i) {
         cout << "Parsing library file no. " << i << " (" << lib_files[i].path().filename() << ")" << endl;
 
-        parse_file(lib_files[i].path().string());
+        parse_file(i);
 
     }
 
@@ -44,10 +52,33 @@ unsigned int indexing_manager::assign_to_index(float mz) {
     return num_indices;
 }
 
-bool indexing_manager::parse_file(std::string file_path) {
+
+bool indexing_manager::set_up_output_streams() {
+
+    for (int i = 0; i < num_indices; ++i) {
+        string file_name = idx_path + "frag_idx_" + to_string(i) + ".csv";
+        output_streams.emplace_back(ofstream(file_name, std::ofstream::out));
+    }
 
 
+    return true;
+}
 
+bool indexing_manager::parse_file(unsigned int file_num) {
+    string file_path = lib_files[file_num].path().string();
+
+    ifstream f(file_path);
+    string buffer;
+    spectrum * tmp_spectrum;
+
+    while (true) {
+
+        msp_reader::read_next_entry_into_buffer(f, buffer);
+        tmp_spectrum = msp_reader::read_spectrum_from_buffer(buffer);
+        //TODO PROCESS spectrum
+        delete tmp_spectrum;
+        break;
+    }
 
     return false;
 }

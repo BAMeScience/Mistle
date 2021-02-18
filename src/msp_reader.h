@@ -22,9 +22,9 @@ public:
     static bool read_file(std::string &path, std::vector<spectrum*> &output_spectra, msp_read_mode read_mode=DETAILED);
     static bool read_file_precursors(std::string &path, std::vector<precursor *> &precursor_list);
     static bool read_file_precursors_efficient(std::string &path, std::vector<precursor *> &precursor_list);
-    static bool read_file_precursors_efficient2(std::string &path, std::vector<precursor *> &precursor_list);
 
     static bool read_spectra_from_positions(std::string &path, std::vector<precursor *> &precursor_list, std::vector<spectrum*> &output_spectra);
+    static bool read_next_entry_into_buffer(std::ifstream &f, std::string &buffer);
     static spectrum* read_spectrum_from_buffer(const std::string& buffer);
 
 

@@ -8,6 +8,7 @@ using namespace std;
 int main() {
     cout << "Hello World Builder" << endl;
 
+
     std::string directory = "/home/ynowatzk/data/9MM/msp";
     indexing_manager im(directory);
 

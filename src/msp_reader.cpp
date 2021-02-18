@@ -275,3 +275,14 @@ bool msp_reader::read_file_precursors_efficient(string &path, vector<precursor *
     return true;
 }
 
+bool msp_reader::read_next_entry_into_buffer(ifstream &f, string &buffer) {
+    /*
+     * Requires open filestream at starting position of a spectrum entry
+     */
+
+    buffer.clear();
+
+
+    return true;
+}
+

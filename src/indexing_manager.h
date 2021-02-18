@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
 #include <filesystem>
 
 class indexing_manager {
@@ -12,11 +13,12 @@ class indexing_manager {
 
 
     /*
-     * Indices
+     * (Sub-) Indices
      */
+    std::string idx_path = "./test/";
     unsigned int num_indices = 1;
     std::vector<unsigned int> idx_limits;
-
+    std::vector<std::ofstream> output_streams;
 
 public:
     indexing_manager();
@@ -24,7 +26,8 @@ public:
 
 
     bool build_indices();
-    bool parse_file(std::string file_path);
+    bool set_up_output_streams();
+    bool parse_file(unsigned int file_num);
 
 
     unsigned int assign_to_index(float mz);

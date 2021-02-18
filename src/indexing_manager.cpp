@@ -57,6 +57,7 @@ bool indexing_manager::set_up_output_streams() {
 
     for (int i = 0; i < num_indices; ++i) {
         string file_name = idx_path + "frag_idx_" + to_string(i) + ".csv";
+        cout << file_name << endl;
         output_streams.emplace_back(ofstream(file_name, std::ofstream::out));
     }
 
@@ -76,6 +77,9 @@ bool indexing_manager::parse_file(unsigned int file_num) {
         msp_reader::read_next_entry_into_buffer(f, buffer);
         tmp_spectrum = msp_reader::read_spectrum_from_buffer(buffer);
         //TODO PROCESS spectrum
+        //Stream peaks into corresponding bin and sub-index
+
+        //Save fingerprint into precursor index
         delete tmp_spectrum;
         break;
     }

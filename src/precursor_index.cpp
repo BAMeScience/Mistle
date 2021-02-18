@@ -5,18 +5,8 @@
 
 using namespace std;
 
-precursor_index::precursor_index(vector<spectrum *> &spectrum_list) : spectra(spectrum_list) {
-    sort(spectra.begin(), spectra.end(), [](const spectrum *a, const spectrum *b) {
-        return *a < *b;
-    });
-
-    for (int i = 0; i < spectra.size(); ++i) {
-        spectra[i]->id = i;
-    }
-}
-
 int precursor_index::get_size() {
-    return spectra.size();
+    return precursors.size();
 }
 
 spectrum *precursor_index::get_spectrum(int i) {
@@ -46,21 +36,41 @@ int precursor_index::get_upper_bound(int charge, float max_mass) {
     return ub - 1;
 }
 
-//Old lower bound search using a naive loop
-int precursor_index::get_lower_bound_naive(int charge, float min_mass) {
-    for (int i = 0; i < spectra.size(); ++i) {
-        if (spectra[i]->charge == charge && spectra[i]->precursor_mass >= min_mass || spectra[i]->charge > charge) {
-            return i; //Find first precursor with matching charge and greater mass (or higher charge -> wrong but still the lower bound)
-        }
-    }
-    return spectra.size();
+
+precursor_index::precursor_index() {
+
 }
 
-int precursor_index::get_upper_bound_naive(int charge, float max_mass, int lower_bound) {
-    for (int i = lower_bound; i < spectra.size(); ++i) {
-        if (spectra[i]->charge > charge || (spectra[i]->charge == charge && spectra[i]->precursor_mass > max_mass)) {
-            return i-1; //Find last elem, that has not higher charge and does not exceed max mass with matching charge
-        }
+bool precursor_index::sort_index() {
+
+    if (id_counter == precursors.size()) {
+        cerr << "Number of recorded precursors does not match precursor ids :: Required to warrant correct mapping of id to precursors" << endl;
+        return false;
     }
-    return spectra.size() - 1;
+
+    sort(ranking.begin(), ranking.end(), [&](unsigned int a,  unsigned int b) {
+        return precursors[a] < precursors[b];
+    });
+
+
+
+    return true;
+}
+
+
+precursor &precursor_index::get_precursor(int i) {
+    return precursors[i];
+}
+
+precursor &precursor_index::record_new_precursor(spectrum *spectrum) {
+    precursors.emplace_back(precursor(id_counter, spectrum->precursor_mass, spectrum->charge, spectrum->peptide));
+    ranking.push_back(id_counter);
+    ++id_counter;
+    return precursors.back();
+}
+
+precursor &precursor_index::record_new_precursor(float mz, int charge, std::string peptide) {
+    precursors.emplace_back(precursor(id_counter, mz, charge, peptide));
+    ++id_counter;
+    return precursors.back();;
 }

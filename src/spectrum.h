@@ -7,25 +7,6 @@
 
 
 
-struct precursor {
-    unsigned int id = 1000;
-    int rank = 1000;
-    float mass;
-    int charge;
-
-    unsigned long offset_begin;
-    unsigned long offset_end;
-    std::string name;
-    //string peptide;
-    precursor() {};
-    precursor(unsigned int id, float mass, int charge, std::string name, std::string peptide="") : id(id), mass(mass), charge(charge) {};
-
-    bool operator<(const precursor &other) const {
-        return charge < other.charge || (charge == other.charge && mass < other.mass);
-    };
-
-};
-
 class spectrum {
 public:
     int id;

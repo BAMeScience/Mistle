@@ -67,7 +67,8 @@ bool library::load_spectra_from_file(string path) {
 
 bool library::build_library_index() {
     cout << "Building precursor index" << endl;
-    precursor_idx = new class precursor_index(spectrum_list);
+    precursor_idx = new precursor_index();
+    //TODO refactoring get up to date
     cout << "Building fragment ion index" << endl;
     fragment_ion_idx = new class fragment_ion_index(precursor_idx);
     is_indexed = true;

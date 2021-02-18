@@ -2,6 +2,7 @@
 #define SIMPLE_EXAMPLE_MSP_READER_H
 
 #include "spectrum.h"
+#include "precursor_index.h"
 
 
 enum msp_read_mode {

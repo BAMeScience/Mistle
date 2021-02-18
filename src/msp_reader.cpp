@@ -277,10 +277,36 @@ bool msp_reader::read_file_precursors_efficient(string &path, vector<precursor *
 
 bool msp_reader::read_next_entry_into_buffer(ifstream &f, string &buffer) {
     /*
-     * Requires open filestream at starting position of a spectrum entry
+     * Requires open filestream and reads until end a new entry
      */
 
     buffer.clear();
+
+    string line;
+
+    if(!getline(f, line)) {
+        return false;
+    }
+
+    if (line.rfind("Name:", 0) != 0) {
+        cout << line << endl;
+        cerr << "entry does not start with Name:" << endl;
+        return false;
+    }
+    buffer.append(line + "\n");
+
+    while (getline(f, line)) {
+        if (line.rfind("Name:", 0) == 0) { // rightmost match, but starting at pos 0 (or earlier), i.e. prefix
+
+            //Jump back to line beginning and return buffer
+            f.seekg(-(line.length() + 1), ios::cur);
+            return true;
+
+        }
+
+        buffer.append(line + "\n");
+
+    }
 
 
     return true;

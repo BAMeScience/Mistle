@@ -68,21 +68,25 @@ bool indexing_manager::set_up_output_streams() {
 bool indexing_manager::parse_file(unsigned int file_num) {
     string file_path = lib_files[file_num].path().string();
 
-    ifstream f(file_path);
+    cout << file_path << endl;
+
+    ifstream f(file_path, ios::in);
     string buffer;
     spectrum * tmp_spectrum;
 
-    while (true) {
-
+    int c = 0;
+    while (c < 3) {
+        ++c;
         msp_reader::read_next_entry_into_buffer(f, buffer);
+        cout << buffer << endl;
         tmp_spectrum = msp_reader::read_spectrum_from_buffer(buffer);
         //TODO PROCESS spectrum
         //Stream peaks into corresponding bin and sub-index
 
-        //Save fingerprint into precursor index
+        cout << tmp_spectrum->name << endl;
+        //Save bookmark in precursor index
         delete tmp_spectrum;
-        break;
     }
-
-    return false;
+    exit(12);
+    return true;
 }

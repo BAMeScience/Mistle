@@ -1,5 +1,6 @@
 #include <iostream>
 #include <utility>
+#include <memory>
 #include "precursor_index.h"
 
 
@@ -9,14 +10,14 @@ int precursor_index::get_size() {
     return precursors.size();
 }
 
-spectrum *precursor_index::get_spectrum(int i) {
+/*spectrum *precursor_index::get_spectrum(int i) {
     return spectra[i];
-}
+}*/
 
 float precursor_index::get_max_precursor_mass() {
-    return spectra.back()->precursor_mass;
+    return precursors[ranking.back()].mass;
 }
-
+/*
 int precursor_index::get_lower_bound(int charge, float min_mass) {
 
     int lb = std::lower_bound(spectra.begin(), spectra.end(), make_pair(charge, min_mass), [](spectrum *s, pair<int, float> charge_mass_tuple) {
@@ -35,7 +36,7 @@ int precursor_index::get_upper_bound(int charge, float max_mass) {
 
     return ub - 1;
 }
-
+*/
 
 precursor_index::precursor_index() {
 
@@ -62,8 +63,8 @@ precursor &precursor_index::get_precursor(int i) {
     return precursors[i];
 }
 
-precursor &precursor_index::record_new_precursor(spectrum *spectrum) {
-    precursors.emplace_back(precursor(id_counter, spectrum->precursor_mass, spectrum->charge, spectrum->peptide));
+precursor &precursor_index::record_new_precursor(const shared_ptr<spectrum>& spec) {
+    precursors.emplace_back(precursor(id_counter, spec->precursor_mass, spec->charge, spec->peptide));
     ranking.push_back(id_counter);
     ++id_counter;
     return precursors.back();

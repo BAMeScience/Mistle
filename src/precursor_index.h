@@ -1,6 +1,7 @@
 #ifndef SIMPLE_EXAMPLE_PRECURSOR_INDEX_H
 #define SIMPLE_EXAMPLE_PRECURSOR_INDEX_H
 #include <vector>
+#include <memory>
 #include "spectrum.h"
 
 
@@ -44,7 +45,7 @@ class precursor_index {
 public:
 
     precursor_index(); //Init empty index
-    precursor& record_new_precursor(spectrum *spectrum);
+    precursor& record_new_precursor(const std::shared_ptr<spectrum>& spec);
     precursor& record_new_precursor(float mz, int charge, std::string peptide);
     bool sort_index();
 

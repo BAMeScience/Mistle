@@ -1,7 +1,10 @@
 #include "msp_reader.h"
 #include <iostream>
 #include <fstream>
+#include <memory>
 #include <sstream>
+#include <utility>
+#include <memory>
 
 using namespace std;
 
@@ -97,7 +100,7 @@ bool msp_reader::read_spectra_from_positions(string &path, vector<precursor *> &
         s.resize(end - start);
         infile.read(&s[0], end - start);
 
-        output_spectra.push_back(read_spectrum_from_buffer(s));
+        output_spectra.push_back(read_spectrum_from_buffer(s).get()); //TODO .get() is messing with pointers again!!! REFACTOR
 
         delete output_spectra.back();
         output_spectra.pop_back();
@@ -106,10 +109,11 @@ bool msp_reader::read_spectra_from_positions(string &path, vector<precursor *> &
     return false;
 }
 
-spectrum *msp_reader::read_spectrum_from_buffer(const string& buffer) {
+shared_ptr<spectrum> msp_reader::read_spectrum_from_buffer(const string& buffer) {
 
     string line, tag, value;
-    spectrum *c_spectrum = nullptr;
+    shared_ptr<spectrum> c_spectrum(nullptr);
+
     stringstream ss(buffer);
     while (tag != "Num peaks") { // what if no colon -> colon_pos == string::npos
         if (ss.eof())
@@ -124,7 +128,7 @@ spectrum *msp_reader::read_spectrum_from_buffer(const string& buffer) {
 
         // parse information
         if (tag == "Name") {
-            c_spectrum = new spectrum();
+            c_spectrum = std::make_shared<spectrum>();
             c_spectrum->name = value;
             c_spectrum->peptide = value.substr(0, value.find('/'));
             c_spectrum->charge = stoi(value.substr(value.rfind('/') + 1, string::npos));

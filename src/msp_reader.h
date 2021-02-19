@@ -3,6 +3,7 @@
 
 #include "spectrum.h"
 #include "precursor_index.h"
+#include <memory>
 
 
 enum msp_read_mode {
@@ -26,7 +27,7 @@ public:
 
     static bool read_spectra_from_positions(std::string &path, std::vector<precursor *> &precursor_list, std::vector<spectrum*> &output_spectra);
     static bool read_next_entry_into_buffer(std::ifstream &f, std::string &buffer);
-    static spectrum* read_spectrum_from_buffer(const std::string& buffer);
+    static std::shared_ptr<spectrum> read_spectrum_from_buffer(const std::string& buffer);
 
 
 };

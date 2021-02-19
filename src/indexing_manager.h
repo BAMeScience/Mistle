@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <filesystem>
+#include "precursor_index.h"
 
 class indexing_manager {
 
@@ -12,14 +13,18 @@ class indexing_manager {
     std::vector<std::filesystem::directory_entry> lib_files;
 
 
+    //Precursor Index
+    precursor_index* precursorIndex;
+
     /*
      * (Sub-) Indices
      */
     std::string idx_path = "./test/";
-    unsigned int num_indices = 1;
-    std::vector<unsigned int> idx_limits;
-    std::vector<std::ofstream> output_streams;
+    unsigned int num_indices = 8;
 
+    unsigned int sub_idx_range;
+    std::vector<unsigned int> sub_idx_limits;
+    std::vector<std::fstream> output_streams;
 public:
     indexing_manager();
     explicit indexing_manager(std::string path);

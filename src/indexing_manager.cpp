@@ -65,6 +65,7 @@ bool indexing_manager::build_indices() {
 
     //Precursor index
     precursorIndex->sort_index();
+    //TODO SAVE
 
     //Closing output streams and reopening them as input streams
     for (int i = 0; i < output_streams.size(); ++i) {
@@ -72,8 +73,14 @@ bool indexing_manager::build_indices() {
     }
 
     for (int i = 0; i < sub_idx_file_names.size(); ++i) {
-        fragment_ion_index frag_index(idx_path + sub_idx_file_names[i]);
-        //frag_index.sort_index();
+        string file_name = idx_path + sub_idx_file_names[i];
+
+        cout << "Loading unsorted index " << sub_idx_file_names[i] << endl;
+        fragment_ion_index frag_index(file_name);
+        cout << "Sorting ..." << endl;
+        frag_index.sort_index(precursorIndex);
+        cout << "Saving..." << endl << endl;
+        frag_index.save_index_to_file(file_name);
     }
 
 

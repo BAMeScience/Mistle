@@ -55,7 +55,7 @@ bool precursor_index::sort_index() {
 
     id_to_rank = vector<unsigned int>(ranking.size(), 0);
     for (int i = 0; i < ranking.size(); ++i) {
-        unsigned int id = precursors[ranking[i]].id;
+        unsigned int id = ranking[i];
         id_to_rank[id] = i;
     }
 

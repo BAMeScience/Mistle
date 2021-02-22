@@ -1,6 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <vector>
 #include "fragment_ion_index.h"
 #include "DefineConstants.h"
 
@@ -35,6 +36,24 @@ fragment_ion_index::fragment_ion_index(string path) : file_path(path) {
 
 
 
+
+
+bool fragment_ion_index::sort_index(std::unique_ptr<precursor_index>& parent_index) {
+
+    /*
+     * Sort all bins according to parent rankings
+     */
+
+    for (fragment_bin bin : fragment_bins) {
+        sort(bin.begin(), bin.end(), [&](fragment a,  fragment b){
+            return parent_index->get_rank(a.parent_id) < parent_index->get_rank(b.parent_id);
+        });
+
+    }
+
+    return false;
+}
+
 bool fragment_ion_index::load_index_from_file(const std::string& path) {
 
     /*
@@ -44,44 +63,46 @@ bool fragment_ion_index::load_index_from_file(const std::string& path) {
     ifstream f(path, ios::in);
     string delimiter = ";";
 
+    fragment_bins.resize(BIN_MAX_MZ + 1);
 
     string line;
     int c = 0;
     while (getline(f,line)) {
         ++c;
         size_t delim_pos = line.find(delimiter);
-        cout << line.substr(0, delim_pos) << " ";
+        size_t delim_right_pos = line.rfind(delimiter);
+
         unsigned int id = stoi(line.substr(0, delim_pos));
+        int mz_bin = stoi(line.substr(delim_pos + 1, delim_right_pos - delim_pos - 1));
+        float intensity = stof(line.substr(delim_right_pos + 1, string::npos));
 
-        size_t next_pos = line.rfind(delimiter);
-        cout << line.substr(delim_pos + 1, next_pos - delim_pos - 1) << " ";
-        int mz_bin = stoi(line.substr(delim_pos + 1, next_pos -  delim_pos - 1));
+        fragment_bins[mz_bin].emplace_back(fragment(id, intensity));
 
-
-        cout << line.substr(next_pos + 1, string::npos) << " " << std::endl;
-        float intensity = stof(line.substr(next_pos + 1, string::npos));
-        if(c>200) {
-
-            exit(12);
-        }
     }
 
+
+    f.close();
 
     return false;
 }
 
-bool fragment_ion_index::sort_index(precursor_index &parent_index) {
+bool fragment_ion_index::save_index_to_file(const string &path) {
 
     /*
-     * Sort all bins according to parent rankings
+     * Save Index to file TODO use file_writer::
      */
 
-    for (fragment_bin bin : fragment_bins) {
-        sort(bin.begin(), bin.end(), [&](fragment a,  fragment b){
-            return parent_index.get_rank(a.parent_id) < parent_index.get_rank(b.parent_id);
-        });
+    ofstream f(path, ios::out);
+    string delimiter = ";";
 
+    for (int i = 0; i < fragment_bins.size(); ++i) {
+
+        fragment_bin  bin = fragment_bins[i];
+        for (fragment frag : bin) {
+            f << frag.parent_id << delimiter << i << delimiter << frag.intensity << "\n";
+        }
     }
 
+    f.close();
     return false;
 }

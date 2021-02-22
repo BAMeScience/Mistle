@@ -44,7 +44,7 @@ precursor_index::precursor_index() {
 
 bool precursor_index::sort_index() {
 
-    if (id_counter == precursors.size()) {
+    if (!(id_counter == precursors.size() && id_counter == ranking.size())) {
         cerr << "Number of recorded precursors does not match precursor ids :: Required to warrant correct mapping of id to precursors" << endl;
         return false;
     }
@@ -52,6 +52,12 @@ bool precursor_index::sort_index() {
     sort(ranking.begin(), ranking.end(), [&](unsigned int a,  unsigned int b) {
         return precursors[a] < precursors[b];
     });
+
+    id_to_rank = vector<unsigned int>(ranking.size(), 0);
+    for (int i = 0; i < ranking.size(); ++i) {
+        unsigned int id = precursors[ranking[i]].id;
+        id_to_rank[id] = i;
+    }
 
 
 

@@ -14,7 +14,7 @@ class indexing_manager {
 
 
     //Precursor Index
-    precursor_index* precursorIndex;
+    std::unique_ptr<precursor_index> precursorIndex;
 
     /*
      * (Sub-) Indices

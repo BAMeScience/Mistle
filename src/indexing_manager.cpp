@@ -20,7 +20,7 @@ indexing_manager::indexing_manager(string path) : path(path) {
      * Init
      */
 
-    precursorIndex = new precursor_index();
+    precursorIndex = make_unique<precursor_index>();
 
     sub_idx_range = (STANDARD_PARENT_UPPER_MZ - STANDARD_PARENT_LOWER_MZ) / num_indices;
     for (int i = 1; i < num_indices; ++i) { //Starting from 1
@@ -61,6 +61,9 @@ bool indexing_manager::build_indices() {
     /*
      * Storing and rebuilding indices
      */
+
+    //Precursor index
+    precursorIndex->sort_index();
 
     //Closing output streams and reopening them as input streams
     for (int i = 0; i < output_streams.size(); ++i) {

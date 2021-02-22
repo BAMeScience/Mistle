@@ -81,3 +81,7 @@ precursor &precursor_index::record_new_precursor(float mz, int charge, std::stri
     ++id_counter;
     return precursors.back();;
 }
+
+unsigned int precursor_index::get_rank(unsigned int id) {
+    return id_to_rank[id];
+}

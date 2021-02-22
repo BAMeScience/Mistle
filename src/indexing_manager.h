@@ -24,6 +24,8 @@ class indexing_manager {
 
     unsigned int sub_idx_range;
     std::vector<unsigned int> sub_idx_limits;
+
+    std::vector<std::string> sub_idx_file_names;
     std::vector<std::fstream> output_streams;
 public:
     indexing_manager();

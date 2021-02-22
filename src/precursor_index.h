@@ -55,6 +55,7 @@ public:
     float get_max_precursor_mass();
 
     precursor& get_precursor(int i);
+    unsigned int get_rank(unsigned int id);
 
 };
 

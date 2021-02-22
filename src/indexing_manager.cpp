@@ -6,6 +6,7 @@
 #include "msp_reader.h"
 #include "index_file_writer.h"
 #include "DefineConstants.h"
+#include "fragment_ion_index.h"
 
 using namespace std;
 
@@ -68,7 +69,11 @@ bool indexing_manager::build_indices() {
     //Closing output streams and reopening them as input streams
     for (int i = 0; i < output_streams.size(); ++i) {
         output_streams[i].close();
-        //TODO REOPEN AS INPUT
+    }
+
+    for (int i = 0; i < sub_idx_file_names.size(); ++i) {
+        fragment_ion_index frag_index(idx_path + sub_idx_file_names[i]);
+        //frag_index.sort_index();
     }
 
 
@@ -90,6 +95,7 @@ bool indexing_manager::set_up_output_streams() {
     for (int i = 0; i < num_indices; ++i) {
         string file_name = idx_path + "frag_idx_" + to_string(i) + ".csv";
         cout << file_name << endl;
+        sub_idx_file_names.push_back("frag_idx_" + to_string(i) + ".csv");
         output_streams.emplace_back(fstream(file_name, std::ofstream::out));
     }
 

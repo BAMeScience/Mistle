@@ -81,8 +81,7 @@ bool fragment_ion_index::load_index_from_file(const std::string& path) {
 
 
     f.close();
-
-    return false;
+    return true;
 }
 
 bool fragment_ion_index::save_index_to_file(const string &path) {
@@ -103,5 +102,5 @@ bool fragment_ion_index::save_index_to_file(const string &path) {
     }
 
     f.close();
-    return false;
+    return true;
 }

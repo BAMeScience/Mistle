@@ -39,7 +39,6 @@ class precursor_index {
     // Contains all spectrum references, sorted first by charge, then by precursor mass
     std::vector<precursor> precursors;
     std::vector<unsigned int> ranking;
-    std::vector<unsigned int> id_to_rank; //inverse of ranking
     unsigned int id_counter = 0;
 
 public:
@@ -48,6 +47,8 @@ public:
     precursor& record_new_precursor(const std::shared_ptr<spectrum>& spec);
     precursor& record_new_precursor(float mz, int charge, std::string peptide);
     bool sort_index();
+    bool save_index_to_file(const std::string &file_path);
+
 
     int get_size();
     int get_lower_bound(int charge, float mass);

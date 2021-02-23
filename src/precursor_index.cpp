@@ -2,6 +2,7 @@
 #include <utility>
 #include <memory>
 #include "precursor_index.h"
+#include "index_file_writer.h"
 
 
 using namespace std;
@@ -54,10 +55,9 @@ bool precursor_index::sort_index() {
         return precursors[a] < precursors[b];
     });
 
-    id_to_rank = vector<unsigned int>(ranking.size(), 0);
     for (int i = 0; i < ranking.size(); ++i) {
         unsigned int id = ranking[i];
-        id_to_rank[id] = i;
+        precursors[id].rank = i;
     }
 
     return true;
@@ -83,5 +83,14 @@ precursor &precursor_index::record_new_precursor(float mz, int charge, std::stri
 }
 
 unsigned int precursor_index::get_rank(unsigned int id) {
-    return id_to_rank[id];
+    return precursors[id].rank;
+}
+
+bool precursor_index::save_index_to_file(const string &file_path) {
+
+    //Saving spectrum bookmarks (precursor info)
+    index_file_writer::save_precursor_index(file_path, precursors);
+
+
+    return true;
 }

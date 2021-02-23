@@ -46,8 +46,11 @@ public:
     precursor_index(); //Init empty index
     precursor& record_new_precursor(const std::shared_ptr<spectrum>& spec);
     precursor& record_new_precursor(float mz, int charge, std::string peptide);
+    bool add_precursor_record(precursor& p);
+
     bool sort_index();
     bool save_index_to_file(const std::string &file_path);
+    bool load_index_from_file(const std::string &file_path);
 
 
     int get_size();

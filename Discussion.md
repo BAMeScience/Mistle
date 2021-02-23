@@ -114,3 +114,18 @@ How to make the sub-indexes for 300GB MS2
   * issue: decide on bins beforhand
 * sort file beforehand, then only bit by bit 
   * issue: ugly + doubles data
+
+
+## Implementation
+
+### Data fromats (w.i.p.)
+
+precursor_idx.csv
+* header: Num: <number precursors> (needed for parsing)
+* then precursors (spectrum bookmarks) line by line
+  * encoded: ID, RANK, MZ, CHARGE, PEPTIDE
+* every info that should be outputted has to be preserved here some how
+* For reconstruction, the ranking vector is reconstructed by precursor rank field while reading
+
+frag_idx_<X>.csv
+* TODO

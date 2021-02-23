@@ -23,7 +23,7 @@ bool index_file_writer::save_precursor_index(const std::string& file_path, std::
     std::string delimiter = ";";
 
     //Have num precursors as header (needed for efficient parsing)
-    f << "Num: " << precursors.size();
+    f << "Num: " << precursors.size() << "\n";
 
     /*
      * ENCODING: ID;RANK;MZ;CHARGE;PEPTIDE

@@ -94,3 +94,13 @@ bool precursor_index::save_index_to_file(const string &file_path) {
 
     return true;
 }
+
+bool precursor_index::add_precursor_record(precursor &p) {
+    precursors.emplace_back(p); //TODO test this
+    return true;
+}
+
+bool precursor_index::load_index_from_file(const string &file_path) {
+    //TODO
+    return true;
+}

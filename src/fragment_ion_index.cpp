@@ -44,14 +44,13 @@ bool fragment_ion_index::sort_index(std::unique_ptr<precursor_index>& parent_ind
      * Sort all bins according to parent rankings
      */
 
-    for (fragment_bin bin : fragment_bins) {
+    for (fragment_bin &bin : fragment_bins) {
         sort(bin.begin(), bin.end(), [&](fragment a,  fragment b){
             return parent_index->get_rank(a.parent_id) < parent_index->get_rank(b.parent_id);
         });
-
     }
 
-    return false;
+    return true;
 }
 
 bool fragment_ion_index::load_index_from_file(const std::string& path) {
@@ -98,8 +97,8 @@ bool fragment_ion_index::save_index_to_file(const string &path) {
     for (int i = 0; i < fragment_bins.size(); ++i) {
 
         fragment_bin  bin = fragment_bins[i];
-        for (fragment frag : bin) {
-            f << frag.parent_id << delimiter << i << delimiter << frag.intensity << "\n";
+        for (auto & j : bin) {
+            f << j.parent_id << delimiter << i << delimiter << j.intensity << "\n";
         }
     }
 

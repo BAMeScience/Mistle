@@ -2,7 +2,7 @@
 #define SIMPLE_EXAMPLE_DEFINECONSTANTS_H
 
 #define BIN_MIN_MZ 0 // spectrast uses 10 // why?
-#define BIN_MAX_MZ 1900
+#define BIN_MAX_MZ 2000
 
 #define STANDARD_PARENT_UPPER_MZ 1100
 #define STANDARD_PARENT_LOWER_MZ 400

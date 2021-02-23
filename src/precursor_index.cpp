@@ -49,6 +49,7 @@ bool precursor_index::sort_index() {
         return false;
     }
 
+
     sort(ranking.begin(), ranking.end(), [&](unsigned int a,  unsigned int b) {
         return precursors[a] < precursors[b];
     });
@@ -58,8 +59,6 @@ bool precursor_index::sort_index() {
         unsigned int id = ranking[i];
         id_to_rank[id] = i;
     }
-
-
 
     return true;
 }
@@ -78,8 +77,9 @@ precursor &precursor_index::record_new_precursor(const shared_ptr<spectrum>& spe
 
 precursor &precursor_index::record_new_precursor(float mz, int charge, std::string peptide) {
     precursors.emplace_back(precursor(id_counter, mz, charge, peptide));
+    ranking.push_back(id_counter);
     ++id_counter;
-    return precursors.back();;
+    return precursors.back();
 }
 
 unsigned int precursor_index::get_rank(unsigned int id) {

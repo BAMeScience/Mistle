@@ -54,6 +54,7 @@ public:
 
 
     int get_size();
+    bool set_size(unsigned int size);
     int get_lower_bound(int charge, float mass);
     int get_upper_bound(int charge, float max_mass);
     float get_max_precursor_mass();

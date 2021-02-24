@@ -3,6 +3,7 @@
 #include <memory>
 #include "precursor_index.h"
 #include "index_file_writer.h"
+#include "index_file_reader.h"
 
 
 using namespace std;
@@ -95,12 +96,23 @@ bool precursor_index::save_index_to_file(const string &file_path) {
     return true;
 }
 
+bool precursor_index::load_index_from_file(const string &file_path) {
+    index_file_reader::read_file_into_precursor_index(file_path, make_shared<precursor_index>(*this));
+
+
+}
+
 bool precursor_index::add_precursor_record(precursor &p) {
     precursors.emplace_back(p); //TODO test this
+    ranking[p.rank] = p.id;
     return true;
 }
 
-bool precursor_index::load_index_from_file(const string &file_path) {
-    //TODO
+bool precursor_index::set_size(unsigned int size) {
+    precursors.reserve(size);
+    ranking.reserve(size);
+
     return true;
 }
+
+

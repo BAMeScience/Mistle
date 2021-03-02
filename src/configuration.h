@@ -15,9 +15,10 @@ public:
     std::vector<unsigned int> sub_idx_limits;
     std::vector<std::string> sub_idx_file_names;
 
-    bool save_configuration(std::string config_file_path);
-    bool load_configuration(std::string config_file_path);
-    
+    //TODO parse more info and move to file_writer/reader
+    bool save_configuration(const std::string& config_file_path);
+    bool load_configuration(const std::string& config_file_path);
+
 
     unsigned int assign_to_index(float mz);
 

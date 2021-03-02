@@ -1,4 +1,5 @@
 #include <iostream>
+#include "search_manager.h"
 
 using namespace std;
 
@@ -6,7 +7,10 @@ int main() {
     cout << "Hello World Explorer" << endl;
 
 
-    std::string directory = "/home/ynowatzk/data/9MM/msp";
+    std::string search_file = "/home/ynowatzk/data/9MM/mgf/9MM_FASP.mgf";
+    std::string index_dir = "./test/";
+
+    search_manager sm(search_file, index_dir);
 
 
     /*indexing_manager im(directory);

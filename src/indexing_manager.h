@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <filesystem>
+#include "configuration.h"
 #include "precursor_index.h"
 
 class indexing_manager {
@@ -19,14 +20,11 @@ class indexing_manager {
     /*
      * (Sub-) Indices
      */
-    std::string idx_path = "./test/";
-    unsigned int num_indices = 8;
 
-    unsigned int sub_idx_range;
-    std::vector<unsigned int> sub_idx_limits;
-
-    std::vector<std::string> sub_idx_file_names;
+    std::shared_ptr<configuration> config = std::make_shared<configuration>();
     std::vector<std::fstream> output_streams;
+
+
 public:
     indexing_manager();
     explicit indexing_manager(std::string path);

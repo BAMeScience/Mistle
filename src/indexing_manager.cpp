@@ -23,10 +23,10 @@ indexing_manager::indexing_manager(string path) : path(path) {
 
     precursorIndex = make_unique<precursor_index>();
 
-    sub_idx_range = (STANDARD_PARENT_UPPER_MZ - STANDARD_PARENT_LOWER_MZ) / num_indices;
-    for (int i = 1; i < num_indices; ++i) { //Starting from 1
-        cout << "LIMIT: " << STANDARD_PARENT_LOWER_MZ + sub_idx_range * i << endl;
-        sub_idx_limits.push_back(STANDARD_PARENT_LOWER_MZ + sub_idx_range * i);
+    config->sub_idx_range = (STANDARD_PARENT_UPPER_MZ - STANDARD_PARENT_LOWER_MZ) / config->num_indices;
+    for (int i = 1; i < config->num_indices; ++i) { //Starting from 1
+        cout << "LIMIT: " << STANDARD_PARENT_LOWER_MZ + config->sub_idx_range * i << endl;
+        config->sub_idx_limits.push_back(STANDARD_PARENT_LOWER_MZ + config->sub_idx_range * i);
     }
 
 
@@ -71,17 +71,17 @@ bool indexing_manager::build_indices() {
     cout << "Sorting precursors index" << endl;
     precursorIndex->sort_index();
     cout << "Saving ..." << endl;
-    precursorIndex->save_index_to_file(idx_path + "precursor_idx.csv");
+    precursorIndex->save_index_to_file(config->idx_path + "precursor_idx.csv");
 
     //Closing output streams and reopening them as input streams
     for (int i = 0; i < output_streams.size(); ++i) {
         output_streams[i].close();
     }
 
-    for (int i = 0; i < sub_idx_file_names.size(); ++i) {
-        string file_name = idx_path + sub_idx_file_names[i];
+    for (int i = 0; i < config->sub_idx_file_names.size(); ++i) {
+        string file_name = config->idx_path + config->sub_idx_file_names[i];
 
-        cout << "Loading fragment index " << sub_idx_file_names[i] << endl;
+        cout << "Loading fragment index " << config->sub_idx_file_names[i] << endl;
         fragment_ion_index frag_index(file_name);
         cout << "Sorting ..." << endl;
         frag_index.sort_index(precursorIndex);
@@ -94,21 +94,21 @@ bool indexing_manager::build_indices() {
 }
 
 unsigned int indexing_manager::assign_to_index(float mz) {
-    for (int i = 0; i < (num_indices - 1); ++i) {
-        if (mz < sub_idx_limits[i]) {
+    for (int i = 0; i < (config->num_indices - 1); ++i) {
+        if (mz < config->sub_idx_limits[i]) {
             return i;
         }
     }
-    return num_indices - 1;
+    return config->num_indices - 1;
 }
 
 
 bool indexing_manager::set_up_output_streams() {
 
-    for (int i = 0; i < num_indices; ++i) {
-        string file_name = idx_path + "frag_idx_" + to_string(i) + ".csv";
+    for (int i = 0; i < config->num_indices; ++i) {
+        string file_name = config->idx_path + "frag_idx_" + to_string(i) + ".csv";
         cout << file_name << endl;
-        sub_idx_file_names.push_back("frag_idx_" + to_string(i) + ".csv");
+        config->sub_idx_file_names.push_back("frag_idx_" + to_string(i) + ".csv");
         output_streams.emplace_back(fstream(file_name, std::ofstream::out));
     }
 

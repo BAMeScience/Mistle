@@ -1,0 +1,10 @@
+#ifndef SIMPLE_EXAMPLE_SEARCH_MANAGER_H
+#define SIMPLE_EXAMPLE_SEARCH_MANAGER_H
+
+
+class search_manager {
+
+};
+
+
+#endif //SIMPLE_EXAMPLE_SEARCH_MANAGER_H

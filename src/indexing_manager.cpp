@@ -93,16 +93,6 @@ bool indexing_manager::build_indices() {
     return true;
 }
 
-unsigned int indexing_manager::assign_to_index(float mz) {
-    for (int i = 0; i < (config->num_indices - 1); ++i) {
-        if (mz < config->sub_idx_limits[i]) {
-            return i;
-        }
-    }
-    return config->num_indices - 1;
-}
-
-
 bool indexing_manager::set_up_output_streams() {
 
     for (int i = 0; i < config->num_indices; ++i) {
@@ -137,7 +127,7 @@ bool indexing_manager::parse_file(unsigned int file_num) {
         precursor &bookmark = precursorIndex->record_new_precursor(tmp_spectrum);
 
         //Stream (binned) peaks into corresponding sub-index file
-        unsigned int idx_num = assign_to_index(bookmark.mass);
+        unsigned int idx_num = config->assign_to_index(bookmark.mass);
         index_file_writer::stream_peaks_to_file(output_streams[idx_num], bookmark.id, tmp_spectrum);
 
 
@@ -174,7 +164,7 @@ bool indexing_manager::parse_file_buffered(unsigned int file_num) {
             precursor &bookmark = precursorIndex->record_new_precursor(tmp_spectrum);
 
             //Stream (binned) peaks into corresponding sub-index file
-            unsigned int idx_num = assign_to_index(bookmark.mass);
+            unsigned int idx_num = config->assign_to_index(bookmark.mass);
             index_file_writer::stream_peaks_to_file(output_streams[idx_num], bookmark.id, tmp_spectrum);
             current_pos = next_pos;
         }

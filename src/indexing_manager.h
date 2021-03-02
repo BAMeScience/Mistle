@@ -36,7 +36,6 @@ public:
     bool parse_file_buffered(unsigned int file_num);
 
 
-    unsigned int assign_to_index(float mz);
 
 
 };

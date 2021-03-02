@@ -52,12 +52,16 @@ bool indexing_manager::build_indices() {
      * Parsing files and creating preliminary indices
      */
 
+    auto start = chrono::high_resolution_clock::now();
     for (int i = 0; i < lib_files.size(); ++i) {
         cout << "Parsing library file no. " << i << " (" << lib_files[i].path().filename() << ")" << endl;
 
-        parse_file(i);
+        parse_file_buffered(i); //TODO choose best
 
     }
+    auto stop = chrono::high_resolution_clock::now();
+    auto duration = duration_cast<chrono::seconds>(stop - start);
+    cout << "Loading Time: " <<  duration.count() << " seconds" << endl;
 
     /*
      * Storing and rebuilding indices
@@ -137,6 +141,49 @@ bool indexing_manager::parse_file(unsigned int file_num) {
         index_file_writer::stream_peaks_to_file(output_streams[idx_num], bookmark.id, tmp_spectrum);
 
 
+    }
+    return true;
+}
+
+bool indexing_manager::parse_file_buffered(unsigned int file_num) {
+    string file_path = lib_files[file_num].path().string();
+
+    ifstream f(file_path, ios::in);
+
+    unsigned int buffer_size = 40960;//1048576; //Byte //TODO fix if too small
+    unsigned int carryover_pos = 0;
+    string buffer;
+    buffer.resize(buffer_size);
+
+    /*
+     * Main loop reading library and creating preliminary indices on the fly
+     */
+    while (!f.eof()) {
+
+        //Read large char buffer
+        f.read(&buffer[carryover_pos], buffer_size - carryover_pos);
+        unsigned int last_pos = buffer.rfind("Name:");
+        unsigned int current_pos = buffer.find("Name:");
+
+        // Parse spectra within the buffer
+        while (current_pos != last_pos) {
+            unsigned int next_pos = buffer.find("Name:", current_pos + 1);
+            shared_ptr<spectrum> tmp_spectrum = msp_reader::read_spectrum_from_buffer(buffer.substr(current_pos, next_pos - current_pos));
+
+            //Save bookmark in precursor index
+            precursor &bookmark = precursorIndex->record_new_precursor(tmp_spectrum);
+
+            //Stream (binned) peaks into corresponding sub-index file
+            unsigned int idx_num = assign_to_index(bookmark.mass);
+            index_file_writer::stream_peaks_to_file(output_streams[idx_num], bookmark.id, tmp_spectrum);
+            current_pos = next_pos;
+        }
+
+        carryover_pos = buffer_size - current_pos;
+        buffer.replace(0, carryover_pos, buffer.substr(current_pos, std::string::npos)); //keep ms2 carryover in the buffer
+        current_pos = 0; //TODO why is this 0 in the first place
+        //buffer = buffer.substr(current_pos, std::string::npos));
+        //buffer.resize(buffer_size);
     }
     return true;
 }

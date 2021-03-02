@@ -25,11 +25,11 @@ int main() {
 
 
     //string msp_file = "/home/ynowatzk/data/pyro_fur/PyroFur_reproduced.msp";
-    string msp_file = "/home/ynowatzk/data/9MM/msp/Brevibacillus+laterosporus.msp";
+    string msp_file = "/home/ynowatzk/data/9MM/msp/";
     string mgf_file = "/home/ynowatzk/data/9MM/mgf/9MM_FASP.mgf"; //
 
 
-    library *search_lib = new library(mgf_file);
+    //library *search_lib = new library(mgf_file);
 
     auto start = chrono::high_resolution_clock::now();
     library *lib = new library(msp_file);
@@ -44,7 +44,9 @@ int main() {
      * SEARCH
      */
 
-    spectral_search search(search_lib, lib);
+    //TODO recosntruct
+
+    //spectral_search search(search_lib, lib);
 
     /*
     //Rescoring of spectrast results
@@ -57,15 +59,15 @@ int main() {
     */
 
 
-    cout << "Searching fragment ion index" << endl;
-    start = chrono::high_resolution_clock::now();
-    search.search_target_library();
-    stop = chrono::high_resolution_clock::now();
-    duration = duration_cast<chrono::seconds>(stop - start);
+    //cout << "Searching fragment ion index" << endl;
+    //start = chrono::high_resolution_clock::now();
+    //search.search_target_library();
+    //stop = chrono::high_resolution_clock::now();
+    //duration = duration_cast<chrono::seconds>(stop - start);
 
-    cout << "Search Time: " <<  duration.count() << " seconds" << endl;
-    search.save_results_to_file("FIIndex.csv");
-    exit(12);
+    //cout << "Search Time: " <<  duration.count() << " seconds" << endl;
+    //search.save_results_to_file("FIIndex.csv");
+    //exit(12);
 
     /*
     auto start = chrono::high_resolution_clock::now();

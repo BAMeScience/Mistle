@@ -112,7 +112,7 @@ bool msp_reader::read_spectra_from_positions(string &path, vector<precursor *> &
 shared_ptr<spectrum> msp_reader::read_spectrum_from_buffer(const string& buffer) {
 
     string line, tag, value;
-    shared_ptr<spectrum> c_spectrum(nullptr);
+    shared_ptr<spectrum> c_spectrum = std::make_shared<spectrum>();
 
     stringstream ss(buffer);
     while (tag != "Num peaks") { // what if no colon -> colon_pos == string::npos

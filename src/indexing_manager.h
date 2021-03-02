@@ -20,7 +20,7 @@ class indexing_manager {
      * (Sub-) Indices
      */
     std::string idx_path = "./test/";
-    unsigned int num_indices = 1;
+    unsigned int num_indices = 8;
 
     unsigned int sub_idx_range;
     std::vector<unsigned int> sub_idx_limits;
@@ -35,6 +35,7 @@ public:
     bool build_indices();
     bool set_up_output_streams();
     bool parse_file(unsigned int file_num);
+    bool parse_file_buffered(unsigned int file_num);
 
 
     unsigned int assign_to_index(float mz);

@@ -9,6 +9,7 @@ class configuration {
 public:
 
     std::string idx_path = "./test/";
+    std::string precursor_index_path;
     unsigned int num_indices = 4;
 
     unsigned int sub_idx_range;

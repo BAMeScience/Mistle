@@ -15,7 +15,7 @@ bool index_file_reader::read_file_into_precursor_index(const std::string &file_p
         return false;
     }
 
-    if (line.rfind("Num: ", 0) == 0) {
+    if (line.rfind("Num: ", 0) != 0) {
         std::cerr << "Incorrect file format" << std::endl;
         return false;
     }

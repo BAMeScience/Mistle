@@ -67,6 +67,7 @@ bool configuration::load_configuration_from_file(const std::string& config_file_
     f.close();
 
     idx_path = config_file_path.substr(0,config_file_path.rfind('/') + 1);
+    precursor_index_path = idx_path + "precursor_idx.csv";
     for (int i = 0; i < num_indices; ++i) {
         sub_idx_file_names.push_back(idx_path + "frag_idx_" + std::to_string(i) + ".csv");
     }

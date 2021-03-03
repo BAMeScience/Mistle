@@ -29,7 +29,8 @@ public:
     search_manager(std::string search_file_path, std::string index_directory_path);
 
     bool prepare_search_library();
-    bool schedule_searches();
+    bool prepare_precursor_index();
+    bool perform_searches();
     bool merge_matches(); //todo probably going over ids back to front and popping matches in the back
 
 

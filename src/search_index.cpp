@@ -12,6 +12,10 @@ int main() {
 
     search_manager sm(search_file, index_dir);
 
+    sm.prepare_search_library();
+    sm.prepare_precursor_index();
+
+    
 
     /*indexing_manager im(directory);
     auto start = chrono::high_resolution_clock::now();

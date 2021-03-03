@@ -15,8 +15,7 @@ bool search_manager::prepare_search_library() {
     // Load search library
     search_library = library(search_file_path);
 
-    // Divide ms2 into search container (corresponding to sub-index)
-
+    // Map ms2 ids to search container (corresponding to sub-index)
     mapped_search_ids = std::vector<std::vector<unsigned int>>(config->num_indices);
     for (int i = 0; i < search_library.spectrum_list.size(); ++i) {
 
@@ -40,12 +39,10 @@ bool search_manager::prepare_search_library() {
 
     }
 
-
-
     return true;
 }
 
-bool search_manager::schedule_searches() {
+bool search_manager::perform_searches() {
     std::cout << config->num_indices << " # " << mapped_search_ids.size() << std::endl;
     for (int i = 0; i < config->num_indices; ++i) {
         std::cout << "Loading index number " << i << std::endl;
@@ -58,5 +55,11 @@ bool search_manager::schedule_searches() {
         }
 
     }
-    return false;
+    return true;
+}
+
+bool search_manager::prepare_precursor_index() {
+    precursor_idx = std::make_shared<precursor_index>();
+    precursor_idx->load_index_from_file(config->precursor_index_path);
+    return true;
 }

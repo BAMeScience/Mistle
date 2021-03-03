@@ -72,6 +72,7 @@ bool indexing_manager::build_indices() {
     precursorIndex->sort_index();
     cout << "Saving ..." << endl;
     precursorIndex->save_index_to_file(config->idx_path + "precursor_idx.csv");
+    config->save_configuration(config->idx_path + "config.txt");
 
     //Closing output streams and reopening them as input streams
     for (int i = 0; i < output_streams.size(); ++i) {

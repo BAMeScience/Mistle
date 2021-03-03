@@ -62,7 +62,7 @@ bool fragment_ion_index::load_index_from_file(const std::string& path) {
     ifstream f(path, ios::in);
     string delimiter = ";";
 
-    fragment_bins.resize(BIN_MAX_MZ + 1);
+    fragment_bins.resize(BIN_MAX_MZ + 1, {});
 
     string line;
     int c = 0;

@@ -20,6 +20,7 @@ float precursor_index::get_max_precursor_mass() {
     return precursors[ranking.back()].mass;
 }
 /*
+//TODO add self chosen bounds
 int precursor_index::get_lower_bound(int charge, float min_mass) {
 
     int lb = std::lower_bound(spectra.begin(), spectra.end(), make_pair(charge, min_mass), [](spectrum *s, pair<int, float> charge_mass_tuple) {
@@ -99,7 +100,7 @@ bool precursor_index::save_index_to_file(const string &file_path) {
 bool precursor_index::load_index_from_file(const string &file_path) {
     index_file_reader::read_file_into_precursor_index(file_path, make_shared<precursor_index>(*this));
 
-
+    return true;
 }
 
 bool precursor_index::add_precursor_record(precursor &p) {

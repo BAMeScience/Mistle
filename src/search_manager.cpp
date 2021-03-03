@@ -19,6 +19,7 @@ bool search_manager::prepare_search_library() {
 
     // Divide ms2 into search container (corresponding to sub-index)
 
+    mapped_search_ids = std::vector<std::vector<unsigned int>>(config->num_indices);
     for (int i = 0; i < search_library.spectrum_list.size(); ++i) {
 
         float mz = search_library.spectrum_list[i]->precursor_mass;
@@ -44,4 +45,20 @@ bool search_manager::prepare_search_library() {
 
 
     return true;
+}
+
+bool search_manager::schedule_searches() {
+    std::cout << config->num_indices << " # " << mapped_search_ids.size() << std::endl;
+    for (int i = 0; i < config->num_indices; ++i) {
+        std::cout << "Loading index number " << i << std::endl;
+        frag_idx->load_index_from_file(config->sub_idx_file_names[i]);
+        //TODO set precursor index limits by subindex borders... has to be properly implemented
+
+        std::vector<unsigned int> &search_ids = mapped_search_ids[i];
+        for (unsigned int &s_id : search_ids) {
+            //TODO search s_id in precursor + fragment ion index
+        }
+
+    }
+    return false;
 }

@@ -5,6 +5,7 @@
 #include "library.h"
 #include "configuration.h"
 
+
 class search_manager {
 
     std::string search_file_path;
@@ -13,8 +14,15 @@ class search_manager {
 
     library search_library;
 
+    //Mapped ms2 ids to sub-index where they might occur
     std::vector<std::vector<unsigned int>> mapped_search_ids; //TODO name right (bucket = subindex)
     float mz_tolerance = 3.0;
+
+    /*
+     * Indices
+     */
+    std::shared_ptr<precursor_index> precursor_idx;
+    std::shared_ptr<fragment_ion_index> frag_idx;
 
 public:
 

@@ -17,9 +17,9 @@ bool configuration::save_configuration(const std::string& config_file_path) {
     std::string delimiter = ";";
 
     f << "Num indices: " << num_indices << "\n";
-    f << "Index limits:";
+    f << "Index limits: ";
     for (unsigned int lim : sub_idx_limits) {
-        f << " " << lim;
+        f << lim << delimiter;
     }
     f << "\n";
 

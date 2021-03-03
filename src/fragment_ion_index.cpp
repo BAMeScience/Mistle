@@ -65,9 +65,7 @@ bool fragment_ion_index::load_index_from_file(const std::string& path) {
     fragment_bins.resize(BIN_MAX_MZ + 1, {});
 
     string line;
-    int c = 0;
     while (getline(f,line)) {
-        ++c;
         size_t delim_pos = line.find(delimiter);
         size_t delim_right_pos = line.rfind(delimiter);
 

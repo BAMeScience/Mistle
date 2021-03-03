@@ -39,9 +39,9 @@ bool search_manager::prepare_search_library() {
             mapped_search_ids.back().push_back(i);
         }
 
-
-
     }
+
+
 
     return true;
 }

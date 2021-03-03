@@ -15,7 +15,9 @@ int main() {
     sm.prepare_search_library();
     sm.prepare_precursor_index();
 
-    
+    sm.perform_searches();
+
+
 
     /*indexing_manager im(directory);
     auto start = chrono::high_resolution_clock::now();

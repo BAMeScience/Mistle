@@ -103,7 +103,7 @@ bool precursor_index::load_index_from_file(const string &file_path) {
     return true;
 }
 
-bool precursor_index::add_precursor_record(precursor &p) {
+bool precursor_index::add_precursor_record(const precursor& p) {
     precursors.emplace_back(p); //TODO test this
     ranking[p.rank] = p.id;
     return true;

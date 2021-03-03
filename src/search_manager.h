@@ -33,7 +33,8 @@ public:
     bool perform_searches();
     bool merge_matches(); //todo probably going over ids back to front and popping matches in the back
 
-
+private:
+    bool search_spectrum(std::shared_ptr<spectrum> &spec);
 };
 
 

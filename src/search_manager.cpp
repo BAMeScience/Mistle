@@ -43,7 +43,9 @@ bool search_manager::prepare_search_library() {
 }
 
 bool search_manager::perform_searches() {
-    std::cout << config->num_indices << " # " << mapped_search_ids.size() << std::endl;
+
+    frag_idx = std::make_shared<fragment_ion_index>();
+
     for (int i = 0; i < config->num_indices; ++i) {
         std::cout << "Loading index number " << i << std::endl;
         frag_idx->load_index_from_file(config->sub_idx_file_names[i]);
@@ -51,7 +53,8 @@ bool search_manager::perform_searches() {
 
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];
         for (unsigned int &s_id : search_ids) {
-            //TODO search s_id in precursor + fragment ion index
+            std::shared_ptr<spectrum> spec = search_library.spectrum_list[s_id];
+            search_spectrum(spec);
         }
 
     }
@@ -62,4 +65,8 @@ bool search_manager::prepare_precursor_index() {
     precursor_idx = std::make_shared<precursor_index>();
     precursor_idx->load_index_from_file(config->precursor_index_path);
     return true;
+}
+
+bool search_manager::search_spectrum(std::shared_ptr<spectrum> &spec) {
+    return false;
 }

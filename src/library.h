@@ -10,7 +10,7 @@ class library {
 public:
     library();
     library(std::string &path);
-    library(std::vector<spectrum*> &spectra);
+    library(std::vector<std::shared_ptr<spectrum>> &spectra);
     ~library();
 
     bool load_spectra_from_file(std::string path);
@@ -18,7 +18,7 @@ public:
 
     bool build_library_index();
 
-    std::vector<spectrum*> spectrum_list;
+    std::vector<std::shared_ptr<spectrum>> spectrum_list;
     precursor_index* precursor_idx;
     fragment_ion_index* fragment_ion_idx;
     bool is_indexed = false;

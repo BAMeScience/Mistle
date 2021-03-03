@@ -20,6 +20,8 @@ public:
     std::string file_path;
     std::vector<fragment_bin> fragment_bins;
 
+
+    fragment_ion_index();
     explicit fragment_ion_index(precursor_index *parent_index);
     explicit fragment_ion_index(std::string path);
 

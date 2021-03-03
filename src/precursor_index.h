@@ -11,7 +11,7 @@ struct precursor {
      * Key values
      */
     unsigned int id;
-    int rank; //unsure if needed here
+    unsigned int rank; //unsure if needed here
     float mass;
     int charge;
     std::string peptide;
@@ -26,6 +26,7 @@ struct precursor {
 
     precursor() {};
     precursor(unsigned int id, float mass, int charge, std::string peptide="") : id(id), mass(mass), charge(charge), peptide(peptide) {};
+    precursor(unsigned int id, unsigned int rank, float mass, int charge, std::string peptide="") : id(id), rank(rank), mass(mass), charge(charge), peptide(peptide) {};
 
     bool operator<(const precursor &other) const {
         return charge < other.charge || (charge == other.charge && mass < other.mass);
@@ -46,7 +47,7 @@ public:
     precursor_index(); //Init empty index
     precursor& record_new_precursor(const std::shared_ptr<spectrum>& spec);
     precursor& record_new_precursor(float mz, int charge, std::string peptide);
-    bool add_precursor_record(precursor& p);
+    bool add_precursor_record(const precursor& p);
 
     bool sort_index();
     bool save_index_to_file(const std::string &file_path);

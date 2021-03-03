@@ -7,6 +7,12 @@
 
 using namespace std;
 
+
+fragment_ion_index::fragment_ion_index() {
+
+}
+
+
 fragment_ion_index::fragment_ion_index(precursor_index *parent_index) {
 
     /*
@@ -28,15 +34,14 @@ fragment_ion_index::fragment_ion_index(precursor_index *parent_index) {
 }
 
 
+
+
+
 fragment_ion_index::fragment_ion_index(string path) : file_path(path) {
 
     load_index_from_file(file_path);
 
 }
-
-
-
-
 
 bool fragment_ion_index::sort_index(std::unique_ptr<precursor_index>& parent_index) {
 
@@ -62,7 +67,8 @@ bool fragment_ion_index::load_index_from_file(const std::string& path) {
     ifstream f(path, ios::in);
     string delimiter = ";";
 
-    fragment_bins.resize(BIN_MAX_MZ + 1, {});
+    fragment_bins.clear();
+    fragment_bins.resize(BIN_MAX_MZ + 1);
 
     string line;
     while (getline(f,line)) {

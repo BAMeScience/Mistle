@@ -11,7 +11,7 @@ using namespace std;
 std::fstream msp_reader::infile;
 
 
-bool msp_reader::read_file(string &path, vector<spectrum *> &output_spectra, msp_read_mode read_mode) {
+bool msp_reader::read_file(string &path, vector<std::shared_ptr<spectrum>> &output_spectra) {
 
     infile.open(path, ios::in);
     if (!infile) {
@@ -22,7 +22,7 @@ bool msp_reader::read_file(string &path, vector<spectrum *> &output_spectra, msp
     string line;
     while (!infile.eof()) {
         string tag, value;
-        spectrum *c_spectrum = nullptr;
+        std::shared_ptr<spectrum> c_spectrum = std::make_shared<spectrum>();
         while (tag != "Num peaks") { // what if no colon -> colon_pos == string::npos
             if (infile.eof())
                 return false;
@@ -36,7 +36,7 @@ bool msp_reader::read_file(string &path, vector<spectrum *> &output_spectra, msp
 
             // parse information
             if (tag == "Name") {
-                c_spectrum = new spectrum();
+                c_spectrum = std::make_shared<spectrum>();
                 c_spectrum->name = value;
                 c_spectrum->peptide = value.substr(0, value.find('/'));
                 c_spectrum->charge = stoi(value.substr(value.rfind('/') + 1, string::npos));

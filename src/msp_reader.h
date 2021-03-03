@@ -6,14 +6,6 @@
 #include <memory>
 
 
-enum msp_read_mode {
-    DETAILED = 0,
-    PEAKS,
-    BINNED_PEAKS,
-    SPARSE
-};
-
-
 class msp_reader {
 
 static std::fstream infile;
@@ -21,7 +13,7 @@ static std::fstream infile;
 
 public:
 
-    static bool read_file(std::string &path, std::vector<spectrum*> &output_spectra, msp_read_mode read_mode=DETAILED);
+    static bool read_file(std::string &path, std::vector<std::shared_ptr<spectrum>> &output_spectra);
     static bool read_file_precursors(std::string &path, std::vector<precursor *> &precursor_list);
     static bool read_file_precursors_efficient(std::string &path, std::vector<precursor *> &precursor_list);
 

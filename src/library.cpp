@@ -75,7 +75,7 @@ bool library::build_library_index() {
     return false;
 }
 
-library::library(vector<spectrum *> &spectra) {
+library::library(vector<std::shared_ptr<spectrum>> &spectra) {
     spectrum_list = spectra;
 }
 

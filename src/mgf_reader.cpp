@@ -9,7 +9,7 @@ mgf_reader::mgf_reader() {
 
 }
 
-bool mgf_reader::read_file(string path, vector<spectrum *> &output_spectra) {
+bool mgf_reader::read_file(string path, vector<std::shared_ptr<spectrum>> &output_spectra) {
 
     fstream infile;
 
@@ -18,7 +18,7 @@ bool mgf_reader::read_file(string path, vector<spectrum *> &output_spectra) {
         return false;
     }
 
-    spectrum *c_spectrum = nullptr;
+    std::shared_ptr<spectrum> c_spectrum = std::make_shared<spectrum>();
     while (!infile.eof()) {
         string line;
         getline(infile, line);
@@ -33,7 +33,7 @@ bool mgf_reader::read_file(string path, vector<spectrum *> &output_spectra) {
         }
 
         if (line == "BEGIN IONS") {
-            c_spectrum = new spectrum();
+            c_spectrum = std::make_shared<spectrum>();
             continue;
         }
 

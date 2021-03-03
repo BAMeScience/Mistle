@@ -129,3 +129,10 @@ precursor_idx.csv
 
 frag_idx_<X>.csv
 * TODO
+
+
+### Active todos
+* Improve file reading (not stringstream?)
+* preset borders for precursor idx based on sub idx limits
+* move config load and save to file_writer classes
+* 

@@ -12,7 +12,7 @@ class search_manager {
     std::string index_directory_path;
     std::shared_ptr<configuration> config;
 
-    library search_library;
+    library search_library; //TODO probably replace by simple list of spectra
 
     //Mapped ms2 ids to sub-index where they might occur
     std::vector<std::vector<unsigned int>> mapped_search_ids; //TODO name right (bucket = subindex)

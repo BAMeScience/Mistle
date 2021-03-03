@@ -132,7 +132,8 @@ frag_idx_<X>.csv
 
 
 ### Active todos
-* Improve file reading (not stringstream?)
+* Improve file reading (not stringstream? getline)
 * preset borders for precursor idx based on sub idx limits
 * move config load and save to file_writer classes
 * make limits floats
+* figure out what to do with library class (delete it *-.-*)

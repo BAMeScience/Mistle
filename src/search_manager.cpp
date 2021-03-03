@@ -6,9 +6,7 @@ search_manager::search_manager(std::string search_file_path, std::string index_d
 
     std::cout << "Configuring ... " << std::endl;
     config = std::make_shared<configuration>();
-    config->load_configuration(index_directory_path + "config.txt");
-
-
+    config->load_configuration_from_file(index_directory_path + "config.txt");
 }
 
 

@@ -9,6 +9,9 @@ public:
     spectrum *query_spectrum;
     spectrum *matched_spectrum;
 
+    unsigned int query_id;
+    unsigned int target_id;
+
     float dot_product;
     float mass_difference;
     int hit_rank;
@@ -19,6 +22,7 @@ public:
     match();
     match(spectrum *search_spectrum, spectrum *matched_spectrum);
     match(spectrum *search_spectrum, spectrum *matched_spectrum, float dot_product, int hit_rank);
+    match(unsigned int query_id, unsigned int target_id, float dot_product, float mass_difference, int hit_rank);
 
 };
 

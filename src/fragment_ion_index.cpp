@@ -23,7 +23,7 @@ fragment_ion_index::fragment_ion_index(precursor_index *parent_index) {
         spectrum *c_spectrum = parent_index->get_spectrum(i);
 
 
-        //Iterate all peaks and save them as fragments in the corresponding ion mass bin
+        //Iterate all peaks and save them as fragments in the corresponding ion mz bin
         for (int j = 0; j < c_spectrum->binned_peaks.size(); ++j) {
             int bin = c_spectrum->binned_peaks[j];
             fragment frag(c_spectrum->id, c_spectrum->binned_intensities[j]);

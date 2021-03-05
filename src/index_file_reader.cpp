@@ -49,5 +49,5 @@ bool index_file_reader::read_file_into_precursor_index(const std::string &file_p
         std::cerr << "Wrong number of precursors" << std::endl;
     }
 
-    return false;
+    return true;
 }

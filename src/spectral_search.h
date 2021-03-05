@@ -34,7 +34,7 @@ public:
     bool rescore_matches();
 
 private:
-    bool is_candidate_suitable(spectrum *candidate_spectrum, spectrum *query_spectrum); //Checking if charge and mass conditions are fullfilled to warrant a closer look
+    bool is_candidate_suitable(spectrum *candidate_spectrum, spectrum *query_spectrum); //Checking if charge and mz conditions are fullfilled to warrant a closer look
 };
 
 

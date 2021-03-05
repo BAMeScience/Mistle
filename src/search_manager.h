@@ -4,6 +4,7 @@
 #include <string>
 #include "library.h"
 #include "configuration.h"
+#include "match.h"
 
 
 class search_manager {
@@ -16,13 +17,20 @@ class search_manager {
 
     //Mapped ms2 ids to sub-index where they might occur
     std::vector<std::vector<unsigned int>> mapped_search_ids; //TODO name right (bucket = subindex)
-    float mz_tolerance = 3.0;
+    float mz_tolerance = 3.0f;
 
     /*
      * Indices
      */
     std::shared_ptr<precursor_index> precursor_idx;
     std::shared_ptr<fragment_ion_index> frag_idx;
+
+    /*
+     * Results
+     */
+    long starting_time;
+    long total_time_elapsed;
+    std::vector<match> matches;
 
 public:
 
@@ -32,9 +40,10 @@ public:
     bool prepare_precursor_index();
     bool perform_searches();
     bool merge_matches(); //todo probably going over ids back to front and popping matches in the back
+    bool save_search_results_to_file(const std::string &file_path);
 
 private:
-    bool search_spectrum(std::shared_ptr<spectrum> &spec);
+    bool search_spectrum(unsigned int search_id, std::shared_ptr<spectrum> &spec);
 };
 
 

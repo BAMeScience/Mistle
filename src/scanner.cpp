@@ -72,12 +72,12 @@ bool scanner::save_precursor_distribution_to_file(string path, string delimiter)
         return false;
 
     // Add header
-    outfile << "mass"+delimiter+"charge" << endl;
+    outfile << "mz"+delimiter+"charge" << endl;
 
     // Go through matches and parse relevant information for each
     for (int i = 0; i < parents.size(); ++i) {
         precursor *p = parents[i];
-        outfile << p->mass << delimiter << p->charge << endl;
+        outfile << p->mz << delimiter << p->charge << endl;
     }
 
     outfile.close();

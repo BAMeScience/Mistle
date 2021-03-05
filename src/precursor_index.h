@@ -12,7 +12,7 @@ struct precursor {
      */
     unsigned int id;
     unsigned int rank; //unsure if needed here
-    float mass;
+    float mz;
     int charge;
     std::string peptide;
 
@@ -25,19 +25,28 @@ struct precursor {
     std::string name;
 
     precursor() {};
-    precursor(unsigned int id, float mass, int charge, std::string peptide="") : id(id), mass(mass), charge(charge), peptide(peptide) {};
-    precursor(unsigned int id, unsigned int rank, float mass, int charge, std::string peptide="") : id(id), rank(rank), mass(mass), charge(charge), peptide(peptide) {};
+    precursor(unsigned int id, float mass, int charge, std::string peptide="") : id(id), mz(mass), charge(charge), peptide(peptide) {};
+    precursor(unsigned int id, unsigned int rank, float mass, int charge, std::string peptide="") : id(id), rank(rank), mz(mass), charge(charge), peptide(peptide) {};
 
     bool operator<(const precursor &other) const {
-        return charge < other.charge || (charge == other.charge && mass < other.mass);
+        return charge < other.charge || (charge == other.charge && mz < other.mz);
     };
+
+    bool operator<(std::pair<int, float> charge_mass_tuple) const {
+        return charge < charge_mass_tuple.first || (charge == charge_mass_tuple.first && mz < charge_mass_tuple.second);
+    }
+
+    bool operator<=(std::pair<int, float> charge_mass_tuple) const {
+        return charge < charge_mass_tuple.first || (charge == charge_mass_tuple.first && mz <= charge_mass_tuple.second);
+    }
+
 
 };
 
 
 class precursor_index {
 
-    // Contains all spectrum references, sorted first by charge, then by precursor mass
+    // Contains all spectrum bookmarks (precursors), sorted first by charge, then by precursor mz
     std::vector<precursor> precursors;
     std::vector<unsigned int> ranking;
     unsigned int id_counter = 0;
@@ -56,11 +65,12 @@ public:
 
     int get_size();
     bool set_size(unsigned int size);
-    int get_lower_bound(int charge, float mass);
+    int get_lower_bound(int charge, float min_mass);
     int get_upper_bound(int charge, float max_mass);
     float get_max_precursor_mass();
 
-    precursor& get_precursor(int i);
+    precursor& get_precursor(unsigned int id);
+    precursor& get_precursor_by_rank(unsigned int id);
     unsigned int get_rank(unsigned int id);
 
 };

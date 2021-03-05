@@ -1,6 +1,7 @@
 #include <iostream>
 #include <utility>
 #include <memory>
+#include <fstream>
 #include "precursor_index.h"
 #include "index_file_writer.h"
 #include "index_file_reader.h"
@@ -17,7 +18,7 @@ int precursor_index::get_size() {
 }*/
 
 float precursor_index::get_max_precursor_mass() {
-    return precursors[ranking.back()].mass;
+    return precursors[ranking.back()].mz;
 }
 /*
 //TODO add self chosen bounds
@@ -45,6 +46,23 @@ precursor_index::precursor_index() {
 
 }
 
+int precursor_index::get_lower_bound(int charge, float min_mass) {
+    int lb = std::lower_bound(ranking.begin(), ranking.end(), make_pair(charge, min_mass), [&](unsigned int rank, pair<int, float> charge_mass_tuple) {
+        return precursors[rank] < charge_mass_tuple;
+    }) - ranking.begin();
+
+    return lb;
+}
+
+
+int precursor_index::get_upper_bound(int charge, float max_mass) {
+    int ub = std::upper_bound(ranking.begin(), ranking.end(), make_pair(charge, max_mass), [&](pair<int, float> charge_mass_tuple, unsigned int rank) {
+        return  !(precursors[rank] <= charge_mass_tuple);
+    }) - ranking.begin();
+
+    return ub - 1;
+}
+
 bool precursor_index::sort_index() {
 
     if (!(id_counter == precursors.size() && id_counter == ranking.size())) {
@@ -65,9 +83,12 @@ bool precursor_index::sort_index() {
     return true;
 }
 
+precursor &precursor_index::get_precursor(unsigned int id) {
+    return precursors[id];
+}
 
-precursor &precursor_index::get_precursor(int i) {
-    return precursors[i];
+precursor &precursor_index::get_precursor_by_rank(unsigned int id) {
+    return precursors[ranking[id]];
 }
 
 precursor &precursor_index::record_new_precursor(const shared_ptr<spectrum>& spec) {
@@ -98,7 +119,49 @@ bool precursor_index::save_index_to_file(const string &file_path) {
 }
 
 bool precursor_index::load_index_from_file(const string &file_path) {
-    index_file_reader::read_file_into_precursor_index(file_path, make_shared<precursor_index>(*this));
+    //index_file_reader::read_file_into_precursor_index(file_path, make_shared<precursor_index>(*this));
+
+    std::ifstream f(file_path, std::ios::in);
+    std::string delimiter = ";";
+    std::string line;
+
+    if (!getline(f, line)) {
+        return false;
+    }
+
+    if (line.rfind("Num: ", 0) != 0) {
+        std::cerr << "Incorrect file format" << std::endl;
+        return false;
+    }
+
+    //Read header
+    unsigned int size = std::stoi(line.substr(5, std::string::npos)); //TODO check 4 or 5
+    set_size(size);
+
+    // Parse precursors line by line
+    //precursor_idx->add_precursor_record(p);
+    while (getline(f, line)) {
+
+        size_t delim_pos = line.find(delimiter);
+        unsigned int id = std::stoi(line.substr(0, delim_pos));
+
+        size_t length = line.find(delimiter, delim_pos + 1) - delim_pos;
+        unsigned int rank = std::stoi(line.substr(delim_pos + 1, length - 1));
+
+        delim_pos = delim_pos + length;
+        length = line.find(delimiter, delim_pos + 1) - delim_pos;
+        float mz = std::stof(line.substr(delim_pos + 1, length - 1));
+
+        delim_pos = delim_pos + length;
+        length = line.find(delimiter, delim_pos + 1) - delim_pos;
+        int charge = std::stoi(line.substr(delim_pos + 1, length - 1));
+        std::string peptide = line.substr(delim_pos + length + 1, std::string::npos);
+
+        add_precursor_record(precursor(id, rank, mz, charge, peptide));
+    }
+    if (get_size() != size) {
+        std::cerr << "Wrong number of precursors" << std::endl;
+    }
 
     return true;
 }
@@ -111,7 +174,7 @@ bool precursor_index::add_precursor_record(const precursor& p) {
 
 bool precursor_index::set_size(unsigned int size) {
     precursors.reserve(size);
-    ranking.reserve(size);
+    ranking.resize(size);
 
     return true;
 }

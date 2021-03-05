@@ -202,7 +202,7 @@ bool msp_reader::read_file_precursors(string &path, vector<precursor *> &precurs
                 //parent->peptide = value.substr(0, value.find('/'));
                 parent->charge = stoi(value.substr(value.rfind('/') + 1, string::npos));
             } else if (tag == "MW") {
-                parent->mass = stof(value);
+                parent->mz = stof(value);
             } else if (tag == "Comment") {
 
             }
@@ -260,7 +260,7 @@ bool msp_reader::read_file_precursors_efficient(string &path, vector<precursor *
         }
 
         if (line.rfind("MW:", 0) == 0) {
-            parent->mass = stof(line.substr(4, string::npos));
+            parent->mz = stof(line.substr(4, string::npos));
         }
 
     }

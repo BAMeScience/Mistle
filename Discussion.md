@@ -89,10 +89,10 @@ spectrast:
 ### February TODO's
 * Get the OpenMS library working
 * Test performance on 9MM (BAM server)
-* Look into paralization, splitting up ion-mass index by parent masses.
+* Look into paralization, splitting up ion-mz index by parent masses.
   * look at *buffer watcher scheduling*
   * idea: group queries (feasible number) by parent masses.
-  * load ion-mass index specified for the parentmass
+  * load ion-mz index specified for the parentmass
   * run all these queries parallel
   * look at SeqAN Dream-Yara
 * Parallel computing in registers SIMD
@@ -106,7 +106,7 @@ spectrast:
   
 ### Problems over problems
 How to make the sub-indexes for 300GB MS2
-* load in batches, make bins and index for the mass windows
+* load in batches, make bins and index for the mz windows
   * issue: decide on bins beforehand 
   * issue: update FIindexes on the fly
 * go through input multiple times and regard only window of peptides and build full subindex in 1 go
@@ -134,7 +134,8 @@ frag_idx_<X>.csv
 ### Active todos
 * Improve file reading (not stringstream? getline)
 * preset borders for precursor idx based on sub idx limits
-* move config load and save to file_writer classes
 * make limits floats
 * figure out what to do with library class (delete it *-.-*)
-* 
+* have a static search class (maybe)
+* move load() and save() functions to file_writer classes (config, precursor idx)
+* try to figure out what is going on with out of bound spectra (limits)

@@ -10,7 +10,7 @@
 using namespace std;
 
 int main() {
-    cout << "Welcome, welcome" << endl;
+    cout << "This is a naive search" << endl;
     //FeatureMap fm;
     //Feature feature;
     //PeakSpectrum p;
@@ -23,13 +23,22 @@ int main() {
     string mgf_file = "/home/ynowatzk/data/9MM/mgf/9MM_FASP.mgf"; //
 
 
-    //library *search_lib = new library(mgf_file);
+    library search_lib(mgf_file);
 
     auto start = chrono::high_resolution_clock::now();
-    library *lib = new library(msp_file);
+    library lib(msp_file);
     auto stop = chrono::high_resolution_clock::now();
     auto duration = duration_cast<chrono::seconds>(stop - start);
     cout << "Loading Time: " <<  duration.count() << " seconds" << endl;
+
+
+    /*
+     * Search
+     */
+
+
+
+
 
     //lib->build_library_index();
 

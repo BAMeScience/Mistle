@@ -23,33 +23,35 @@ int main() {
     string mgf_file = "/home/ynowatzk/data/9MM/mgf/9MM_FASP.mgf"; //
 
 
-    library search_lib(mgf_file);
+    shared_ptr<library> search_lib = make_shared<library>(mgf_file);
 
     auto start = chrono::high_resolution_clock::now();
-    library lib(msp_file);
+    shared_ptr<library> lib = make_shared<library>(msp_file);
     auto stop = chrono::high_resolution_clock::now();
     auto duration = duration_cast<chrono::seconds>(stop - start);
     cout << "Loading Time: " <<  duration.count() << " seconds" << endl;
+
+
 
 
     /*
      * Search
      */
 
+    start = chrono::high_resolution_clock::now();
+    spectral_search search(search_lib, lib);
+    search.search_target_library();
+    stop = chrono::high_resolution_clock::now();
+    duration = duration_cast<chrono::seconds>(stop - start);
+    cout << "Loading Time: " <<  duration.count() << " seconds" << endl;
 
-
-
-
+    search.save_results_to_file("./naive_search_results.csv");
     //lib->build_library_index();
 
 
     /*
      * SEARCH
      */
-
-    //TODO recosntruct
-
-    //spectral_search search(search_lib, lib);
 
     /*
     //Rescoring of spectrast results

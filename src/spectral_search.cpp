@@ -10,22 +10,22 @@ spectral_search::spectral_search() {
 
 }
 
-spectral_search::spectral_search(library *query_lib) : query_lib(query_lib) {
+spectral_search::spectral_search(std::shared_ptr<library> query_lib) : query_lib(query_lib) {
 
 }
 
-spectral_search::spectral_search(library *query_lib, library *target_lib) :
+spectral_search::spectral_search(std::shared_ptr<library> query_lib, std::shared_ptr<library> target_lib) :
         query_lib(query_lib), target_lib(target_lib)
 {
 
 }
 
-bool spectral_search::search_target_library(library *target_lib) {
+bool spectral_search::search_target_library(std::shared_ptr<library> target_lib) {
     this->target_lib = target_lib;
     return search_target_library();
 }
 
-bool spectral_search::is_candidate_suitable(spectrum *candidate_spectrum, spectrum *query_spectrum) {
+bool spectral_search::is_candidate_suitable(shared_ptr<spectrum> candidate_spectrum, shared_ptr<spectrum>query_spectrum) {
     bool has_equal_charge = candidate_spectrum->charge == query_spectrum->charge;
     bool is_in_mass_range = abs(candidate_spectrum->precursor_mass - query_spectrum->precursor_mass) < mz_tolerance;
     return has_equal_charge && is_in_mass_range;
@@ -90,13 +90,13 @@ bool spectral_search::read_results_from_file(string path, char delimiter, bool r
 
         // Find spectra in the libraries according to the names
 
-        spectrum *query_spectrum, *matched_spectrum;
-        for (spectrum *s : query_lib->spectrum_list) { //TODO run-time optimize if this takes to long
+        shared_ptr<spectrum> query_spectrum, matched_spectrum;
+        for (shared_ptr<spectrum> &s : query_lib->spectrum_list) { //TODO run-time optimize if this takes to long
             if (s->name == name) {
                 query_spectrum = s;
             }
         }
-        for (spectrum *s : target_lib->spectrum_list) { //TODO run-time optimize if this takes to long
+        for (shared_ptr<spectrum> &s : target_lib->spectrum_list) { //TODO run-time optimize if this takes to long
             if (s->name == match_name) {
                 matched_spectrum = s;
             }
@@ -126,16 +126,16 @@ bool spectral_search::search_target_library() {
     cout << "Begin searching target library" << endl;
 
     for (int i = 0; i < query_lib->spectrum_list.size(); ++i) {
-        spectrum* query_spectrum = query_lib->spectrum_list[i];
+        shared_ptr<spectrum> query_spectrum = query_lib->spectrum_list[i];
 
         if (i % 1000 == 0) {
             cout << "progress: " << i << " of " << query_lib->spectrum_list.size() << " " << (float(i) / query_lib->spectrum_list.size()) * 100 << " %" << endl;
         }
 
         float max_dot = -1.f;
-        spectrum *best_candidate = nullptr;
+        std::shared_ptr<spectrum> best_candidate = make_shared<spectrum>();
         //Naive exhaustive spectral_search
-        for (spectrum* candidate_spectrum : target_lib->spectrum_list) {
+        for (shared_ptr<spectrum> &candidate_spectrum : target_lib->spectrum_list) {
             if (is_candidate_suitable(candidate_spectrum, query_spectrum)) {
                 float dot = scores::dot_product(query_spectrum->bins, candidate_spectrum->bins);
                 if (dot >= max_dot) {//todo What if equal
@@ -168,7 +168,7 @@ bool spectral_search::search_fragment_ion_index() {
             cout << "progress: " << i << " of " << query_lib->spectrum_list.size() << " " << (float(i) / query_lib->spectrum_list.size()) * 100 << " %" << endl;
         }
 
-        spectrum *query_spectrum = query_lib->spectrum_list[i];
+        shared_ptr<spectrum> query_spectrum = query_lib->spectrum_list[i];
 
         // Determine range of candidate spectra
         int lower_index = precursor_index->get_lower_bound(query_spectrum->charge,query_spectrum->precursor_mass - mz_tolerance);
@@ -204,9 +204,10 @@ bool spectral_search::search_fragment_ion_index() {
         int max_elem = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
         float dot = dot_scores[max_elem];
         int parent_index = max_elem + lower_index;
-        match top_match(query_spectrum, precursor_index->get_spectrum(parent_index), dot, 1);
+        std::cerr << "currently unavailable" << std::endl;
+        //TODO match top_match(query_spectrum, precursor_index->get_spectrum(parent_index), dot, 1);
 
-        search_results.push_back(top_match);
+        //TODO search_results.push_back(top_match);
     }
     return true;
 }

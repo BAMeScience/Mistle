@@ -6,22 +6,22 @@
 
 
 class spectral_search {
-    library *query_lib;
-    library *target_lib;
+    std::shared_ptr<library> query_lib;
+    std::shared_ptr<library> target_lib;
 
     std::vector<match> search_results;
     float mz_tolerance=3.0;
 
 public:
     spectral_search();
-    explicit spectral_search(library *query_lib);
-    spectral_search(library *query_lib, library *target_lib);
+    explicit spectral_search(std::shared_ptr<library> query_lib);
+    spectral_search(std::shared_ptr<library> query_lib, std::shared_ptr<library> target_lib);
 
     /*
      * Searching query library against a target library
      */
     bool search_target_library();
-    bool search_target_library(library *target_lib);
+    bool search_target_library(std::shared_ptr<library> target_lib);
     bool search_fragment_ion_index();
 
     std::vector<match> get_results();
@@ -34,7 +34,7 @@ public:
     bool rescore_matches();
 
 private:
-    bool is_candidate_suitable(spectrum *candidate_spectrum, spectrum *query_spectrum); //Checking if charge and mz conditions are fullfilled to warrant a closer look
+    bool is_candidate_suitable(std::shared_ptr<spectrum> candidate_spectrum, std::shared_ptr<spectrum> query_spectrum); //Checking if charge and mz conditions are fullfilled to warrant a closer look
 };
 
 

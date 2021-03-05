@@ -2,12 +2,12 @@
 #define SIMPLE_EXAMPLE_MATCH_H
 
 #include "spectrum.h"
-
+#include <memory>
 
 class match {
 public:
-    spectrum *query_spectrum;
-    spectrum *matched_spectrum;
+    std::shared_ptr<spectrum> query_spectrum;
+    std::shared_ptr<spectrum> matched_spectrum;
 
     unsigned int query_id;
     unsigned int target_id;
@@ -20,8 +20,8 @@ public:
     int num_matched_peaks;
 
     match();
-    match(spectrum *search_spectrum, spectrum *matched_spectrum);
-    match(spectrum *search_spectrum, spectrum *matched_spectrum, float dot_product, int hit_rank);
+    match(std::shared_ptr<spectrum> search_spectrum, std::shared_ptr<spectrum> matched_spectrum);
+    match(std::shared_ptr<spectrum> search_spectrum, std::shared_ptr<spectrum> matched_spectrum, float dot_product, int hit_rank);
     match(unsigned int query_id, unsigned int target_id, float dot_product, float mass_difference, int hit_rank);
 
 };

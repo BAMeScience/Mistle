@@ -145,6 +145,8 @@ bool spectral_search::search_target_library() {
             }
         }
         if (max_dot >= 0.0) { // if any match was found (i.e. any spectra in mz range)
+            cout.precision(17);
+            cout << best_candidate->precursor_mass << " " << query_spectrum->precursor_mass << " " << best_candidate->precursor_mass - query_spectrum->precursor_mass << endl;
             match best_match(query_spectrum, best_candidate, max_dot, 1);
             search_results.push_back(best_match);
         }

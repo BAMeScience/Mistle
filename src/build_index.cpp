@@ -9,7 +9,7 @@ int main() {
     cout << "Hello World Builder" << endl;
 
 
-    std::string directory = "/home/ynowatzk/data/9MM/msp/lact";
+    std::string directory = "/home/ynowatzk/data/9MM/msp";
 
     indexing_manager im(directory);
     auto start = chrono::high_resolution_clock::now();

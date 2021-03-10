@@ -42,13 +42,6 @@ bool msp_reader::read_file(string &path, vector<std::shared_ptr<spectrum>> &outp
                 c_spectrum->charge = stoi(value.substr(value.rfind('/') + 1, string::npos));
             } else if (tag == "MW") {
                 c_spectrum->precursor_mass = stof(value);
-                if (c_spectrum->name == "EKKYVYPGQK/3") {
-
-                    cout.precision(17);
-                    cout << value << endl;
-                    cout << c_spectrum->precursor_mass << endl;
-                    exit(12);
-                }
             } else if (tag == "Comment") {
 
             }
@@ -141,13 +134,6 @@ shared_ptr<spectrum> msp_reader::read_spectrum_from_buffer(const string& buffer)
             c_spectrum->charge = stoi(value.substr(value.rfind('/') + 1, string::npos));
         } else if (tag == "MW") {
             c_spectrum->precursor_mass = stof(value);
-            if (c_spectrum->name == "EKKYVYPGQK/3") {
-
-                cout.precision(17);
-                cout << value << endl;
-                cout << c_spectrum->precursor_mass << endl;
-                exit(12);
-            }
         } else if (tag == "Comment") {
 
         }

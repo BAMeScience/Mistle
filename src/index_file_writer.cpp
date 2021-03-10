@@ -1,4 +1,5 @@
 #include "index_file_writer.h"
+#include "DefineConstants.h"
 #include <fstream>
 #include <iostream>
 
@@ -22,6 +23,7 @@ bool index_file_writer::save_precursor_index(const std::string& file_path, std::
 
     std::ofstream f(file_path, std::ofstream::out);
     std::string delimiter = ";";
+    f.precision(FLOAT_OUTPUT_PRECISION);
 
     //Have num precursors as header (needed for efficient parsing)
     f << "Num: " << precursors.size() << "\n";

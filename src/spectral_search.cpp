@@ -27,7 +27,7 @@ bool spectral_search::search_target_library(std::shared_ptr<library> target_lib)
 
 bool spectral_search::is_candidate_suitable(shared_ptr<spectrum> candidate_spectrum, shared_ptr<spectrum>query_spectrum) {
     bool has_equal_charge = candidate_spectrum->charge == query_spectrum->charge;
-    bool is_in_mass_range = abs(candidate_spectrum->precursor_mass - query_spectrum->precursor_mass) < mz_tolerance;
+    bool is_in_mass_range = abs(candidate_spectrum->precursor_mass - query_spectrum->precursor_mass) <= mz_tolerance;
     return has_equal_charge && is_in_mass_range;
 }
 
@@ -145,8 +145,6 @@ bool spectral_search::search_target_library() {
             }
         }
         if (max_dot >= 0.0) { // if any match was found (i.e. any spectra in mz range)
-            cout.precision(17);
-            cout << best_candidate->precursor_mass << " " << query_spectrum->precursor_mass << " " << best_candidate->precursor_mass - query_spectrum->precursor_mass << endl;
             match best_match(query_spectrum, best_candidate, max_dot, 1);
             search_results.push_back(best_match);
         }

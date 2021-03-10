@@ -107,11 +107,6 @@ bool search_manager::search_spectrum(unsigned int search_id, std::shared_ptr<spe
     float dot = dot_scores[max_elem];
 
     float mass_diff = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
-    if (precursor_idx->get_precursor_by_rank(target_rank).id == 130092) {
-        std::cout.precision(17);
-        std::cout << precursor_idx->get_precursor_by_rank(target_rank).mz << " " << spec->precursor_mass << " " << mass_diff << std::endl;
-        exit(12);
-    }
     // Record match
     matches.emplace_back(match(search_id, precursor_idx->get_precursor_by_rank(target_rank).id, dot, mass_diff, 1));
 

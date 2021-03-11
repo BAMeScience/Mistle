@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <numeric>
 #include "search_manager.h"
 
 search_manager::search_manager(std::string search_file_path, std::string index_directory_path) : search_file_path(search_file_path), index_directory_path(index_directory_path) {
@@ -18,6 +19,13 @@ bool search_manager::prepare_search_library() {
 
     // Map ms2 ids to search container (corresponding to sub-index)
     mapped_search_ids = std::vector<std::vector<unsigned int>>(config->num_indices);
+
+    if (config->num_indices == 1) {
+        mapped_search_ids[0].resize(search_library.spectrum_list.size());
+        std::iota(mapped_search_ids[0].begin(), mapped_search_ids[0].end(), 0);
+        return true;
+    }
+
     for (unsigned int i = 0; i < search_library.spectrum_list.size(); ++i) {
 
         float mz = search_library.spectrum_list[i]->precursor_mass;

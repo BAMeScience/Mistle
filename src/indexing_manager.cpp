@@ -82,11 +82,11 @@ bool indexing_manager::build_indices() {
     for (int i = 0; i < config->sub_idx_file_names.size(); ++i) {
         string file_name = config->idx_path + config->sub_idx_file_names[i];
 
-        cout << "Loading fragment index " << config->sub_idx_file_names[i] << endl;
+        //cout << "Loading fragment index " << config->sub_idx_file_names[i] << endl;
         fragment_ion_index frag_index(file_name);
-        cout << "Sorting ..." << endl;
+        //cout << "Sorting ..." << endl;
         frag_index.sort_index(precursorIndex);
-        cout << "Saving..." << endl << endl;
+        //cout << "Saving..." << endl << endl;
         frag_index.save_index_to_file(file_name);
     }
 

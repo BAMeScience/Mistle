@@ -133,10 +133,10 @@ frag_idx_<X>.csv
 
 ### Active todos
 * Improve file reading (not stringstream? getline)
+* binary files reading!!
 * preset borders for precursor idx based on sub idx limits
 * make limits floats
 * figure out what to do with library class (delete it *-.-*)
 * have a static search class (maybe)
 * move load() and save() functions to file_writer classes (config, precursor idx)
 * try to figure out what is going on with out of bound spectra (limits)
-* rebuild naive-search/

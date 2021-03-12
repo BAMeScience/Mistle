@@ -103,7 +103,7 @@ bool search_manager::search_spectrum(unsigned int search_id, std::shared_ptr<spe
 
         //Update scores for all parents with fragments in the range
         for (int k = starting_point_inside_bin; k < ion_bin.size() && precursor_idx->get_rank(ion_bin[k].parent_id) <= upper_rank; ++k) {
-            fragment &f = ion_bin[k];
+            fragment &f = ion_bin[k]; //todo SIMD
             dot_scores[precursor_idx->get_rank(f.parent_id) - lower_rank] += f.intensity * spec->binned_intensities[j];
         }
 

@@ -2,6 +2,7 @@
 #include <chrono>
 #include <utility>
 #include "search_manager.h"
+#include "thread_pool.h"
 
 using namespace std;
 /*
@@ -28,6 +29,12 @@ auto time_func =
 int main() {
 
     cout << "Hello World Explorer" << endl;
+
+    thread_pool pool(4);
+
+    exit(12);
+
+
     auto start = chrono::high_resolution_clock::now();
 
     /*

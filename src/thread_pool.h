@@ -10,9 +10,21 @@
 class thread_pool {
 
     std::vector<std::thread> threads;
+    //todo add task vector std::vector<std::future>
+    std::mutex mtx;
+    std::condition_variable event_cond;
+    bool request_stop = false;
 
+    size_t size;
+
+
+
+public:
     thread_pool(size_t n);
-
+    ~thread_pool();
+    void start();
+    void stop();
+    void wait();
 };
 
 

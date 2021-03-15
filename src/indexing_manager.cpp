@@ -87,7 +87,7 @@ bool indexing_manager::build_indices() {
         //cout << "Sorting ..." << endl;
         frag_index.sort_index(precursorIndex);
         //cout << "Saving..." << endl << endl;
-        frag_index.save_index_to_file(file_name);
+        frag_index.save_index_to_binary_file(file_name);
     }
 
 
@@ -97,10 +97,10 @@ bool indexing_manager::build_indices() {
 bool indexing_manager::set_up_output_streams() {
 
     for (int i = 0; i < config->num_indices; ++i) {
-        string file_name = config->idx_path + "frag_idx_" + to_string(i) + ".csv";
+        string file_name = config->idx_path + "frag_idx_" + to_string(i) + ".bin";
         cout << file_name << endl;
-        config->sub_idx_file_names.push_back("frag_idx_" + to_string(i) + ".csv");
-        output_streams.emplace_back(fstream(file_name, std::ofstream::out));
+        config->sub_idx_file_names.push_back("frag_idx_" + to_string(i) + ".bin");
+        output_streams.emplace_back(fstream(file_name, std::ios::binary | std::ofstream::out));
     }
 
 
@@ -169,7 +169,7 @@ bool indexing_manager::parse_file_buffered(unsigned int file_num) {
 
             //Stream (binned) peaks into corresponding sub-index file
             unsigned int idx_num = config->assign_to_index(bookmark.mz);
-            index_file_writer::stream_peaks_to_file(output_streams[idx_num], bookmark.id, tmp_spectrum);
+            index_file_writer::stream_peaks_to_binary_file(output_streams[idx_num], bookmark.id, tmp_spectrum); //TODO made binary
             current_pos = next_pos;
         }
 

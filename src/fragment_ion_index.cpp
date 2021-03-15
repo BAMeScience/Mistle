@@ -39,7 +39,8 @@ fragment_ion_index::fragment_ion_index(precursor_index *parent_index) {
 
 fragment_ion_index::fragment_ion_index(string path) : file_path(path) {
 
-    load_index_from_file(file_path);
+    //load_index_from_file(file_path);
+    load_index_from_binary_file(file_path);
 
 }
 
@@ -104,6 +105,54 @@ bool fragment_ion_index::save_index_to_file(const string &path) {
         fragment_bin  bin = fragment_bins[i];
         for (auto & j : bin) {
             f << j.parent_id << delimiter << i << delimiter << j.intensity << "\n";
+        }
+    }
+
+    f.close();
+    return true;
+}
+
+bool fragment_ion_index::load_index_from_binary_file(const string &path) {
+
+    /*
+     * Read index from binary file
+     */
+
+    ifstream f(path, ios::binary | ios::in);
+
+    fragment_bins.clear();
+    fragment_bins.resize(BIN_MAX_MZ + 1);
+
+    string line;
+    while (!f.eof()) {
+        unsigned int id;
+        int mz_bin;
+        float intensity;
+
+        f.read((char *) &id, sizeof(unsigned int));
+        f.read((char *) &mz_bin, sizeof(int));
+        f.read((char *) &intensity, sizeof(float));
+
+        fragment_bins[mz_bin].emplace_back(fragment(id, intensity));
+
+    }
+
+
+    f.close();
+    return true;}
+
+bool fragment_ion_index::save_index_to_binary_file(const string &path) {
+
+    ofstream f(path, ios::binary | ios::out);
+
+
+    for (int i = 0; i < fragment_bins.size(); ++i) {
+
+        fragment_bin  bin = fragment_bins[i];
+        for (auto & j : bin) {
+            f.write((char *) &j.parent_id, sizeof(unsigned int)); //TODO
+            f.write((char *) &i, sizeof(int));
+            f.write((char *) &j.intensity, sizeof(float));
         }
     }
 

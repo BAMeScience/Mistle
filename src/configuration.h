@@ -10,7 +10,7 @@ public:
 
     std::string idx_path = "./test/";
     std::string precursor_index_path;
-    unsigned int num_indices = 4;
+    unsigned int num_indices = 12;
 
     unsigned int sub_idx_range;
     std::vector<unsigned int> sub_idx_limits;

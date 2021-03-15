@@ -30,7 +30,9 @@ public:
 
 
     bool load_index_from_file(const std::string& path);
+    bool load_index_from_binary_file(const std::string& path);
     bool save_index_to_file(const std::string& path);
+    bool save_index_to_binary_file(const std::string& path);
 };
 
 

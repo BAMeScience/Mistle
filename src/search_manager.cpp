@@ -63,7 +63,7 @@ bool search_manager::perform_searches() {
 
     for (int i = 0; i < config->num_indices; ++i) {
         std::cout << "Loading index number " << i << std::endl;
-        frag_idx->load_index_from_file(config->sub_idx_file_names[i]);
+        frag_idx->load_index_from_binary_file(config->sub_idx_file_names[i]);
         //TODO set precursor index limits by subindex borders... has to be properly implemented
         std::cout << "Searching ... " << std::endl;
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];

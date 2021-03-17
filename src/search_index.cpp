@@ -30,44 +30,7 @@ int main() {
 
     cout << "Hello World Explorer" << endl;
 
-    thread_pool pool(4);
-    std::vector<int> test;
-
-    pool.enqueue([&](){
-        pool.mtx.lock();
-        test.push_back(1);
-        test.push_back(2);
-        test.push_back(3);
-        test.push_back(4);
-        test.push_back(5);
-        test.push_back(6);
-        test.push_back(1);
-        test.push_back(2);
-        test.push_back(3);
-        test.push_back(4);
-        test.push_back(5);
-        test.push_back(6);
-        pool.mtx.unlock();
-        cout << "Hello Task " << endl;
-    });
-    pool.enqueue([&]() {
-        pool.mtx.lock();
-        test.push_back(1);
-        test.push_back(2);
-        test.push_back(3);
-        test.push_back(4);
-        test.push_back(5);
-        test.push_back(6);
-        test.push_back(1);
-        test.push_back(2);
-        test.push_back(3);
-        test.push_back(4);
-        test.push_back(5);
-        test.push_back(6);
-        pool.mtx.unlock();
-        cout << "Hello Again " << endl;
-    });
-
+    //thread_pool pool(4);
 
 
 
@@ -91,12 +54,6 @@ int main() {
     sm.prepare_search_library();
     sm.prepare_precursor_index();
 
-    for (int &i : test) {
-        cout << " " << i;
-    }
-    cout << endl;
-
-    exit(12);
 
     std::cout << "Searching fragment-ion-indices in batches" << endl;
     sm.perform_searches();

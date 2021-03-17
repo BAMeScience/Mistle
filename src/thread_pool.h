@@ -18,9 +18,11 @@ class thread_pool {
     //todo add task vector std::vector<std::future>
     std::mutex mtx_queue;
     std::condition_variable event_cond;
+    std::condition_variable finished_cond;
     bool request_stop = false;
 
     size_t size;
+    int busy_threads = 0;
 
 
 
@@ -29,6 +31,9 @@ public:
     ~thread_pool();
     void start();
     void stop();
+
+    void wait_for_all_threads();
+    void join_all();
     void wait();
 
     void enqueue(std::function<void()> task);

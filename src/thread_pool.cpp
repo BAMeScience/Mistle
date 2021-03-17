@@ -3,6 +3,7 @@
 
 thread_pool::thread_pool(size_t n) : size(n) {
     start();
+    busy_threads = 0;
 }
 
 thread_pool::~thread_pool() {
@@ -21,17 +22,24 @@ void thread_pool::start() {
 
                 std::function<void()> task;
                 { //New scope: Lock and wait for action
-                    std::cout << "Waiting" << std::endl;
+
                     std::unique_lock<std::mutex> lock(mtx_queue);
                     event_cond.wait(lock, [=] { return !tasks.empty() || request_stop; });
-                    if (request_stop)
+                    if (request_stop && tasks.empty())
                         break;
 
+                    ++busy_threads;
                     task = std::move(tasks.front());
                     tasks.pop();
 
                 }
                 task();
+
+                mtx_queue.lock();
+                --busy_threads;
+                finished_cond.notify_one();
+                mtx_queue.unlock();
+
             }
 
 
@@ -58,7 +66,18 @@ void thread_pool::stop() {
 void thread_pool::enqueue(std::function<void()> task) {
     {
         std::unique_lock<std::mutex> lock(mtx_queue);
-        tasks.emplace(std::move(task));
+        tasks.emplace(task);
     }
     event_cond.notify_one();
+}
+
+void thread_pool::join_all() {
+    for (auto &t : threads) {
+        t.join();
+    }
+}
+
+void thread_pool::wait_for_all_threads() {
+    std::unique_lock<std::mutex> lock(mtx_queue);
+    finished_cond.wait(lock, [this] { return (tasks.empty() && (busy_threads == 0)); });
 }

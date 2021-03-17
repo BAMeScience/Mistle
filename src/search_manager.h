@@ -5,6 +5,7 @@
 #include "library.h"
 #include "configuration.h"
 #include "match.h"
+#include "thread_pool.h"
 
 
 class search_manager {
@@ -26,6 +27,12 @@ class search_manager {
     std::shared_ptr<fragment_ion_index> frag_idx;
 
     /*
+     * Threading
+     */
+
+    std::shared_ptr<thread_pool> pool;
+
+    /*
      * Results
      */
     long starting_time;
@@ -44,6 +51,7 @@ public:
 
 private:
     bool search_spectrum(unsigned int search_id, std::shared_ptr<spectrum> &spec);
+    std::function<void()> task_search_spectrum(unsigned int search_id, std::shared_ptr<spectrum> spec);
 };
 
 

@@ -23,14 +23,13 @@ class thread_pool {
     int busy_threads = 0;
 
 public:
-    thread_pool(size_t n);
+    explicit thread_pool(size_t n);
     ~thread_pool();
     void start();
     void stop();
 
     void wait_for_all_threads();
     void join_all();
-    void wait();
 
     //template<typename F, typename... Args>
     //void enqueue(F f, Args&&... args);

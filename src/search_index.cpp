@@ -56,11 +56,9 @@ int main() {
 
 
     std::cout << "Searching fragment-ion-indices in batches" << endl;
-    sm.perform_searches();
+    sm.perform_searches_parallel();
     std::cout << "Merging overlapping results" << std::endl;
-    auto check_point = chrono::high_resolution_clock::now();
     sm.merge_matches();
-    std::cout << "Time elapsed: " << duration_cast<chrono::seconds>(check_point - chrono::high_resolution_clock::now()).count() << " seconds" << endl;
     std::cout << "Writing results to file" << std::endl;
     sm.save_search_results_to_file(index_dir + "results.csv");
 

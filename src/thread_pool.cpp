@@ -10,13 +10,9 @@ thread_pool::~thread_pool() {
     stop();
 }
 
-void thread_pool::wait() {
-
-}
-
 void thread_pool::start() {
     for (size_t i = 0; i < size; ++i) {
-        threads.emplace_back([=] {
+        threads.emplace_back([this] {
 
             while (true) {
 
@@ -24,7 +20,7 @@ void thread_pool::start() {
                 { //New scope: Lock and wait for action
 
                     std::unique_lock<std::mutex> lock(mtx_queue);
-                    event_cond.wait(lock, [=] { return !tasks.empty() || request_stop; });
+                    event_cond.wait(lock, [this] { return !tasks.empty() || request_stop; });
                     if (request_stop && tasks.empty())
                         break;
 
@@ -55,9 +51,7 @@ void thread_pool::stop() {
     }
 
     event_cond.notify_all();
-    for (auto &t : threads) {
-        t.join();
-    }
+    join_all();
 
 }
 

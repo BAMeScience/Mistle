@@ -52,7 +52,7 @@ public:
 
 private:
     bool search_spectrum(unsigned int search_id, std::shared_ptr<spectrum> &spec);
-    std::function<void()> task_search_spectrum(unsigned int search_id, std::shared_ptr<spectrum> spec);
+    bool task_search_spectrum(unsigned int search_id);
     void task_search_spectrum();
     bool test(unsigned int search_id);
 };

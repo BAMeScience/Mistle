@@ -68,7 +68,7 @@ bool search_manager::perform_searches() {
         //TODO set precursor index limits by subindex borders... has to be properly implemented
         std::cout << "Searching ... " << std::endl;
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];
-        std::vector<std::future<void>> futures;
+
         for (unsigned int &s_id : search_ids) {
             std::shared_ptr<spectrum> spec = search_library.spectrum_list[s_id];
             search_spectrum(s_id, spec);
@@ -87,14 +87,13 @@ bool search_manager::perform_searches_parallel() {
         //TODO set precursor index limits by subindex borders... has to be properly implemented
         std::cout << "Searching ... " << std::endl;
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];
-        std::vector<std::future<void>> futures;
         for (unsigned int &s_id : search_ids) {
             std::shared_ptr<spectrum> spec = search_library.spectrum_list[s_id];
 
             //auto f = [&](int s) {test(s);};
             //pool->enqueue([f, s_id] { return f(s_id); });
 
-            pool->enqueue([&, s_id] () {test(s_id);}); //TODO THIS WORKS
+            pool->enqueue([this, s_id] () {task_search_spectrum(s_id);}); //TODO THIS WORKS
         }
         pool->wait_for_all_threads();
     }
@@ -146,8 +145,50 @@ bool search_manager::search_spectrum(unsigned int search_id, std::shared_ptr<spe
     return true;
 }
 
-std::function<void()> search_manager::task_search_spectrum(unsigned int search_id, std::shared_ptr<spectrum> spec) { //Todo must copy spectrum?
+bool search_manager::task_search_spectrum(unsigned int search_id) {
+    std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
+    // Determine range of candidate spectra
+    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - mz_tolerance);
+    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + mz_tolerance);
 
+    if (lower_rank < 0 || upper_rank < 0 || lower_rank > upper_rank) { // todo necessary? No matching precursor masses
+        return false;
+    }
+
+
+    // Init candidate scores
+    std::vector<float> dot_scores(upper_rank - lower_rank + 1, 0.f);
+
+    // Update scores by matching all peaks using the fragment ion index
+    for (int j = 0; j < spec->binned_peaks.size(); ++j) {
+
+        // Open ion mz bin for corresponding peak
+        fragment_bin &ion_bin = frag_idx->fragment_bins[spec->binned_peaks[j]];
+
+        // Determine starting point of lowest (candidate) parent index inside bin
+        int starting_point_inside_bin = std::lower_bound(ion_bin.begin(), ion_bin.end(), lower_rank, [&](fragment f, int rank) {
+            return precursor_idx->get_rank(f.parent_id) < rank;
+        }) - ion_bin.begin();
+
+        //Update scores for all parents with fragments in the range
+        for (int k = starting_point_inside_bin; k < ion_bin.size() && precursor_idx->get_rank(ion_bin[k].parent_id) <= upper_rank; ++k) {
+            fragment &f = ion_bin[k]; //todo SIMD
+            dot_scores[precursor_idx->get_rank(f.parent_id) - lower_rank] += f.intensity * spec->binned_intensities[j];
+        }
+
+    }
+
+    // Prepare best-scoring PSM
+    int max_elem = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
+    int target_rank = max_elem + lower_rank;
+    float dot = dot_scores[max_elem];
+
+    float mass_diff = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
+    // Record match
+
+    std::lock_guard<std::mutex> guard(pool->mtx);
+    matches.emplace_back(search_id, precursor_idx->get_precursor_by_rank(target_rank).id, dot, mass_diff, 1);
+    return true;
 
 }
 

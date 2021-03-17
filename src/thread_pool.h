@@ -11,11 +11,9 @@
 
 class thread_pool {
 
-
-
     std::vector<std::thread> threads;
     std::queue<std::function<void()>> tasks;
-    //todo add task vector std::vector<std::future>
+
     std::mutex mtx_queue;
     std::condition_variable event_cond;
     std::condition_variable finished_cond;
@@ -23,8 +21,6 @@ class thread_pool {
 
     size_t size;
     int busy_threads = 0;
-
-
 
 public:
     thread_pool(size_t n);
@@ -35,6 +31,9 @@ public:
     void wait_for_all_threads();
     void join_all();
     void wait();
+
+    //template<typename F, typename... Args>
+    //void enqueue(F f, Args&&... args);
 
     void enqueue(std::function<void()> task);
 

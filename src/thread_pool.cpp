@@ -81,3 +81,9 @@ void thread_pool::wait_for_all_threads() {
     std::unique_lock<std::mutex> lock(mtx_queue);
     finished_cond.wait(lock, [this] { return (tasks.empty() && (busy_threads == 0)); });
 }
+
+/*
+template<typename F, typename... Args>
+void thread_pool::enqueue(F f, Args &&... args) {
+    tasks.emplace( std::bind(f, std::forward<Args>(args)...) );
+}*/

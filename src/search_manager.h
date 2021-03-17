@@ -46,12 +46,15 @@ public:
     bool prepare_search_library();
     bool prepare_precursor_index();
     bool perform_searches();
+    bool perform_searches_parallel();
     bool merge_matches(); //todo probably going over ids back to front and popping matches in the back
     bool save_search_results_to_file(const std::string &file_path);
 
 private:
     bool search_spectrum(unsigned int search_id, std::shared_ptr<spectrum> &spec);
     std::function<void()> task_search_spectrum(unsigned int search_id, std::shared_ptr<spectrum> spec);
+    void task_search_spectrum();
+    bool test(unsigned int search_id);
 };
 
 

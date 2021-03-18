@@ -38,6 +38,9 @@ public:
 
     std::mutex mtx;
 
+    void thread_waiting_loop();
+private:
+
 };
 
 

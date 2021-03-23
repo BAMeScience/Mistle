@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)  # CMake version check
 project(simple_example)               # Create project "simple_example"
 set(CMAKE_CXX_STANDARD 20)            # Enable c++20 standard
-set(CMAKE_CXX_FLAGS "-O3 -pthread")
+set(CMAKE_CXX_FLAGS "-O3 -pthread -mavx2")
 
 # Add main.cpp file of project root directory as source file
 set(SOURCE_FILES src/spectrum.cpp src/msp_reader.cpp src/scores.cpp src/library.cpp src/library.h src/mgf_reader.cpp src/mgf_reader.h src/spectral_search.h src/match.cpp src/match.h src/fragment_ion_index.cpp src/fragment_ion_index.h src/precursor_index.cpp src/precursor_index.h src/index_file_reader.h src/index_file_reader.cpp src/index_file_writer.cpp src/index_file_writer.h) #deleted src/spectral_search.cpp

@@ -14,6 +14,11 @@ struct fragment {
 
 typedef std::vector<fragment> fragment_bin;
 
+struct fragment_binn {
+    std::vector<fragment> fragments;
+    std::vector<unsigned int> parent_ids;
+    std::vector<float> intensities;
+};
 
 class fragment_ion_index {
 public:

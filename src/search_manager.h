@@ -53,6 +53,7 @@ public:
 private:
     bool search_spectrum(unsigned int search_id);
     bool search_spectrum_avx(unsigned int search_id);
+    bool search_spectrum_avx2(unsigned int search_id);
     bool task_search_spectrum(unsigned int search_id);
 };
 

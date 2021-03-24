@@ -51,10 +51,9 @@ public:
     bool save_search_results_to_file(const std::string &file_path);
 
 private:
-    bool search_spectrum(unsigned int search_id, std::shared_ptr<spectrum> &spec);
+    bool search_spectrum(unsigned int search_id);
+    bool search_spectrum_avx(unsigned int search_id);
     bool task_search_spectrum(unsigned int search_id);
-    void task_search_spectrum();
-    bool test(unsigned int search_id);
 };
 
 

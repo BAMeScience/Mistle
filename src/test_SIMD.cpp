@@ -1,6 +1,8 @@
 #include <iostream>
 #include <chrono>
 #include <vector>
+//#include <avxintrin.h>
+
 #include <immintrin.h>
 #include <memory>
 
@@ -37,6 +39,8 @@ void multiply256(__m256 _scalar, std::vector<float> &vec, std::vector<float> &re
     for (int i = 0; i < vec.size(); i+=8) {
         __m256 _mini_vector = _mm256_load_ps(&vec[i]);
         __m256 _result = _mm256_mul_ps(_scalar, _mini_vector);
+        float m[8];
+        _mm_store_ps(&m[0], _result);
         _mm256_storeu_ps(&res[i], _result);
     }
 }

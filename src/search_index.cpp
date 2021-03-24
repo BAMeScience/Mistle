@@ -56,7 +56,7 @@ int main() {
 
 
     std::cout << "Searching fragment-ion-indices in batches" << endl;
-    sm.perform_searches_parallel();
+    sm.perform_searches();
     std::cout << "Merging overlapping results" << std::endl;
     sm.merge_matches();
     std::cout << "Writing results to file" << std::endl;

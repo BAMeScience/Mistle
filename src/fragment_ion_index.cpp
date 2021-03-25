@@ -41,6 +41,7 @@ fragment_ion_index::fragment_ion_index(string path) : file_path(path) {
 
     //load_index_from_file(file_path);
     load_index_from_binary_file(file_path);
+    update_intensities();
 
 }
 
@@ -139,7 +140,8 @@ bool fragment_ion_index::load_index_from_binary_file(const string &path) {
 
 
     f.close();
-    return true;}
+    return true;
+}
 
 bool fragment_ion_index::save_index_to_binary_file(const string &path) {
 
@@ -158,4 +160,15 @@ bool fragment_ion_index::save_index_to_binary_file(const string &path) {
 
     f.close();
     return true;
+}
+
+bool fragment_ion_index::update_intensities() {
+    frag_bins.clear();
+    frag_bins.resize(fragment_bins.size());
+    for (int i = 0; i < fragment_bins.size(); ++i) {
+        for (int j = 0; j < fragment_bins[i].size(); ++j) {
+            frag_bins[i].intensities.push_back(fragment_bins[i][j].intensity);
+        }
+    }
+    return false;
 }

@@ -69,14 +69,15 @@ bool search_manager::perform_searches() {
     for (int i = 0; i < config->num_indices; ++i) {
         std::cout << "Loading index number " << i << std::endl;
         frag_idx->load_index_from_binary_file(config->sub_idx_file_names[i]);
+        frag_idx->update_intensities();
         //TODO set precursor index limits by subindex borders... has to be properly implemented
         std::cout << "Searching ... " << std::endl;
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];
 
         for (unsigned int &s_id : search_ids) {
-            //search_spectrum(s_id);
+            search_spectrum(s_id);
             //search_spectrum_avx(s_id);
-            search_spectrum_avx2(s_id);
+            //search_spectrum_avx2(s_id);
         }
     }
     return true;
@@ -129,16 +130,21 @@ bool search_manager::search_spectrum(unsigned int search_id) {
         fragment_bin &ion_bin = frag_idx->fragment_bins[spec->binned_peaks[j]];
 
         // Determine starting point of lowest (candidate) parent index inside bin
-        int starting_point_inside_bin = std::lower_bound(ion_bin.begin(), ion_bin.end(), lower_rank, [&](fragment f, int rank) {
+        int starting_point_inside_bin = std::lower_bound(ion_bin.begin(), ion_bin.end(), lower_rank, [&](fragment &f, int rank) {
             return precursor_idx->get_rank(f.parent_id) < rank;
         }) - ion_bin.begin();
+        //int end_point = std::upper_bound(ion_bin.begin() + starting_point_inside_bin, ion_bin.end(), upper_rank, [&](int rank, fragment &f) {
+        //    return !(precursor_idx->get_rank(f.parent_id) <= rank);
+        //}) - ion_bin.begin();
 
         //Update scores for all parents with fragments in the range
         for (int k = starting_point_inside_bin; k < ion_bin.size() && precursor_idx->get_rank(ion_bin[k].parent_id) <= upper_rank; ++k) {
-            fragment &f = ion_bin[k]; //todo SIMD
+            fragment &f = ion_bin[k];
             dot_scores[precursor_idx->get_rank(f.parent_id) - lower_rank] += f.intensity * spec->binned_intensities[j];
+            //std::cout << k << std::endl;
         }
-
+        //std::cout << end_point << std::endl;
+        //exit(12);
     }
 
     // Prepare best-scoring PSM
@@ -353,6 +359,8 @@ bool search_manager::search_spectrum_avx2(unsigned int search_id) {
 
         // Open ion mz bin for corresponding peak
         fragment_bin &ion_bin = frag_idx->fragment_bins[spec->binned_peaks[j]];
+        fragment_binn &bin = frag_idx->frag_bins[spec->binned_peaks[j]];
+
 
         // Determine starting point of lowest (candidate) parent index inside bin
         int starting_point_inside_bin = std::lower_bound(ion_bin.begin(), ion_bin.end(), lower_rank, [&](fragment f, int rank) {
@@ -367,8 +375,14 @@ bool search_manager::search_spectrum_avx2(unsigned int search_id) {
         for (int k = starting_point_inside_bin; k < ion_bin.size() && precursor_idx->get_rank(ion_bin[k].parent_id) <= upper_rank; k+=8) {
 
             //Fill vector with 8 float values
+
             //__m256 _mini_vector = _mm256_setr_ps(ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity);
-            __m256 _mini_vector = {ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity}; //_mm256_set_ps(ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity);//_mm256_load_ps(&vec[i]);
+            //__m256 _mini_vector = {ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity}; //_mm256_set_ps(ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity);//_mm256_load_ps(&vec[i]);
+            //std::cout << alignof(bin.intensities) << std::endl;
+            //std::cout << bin.intensities.size() << " " << ion_bin.size() << std::endl;
+            __m256 _mini_vector = _mm256_loadu_ps(&frag_idx->frag_bins[spec->binned_peaks[j]].intensities[k]);
+            //__m256 _mini_vector = _mm256_load_ps(&vec[i + 1]);
+
             auto d = [&](int l) {
                 if (l >= ion_bin.size())
                     return 0.f;

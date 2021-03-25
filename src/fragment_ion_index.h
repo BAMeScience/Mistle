@@ -14,9 +14,9 @@ struct fragment {
 
 typedef std::vector<fragment> fragment_bin;
 
+
+
 struct fragment_binn {
-    std::vector<fragment> fragments;
-    std::vector<unsigned int> parent_ids;
     std::vector<float> intensities;
 };
 
@@ -24,6 +24,7 @@ class fragment_ion_index {
 public:
     std::string file_path;
     std::vector<fragment_bin> fragment_bins;
+    alignas(16) std::vector<fragment_binn> frag_bins;
 
 
     fragment_ion_index();
@@ -33,7 +34,7 @@ public:
     bool sort_index(std::unique_ptr<precursor_index>& parent_index);
 
 
-
+    bool update_intensities();
     bool load_index_from_file(const std::string& path);
     bool load_index_from_binary_file(const std::string& path);
     bool save_index_to_file(const std::string& path);

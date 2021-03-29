@@ -168,6 +168,7 @@ bool fragment_ion_index::update_intensities() {
     for (int i = 0; i < fragment_bins.size(); ++i) {
         for (int j = 0; j < fragment_bins[i].size(); ++j) {
             frag_bins[i].intensities.push_back(fragment_bins[i][j].intensity);
+            frag_bins[i].parent_ids.push_back(fragment_bins[i][j].parent_id);
         }
     }
     return false;

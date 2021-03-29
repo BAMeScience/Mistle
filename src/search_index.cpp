@@ -29,7 +29,6 @@ auto time_func =
 int main() {
 
     cout << "Hello World Explorer" << endl;
-
     //thread_pool pool(4);
 
 

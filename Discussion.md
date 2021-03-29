@@ -145,3 +145,4 @@ New:
 
 * read queries in batches, and evaluate if buffer is full
 * use mask_gather and scatter to obtain scores for SIMD
+* AVX2 has gathers (not scatters), but they're only fast on Skylake and newer. They're ok on Broadwell, slowish on Haswell, and slow on AMD. (

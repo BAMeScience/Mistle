@@ -16,7 +16,7 @@ typedef std::vector<fragment> fragment_bin;
 
 
 
-__attribute__ ((aligned (32))) struct fragment_binn {
+struct __attribute__ ((aligned (32))) fragment_binn {
     __attribute__ ((aligned (32))) std::vector<float> intensities;
 };
 

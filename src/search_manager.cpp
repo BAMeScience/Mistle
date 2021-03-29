@@ -1,9 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <numeric>
+//#include <avx512vlintrin.h>
 #include <x86intrin.h>
+
 //#include <x86intrin.h>
-//#include <immintrin.h>
+#include <immintrin.h>
 
 #include "search_manager.h"
 
@@ -237,7 +239,6 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
     std::ofstream outfile;
     std::string delimiter = "\t";
 
-
     outfile.open(file_path, std::ios::out);
     if (!outfile.good())
         return false;
@@ -373,29 +374,17 @@ bool search_manager::search_spectrum_avx2(unsigned int search_id) {
         }) - ion_bin.begin();
 
         //Obtain dot-scores iff in valid range (0 otherwise
-        auto valid_score = [&](int ii) {
+        /*auto valid_score = [&](int ii) {
             if (ii < end_point)
                 return dot_scores[precursor_idx->get_rank(ion_bin[ii].parent_id) - lower_rank];
             return 0.f;
-        };
+        };*/
         auto score_pos = [&](int ii) {
             if (ii < end_point)
                 return precursor_idx->get_rank(ion_bin[ii].parent_id) - lower_rank;
             return (unsigned) 0;
         };
-        auto print_vec = [](__m256 x) {
-            for (int i = 0; i < 8; ++i) {
-                std::cout << x[i] << " ";
-            }
-            std::cout << std::endl;
-        };
 
-        auto print_veci = [](__m256i x) {
-            for (int i = 0; i < 8; ++i) {
-                //std::cout << _mm256_extract_epi32(x, i) <<"v" << x[i] << " ";
-            }
-            std::cout << std::endl;
-        };
 
         //Update scores for all parents with fragments in the range
         __m256 _scalar = _mm256_set1_ps(spec->binned_intensities[j]);
@@ -403,28 +392,17 @@ bool search_manager::search_spectrum_avx2(unsigned int search_id) {
 
             //Fill vectors with 8 float values
             __m256 _mini_vector = _mm256_loadu_ps(&bin.intensities[k]);
-            //std::cout << score_pos(k) << " " << score_pos(k+1) << " " << score_pos(k+2) << " " << score_pos(k+3) << " " << score_pos(k+4) << " " << score_pos(k+5) << " " << score_pos(k+6) << " " << score_pos(k+7)<< std::endl;
             __m256i _score_pos = _mm256_setr_epi32(score_pos(k), score_pos(k+1), score_pos(k+2), score_pos(k+3),
                                                   score_pos(k+4), score_pos(k+5), score_pos(k+6), score_pos(k+7));
-            //std::cout << _mm256_extract_epi32(_score_pos, 0) << " " << _mm256_extract_epi32(_score_pos, 1) << std::endl;
-            //{score_pos(k), score_pos(k+1), score_pos(k+2), score_pos(k+3)};
-                                 //score_pos(k+4), score_pos(k+5), score_pos(k+6), score_pos(k+7));
-            //__m256i _score_pos = {score_pos(k), score_pos(k+1), score_pos(k+2), score_pos(k+3),
-            //                     score_pos(k+4), score_pos(k+5), score_pos(k+6), score_pos(k+7)};
             __m256 _scores = _mm256_i32gather_ps(&dot_scores[0], _score_pos, 4); //TODO why 4????
-            //__m256 _scores_t = _mm256_i32gather_ps()
-            //std::cout << "shh" << std::endl;
-            //print_veci(_score_pos);
-            __m256 _scores1 = {dot_scores[_mm256_extract_epi32(_score_pos, 0)], dot_scores[_mm256_extract_epi32(_score_pos, 1)], dot_scores[_mm256_extract_epi32(_score_pos, 2)], dot_scores[_mm256_extract_epi32(_score_pos, 3)],
-                               dot_scores[_mm256_extract_epi32(_score_pos, 4)],dot_scores[_mm256_extract_epi32(_score_pos, 5)],dot_scores[_mm256_extract_epi32(_score_pos, 6)], dot_scores[_mm256_extract_epi32(_score_pos, 7)]};
-            //print_vec(_scores);
-            //print_vec(_scores1);
-            __m256 _scores2 = {valid_score(k), valid_score(k+1), valid_score(k+2), valid_score(k+3),
-                                 valid_score(k+4), valid_score(k+5), valid_score(k+6), valid_score(k+7)};
-            //print_vec(_scores2);
+
+            //__m256 _scoresBefore = {valid_score(k), valid_score(k+1), valid_score(k+2), valid_score(k+3),
+            //                     valid_score(k+4), valid_score(k+5), valid_score(k+6), valid_score(k+7)};
+
 
             __m256 _result = _mm256_fmadd_ps(_scalar, _mini_vector, _scores);
 
+            //_mm256_i32scatter_ps(&dot_scores[0], _score_pos, _result, 4);
             for (int l = 0; l < 8 && k + l < end_point; ++l) {
                 dot_scores[precursor_idx->get_rank(ion_bin[k + l].parent_id) - lower_rank] = _result[l];
             }

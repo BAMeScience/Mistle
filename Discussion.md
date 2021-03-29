@@ -140,3 +140,8 @@ frag_idx_<X>.csv
 * have a static search class (maybe)
 * move load() and save() functions to file_writer classes (config, precursor idx)
 * try to figure out what is going on with out of bound spectra (limits)
+
+New:
+
+* read queries in batches, and evaluate if buffer is full
+* use mask_gather and scatter to obtain scores for SIMD

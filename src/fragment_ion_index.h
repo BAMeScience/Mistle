@@ -16,15 +16,15 @@ typedef std::vector<fragment> fragment_bin;
 
 
 
-struct fragment_binn {
-    std::vector<float> intensities;
+__attribute__ ((aligned (32))) struct fragment_binn {
+    __attribute__ ((aligned (32))) std::vector<float> intensities;
 };
 
 class fragment_ion_index {
 public:
     std::string file_path;
     std::vector<fragment_bin> fragment_bins;
-    alignas(16) std::vector<fragment_binn> frag_bins;
+    __attribute__ ((aligned (32))) std::vector<fragment_binn> frag_bins;
 
 
     fragment_ion_index();

@@ -1,6 +1,7 @@
 #ifndef SIMPLE_EXAMPLE_FRAGMENT_ION_INDEX_H
 #define SIMPLE_EXAMPLE_FRAGMENT_ION_INDEX_H
 #include <vector>
+#include <immintrin.h>
 #include "precursor_index.h"
 
 
@@ -18,11 +19,16 @@ typedef std::vector<fragment> fragment_bin;
 
 struct __attribute__ ((aligned (32))) fragment_binn {
     __attribute__ ((aligned (32))) std::vector<float> intensities;
-    __attribute__ ((aligned (32))) std::vector<float> parent_ids;
+    __attribute__ ((aligned (32))) std::vector<unsigned> parent_ids;
+    __attribute__ ((aligned (32))) std::vector<__m256> _intensities;
+    __attribute__ ((aligned (32))) std::vector<__m256i> _parent_ids;
+    __attribute__ ((aligned (32))) std::vector<__m256i> _parent_ranks;
+
 };
 
 class fragment_ion_index {
 public:
+    std::shared_ptr<precursor_index> precursor_idx;
     std::string file_path;
     std::vector<fragment_bin> fragment_bins;
     __attribute__ ((aligned (32))) std::vector<fragment_binn> frag_bins;
@@ -35,7 +41,7 @@ public:
     bool sort_index(std::unique_ptr<precursor_index>& parent_index);
 
 
-    bool update_intensities();
+    bool prepare_axv2_access();
     bool load_index_from_file(const std::string& path);
     bool load_index_from_binary_file(const std::string& path);
     bool save_index_to_file(const std::string& path);

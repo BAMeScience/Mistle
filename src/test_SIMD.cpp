@@ -37,7 +37,7 @@ void multiply128(__m128 _scalar, std::vector<float> &vec, std::vector<float> &re
 
 void multiply256(__m256 _scalar, std::vector<float> &vec, std::vector<float> &res) {
     for (int i = 0; i < vec.size() - 100; i+=8) {
-        __m256 _mini_vector = _mm256_load_ps(&vec[i + 1]);
+        __m256 _mini_vector = _mm256_load_ps(&vec[i + 2]);
         __m256 _result = _mm256_mul_ps(_scalar, _mini_vector);
 
         _mm256_storeu_ps(&res[i], _result);
@@ -53,10 +53,11 @@ int main() {
     /*
      * Args
      */
-
-    int n = 100000000;
-    alignas(16) std::vector<std::vector<float>> vec(2);
-    alignas(16) std::vector<float> res;
+    volatile int8_t test;
+    cout << test << endl;
+    int n = 1000;
+    alignas(32) std::vector<std::vector<float>> vec(2);
+    alignas(32) std::vector<float> res;
 
 
     cout << alignof(vec) << endl;

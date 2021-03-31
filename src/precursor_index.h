@@ -51,8 +51,9 @@ class precursor_index {
     std::vector<unsigned int> ranking;
     unsigned int id_counter = 0;
 
-public:
 
+public:
+    std::vector<int> to_rank;
     precursor_index(); //Init empty index
     precursor& record_new_precursor(const std::shared_ptr<spectrum>& spec);
     precursor& record_new_precursor(float mz, int charge, std::string peptide);

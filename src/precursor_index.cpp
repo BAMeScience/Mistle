@@ -163,6 +163,11 @@ bool precursor_index::load_index_from_file(const string &file_path) {
         std::cerr << "Wrong number of precursors" << std::endl;
     }
 
+    //TODO delete this if not used anymore
+    for (auto & precursor : precursors) {
+        to_rank.push_back(precursor.rank);
+    }
+
     return true;
 }
 

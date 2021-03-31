@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <cassert>
 #include "fragment_ion_index.h"
 #include "DefineConstants.h"
 
@@ -41,7 +42,7 @@ fragment_ion_index::fragment_ion_index(string path) : file_path(path) {
 
     //load_index_from_file(file_path);
     load_index_from_binary_file(file_path);
-    update_intensities();
+    prepare_axv2_access();
 
 }
 
@@ -162,14 +163,28 @@ bool fragment_ion_index::save_index_to_binary_file(const string &path) {
     return true;
 }
 
-bool fragment_ion_index::update_intensities() {
+bool fragment_ion_index::prepare_axv2_access() {
     frag_bins.clear();
     frag_bins.resize(fragment_bins.size());
     for (int i = 0; i < fragment_bins.size(); ++i) {
+        __m256 intensity_x8;
+        __m256i identity_x8;
+        int ranks[8];
         for (int j = 0; j < fragment_bins[i].size(); ++j) {
             frag_bins[i].intensities.push_back(fragment_bins[i][j].intensity);
             frag_bins[i].parent_ids.push_back(fragment_bins[i][j].parent_id);
+            if(j % 8 == 0 && j > 0) {
+                intensity_x8 = _mm256_loadu_ps(&frag_bins[i].intensities[j-8]);
+                //identity_x8 = _mm256_loadu_si256((__m256i*)&frag_bins[i].parent_ids[j-8]);
+                frag_bins[i]._intensities.push_back(intensity_x8);
+                //frag_bins[i]._parent_ids.push_back(identity_x8);
+                //frag_bins[i]._parent_ranks.push_back(_mm256_load_si256((__m256i*)& ranks));
+            }
+            //ranks[j % 8] = (int) precursor_idx->get_rank(fragment_bins[i][j].parent_id);
         }
+        assert(reinterpret_cast<uintptr_t>(frag_bins[i]._intensities.data()) % alignof(__m256) == 0);
+        //assert(reinterpret_cast<uintptr_t>(frag_bins[i]._parent_ids.data()) % alignof(__m256i) == 0);
+        //assert(reinterpret_cast<uintptr_t>(frag_bins[i]._parent_ranks.data()) % alignof(__m256i) == 0);
     }
-    return false;
+    return true;
 }

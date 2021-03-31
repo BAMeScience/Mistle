@@ -67,11 +67,11 @@ bool search_manager::prepare_precursor_index() {
 bool search_manager::perform_searches() {
 
     frag_idx = std::make_shared<fragment_ion_index>();
-
+    frag_idx->precursor_idx = precursor_idx;
     for (int i = 0; i < config->num_indices; ++i) {
         std::cout << "Loading index number " << i << std::endl;
         frag_idx->load_index_from_binary_file(config->sub_idx_file_names[i]);
-        frag_idx->update_intensities();
+        frag_idx->prepare_axv2_access();
         //TODO set precursor index limits by subindex borders... has to be properly implemented
         std::cout << "Searching ... " << std::endl;
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];
@@ -374,24 +374,25 @@ bool search_manager::search_spectrum_avx2(unsigned int search_id) {
         }) - ion_bin.begin();
 
         //Obtain dot-scores iff in valid range (0 otherwise
-        /*auto valid_score = [&](int ii) {
+        auto valid_score = [&](int ii) {
             if (ii < end_point)
                 return dot_scores[precursor_idx->get_rank(ion_bin[ii].parent_id) - lower_rank];
             return 0.f;
-        };*/
+        };
         auto score_pos_secure = [&](int ii) {
             if (ii < end_point)
                 return precursor_idx->get_rank(ion_bin[ii].parent_id) - lower_rank;
             return (unsigned) 0;
         };
         auto score_pos = [&](int ii) {
-            return precursor_idx->get_rank(ion_bin[ii].parent_id) - lower_rank;
+            return precursor_idx->get_rank(ion_bin[ii].parent_id);
         };
 
 
 
         //Update scores for all parents with fragments in the range
         __m256 _scalar = _mm256_set1_ps(spec->binned_intensities[j]);
+        __m256i _lower_rank = _mm256_set1_epi32(lower_rank);
         /*for (int k = starting_point_inside_bin; k < end_point; k+=8) {
 
             //Fill vectors with 8 float values
@@ -413,15 +414,25 @@ bool search_manager::search_spectrum_avx2(unsigned int search_id) {
         }*/
 
         int k = starting_point_inside_bin;
+        //First reach k mod 8 = 0
+        for (; k % 8 != 0 && k < end_point; ++k) {
+            fragment &f = ion_bin[k];
+            dot_scores[precursor_idx->get_rank(f.parent_id) - lower_rank] += f.intensity * spec->binned_intensities[j];
+        }
         for (; k+8 < end_point; k+=8) {
             //Fill vectors with 8 float values
-            __m256 _mini_vector = _mm256_loadu_ps(&bin.intensities[k]);
-            __m256i _score_pos = _mm256_setr_epi32(score_pos(k), score_pos(k + 1), score_pos(k + 2), score_pos(k + 3),
-                                                   score_pos(k + 4), score_pos(k + 5), score_pos(k + 6), score_pos(k + 7));
-            __m256 _scores = _mm256_i32gather_ps(&dot_scores[0], _score_pos, 4); //TODO why 4????
+            __m256 _mini_vector = bin._intensities[k/8];
+            //__m256 _mini_vector = _mm256_load_ps(&bin.intensities[k]);
+            /*__m256i _score_pos0 = bin._parent_ids[k/8];
+            __m256i _score_pos1 = _mm256_i32gather_epi32(&precursor_idx->to_rank[0], _score_pos0, 4); //TODO why 4????
+            __m256i _score_pos2 = _mm256_sub_epi32(_score_pos1, _lower_rank);*/
+            //__m256 _scores = _mm256_i32gather_ps(&dot_scores[0], _mm256_sub_epi32(bin._parent_ranks[k/8], _lower_rank), 4); //TODO why 4????
 
-            //__m256 _scoresBefore = {valid_score(k), valid_score(k+1), valid_score(k+2), valid_score(k+3),
-            //                     valid_score(k+4), valid_score(k+5), valid_score(k+6), valid_score(k+7)};
+            //__m256i _score_pos1 = _mm256_setr_epi32(score_pos(k), score_pos(k + 1), score_pos(k + 2), score_pos(k + 3),
+            //score_pos(k + 4), score_pos(k + 5), score_pos(k + 6), score_pos(k + 7));
+
+            __m256 _scores = {valid_score(k), valid_score(k+1), valid_score(k+2), valid_score(k+3),
+                                 valid_score(k+4), valid_score(k+5), valid_score(k+6), valid_score(k+7)};
 
 
             __m256 _result = _mm256_fmadd_ps(_scalar, _mini_vector, _scores);

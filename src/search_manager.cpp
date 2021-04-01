@@ -8,7 +8,6 @@
 #include <immintrin.h>
 
 #include "search_manager.h"
-#include "../include/cxxopts.h"
 #include "settings.h"
 
 search_manager::search_manager(std::string search_file_path, std::string index_directory_path) : search_file_path(search_file_path), index_directory_path(index_directory_path) {

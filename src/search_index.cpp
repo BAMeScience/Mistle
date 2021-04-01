@@ -2,16 +2,51 @@
 #include <chrono>
 #include <utility>
 #include <cxxopts.hpp>
+#include "settings.h"
 #include "search_manager.h"
 #include "thread_pool.h"
 
 using namespace std;
 
-int main() {
+cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
+    try {
+        cxxopts::Options options("mistle-search", "Search experimental mass spectra in mistle fragment ion index");
 
+        options.positional_help("[optional args]").show_positional_help();
+
+        options.add_options()
+                ("h, help", "Print this help message")
+                ("s,search", "search file or directory ", cxxopts::value<std::string>())
+                ("i,index", "index directory (must contain config.txt and index files )", cxxopts::value<std::string>())
+                ("t,threads", "number of threads", cxxopts::value<int>()->default_value("1"));
+
+        options.parse_positional({"search", "input"});
+
+        auto result = options.parse(argc,argv);
+
+
+        if (result.count("help"))
+        {
+            std::cout << options.help() << std::endl;
+            exit(0);
+        }
+        if (result.count("threads")) {
+            settings::num_threads = result["threads"].as<int>();
+        }
+
+        return result;
+
+    }
+    catch (const cxxopts::OptionException& e) {
+        std::cout << "error parsing options: " << e.what() << std::endl;
+        exit(1);
+    }
+}
+
+int main(int argc, const char* argv[]) {
+
+    parseArgs(argc, argv);
     cout << "Hello World Explorer" << endl;
-    //thread_pool pool(4);
-
 
 
     auto start = chrono::high_resolution_clock::now();

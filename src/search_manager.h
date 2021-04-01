@@ -18,7 +18,6 @@ class search_manager {
 
     //Mapped ms2 ids to sub-index where they might occur
     std::vector<std::vector<unsigned int>> mapped_search_ids; //TODO name right (bucket = subindex)
-    float mz_tolerance = 3.0f;
 
     /*
      * Indices

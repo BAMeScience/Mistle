@@ -8,6 +8,8 @@
 #include <immintrin.h>
 
 #include "search_manager.h"
+#include "../include/cxxopts.h"
+#include "settings.h"
 
 search_manager::search_manager(std::string search_file_path, std::string index_directory_path) : search_file_path(search_file_path), index_directory_path(index_directory_path) {
     std::cout << "Calling MS2 recruiter" << std::endl;
@@ -15,7 +17,7 @@ search_manager::search_manager(std::string search_file_path, std::string index_d
     std::cout << "Configuring ... " << std::endl;
     config = std::make_shared<configuration>();
     config->load_configuration_from_file(index_directory_path + "config.txt");
-    pool = std::make_shared<thread_pool>(4);
+    pool = std::make_shared<thread_pool>(settings::num_threads);
 }
 
 
@@ -36,8 +38,8 @@ bool search_manager::prepare_search_library() {
     for (unsigned int i = 0; i < search_library.spectrum_list.size(); ++i) {
 
         float mz = search_library.spectrum_list[i]->precursor_mass;
-        float min_mz = mz - mz_tolerance;
-        float max_mz = mz + mz_tolerance;
+        float min_mz = mz - settings::mz_tolerance;
+        float max_mz = mz + settings::mz_tolerance;
 
         // Map id (i) to every sub-index where min/max bounds fall into
         for (int idx_num = 0; idx_num < (config->num_indices - 1); ++idx_num) {
@@ -113,8 +115,8 @@ bool search_manager::perform_searches_parallel() {
 bool search_manager::search_spectrum(unsigned int search_id) {
     std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
     // Determine range of candidate spectra
-    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - mz_tolerance);
-    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + mz_tolerance);
+    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - settings::mz_tolerance);
+    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + settings::mz_tolerance);
 
     if (lower_rank < 0 || upper_rank < 0 || lower_rank > upper_rank) { // todo necessary? No matching precursor masses
         return false;
@@ -212,8 +214,8 @@ bool search_manager::search_spectrum_avx(unsigned int search_id) {
 
 
     // Determine range of candidate spectra
-    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - mz_tolerance);
-    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + mz_tolerance);
+    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - settings::mz_tolerance);
+    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + settings::mz_tolerance);
 
     if (lower_rank < 0 || upper_rank < 0 || lower_rank > upper_rank) { // todo necessary? No matching precursor masses
         return false;
@@ -296,8 +298,8 @@ bool search_manager::search_spectrum_avx2(unsigned int search_id) {
     std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
 
     // Determine range of candidate spectra
-    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - mz_tolerance);
-    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + mz_tolerance);
+    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - settings::mz_tolerance);
+    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + settings::mz_tolerance);
 
     if (lower_rank < 0 || upper_rank < 0 || lower_rank > upper_rank) {
         return false;

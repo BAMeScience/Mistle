@@ -1,30 +1,11 @@
 #include <iostream>
 #include <chrono>
 #include <utility>
+#include <cxxopts.hpp>
 #include "search_manager.h"
 #include "thread_pool.h"
 
 using namespace std;
-/*
-template<typename F, typename... Args>
-void time_function(F func, Args&&... args){
-    auto start = chrono::high_resolution_clock::now();
-    func(std::forward<Args>(args)...);
-    auto stop = chrono::high_resolution_clock::now();
-    auto duration = duration_cast<chrono::seconds>(stop - start);
-    cout << "Time elapsed: " <<  duration.count() << " seconds" << endl;
-}
-
-auto time_func =
-        [](auto&& func, auto&&... params) {
-            // get time before function invocation
-            auto start = chrono::high_resolution_clock::now();
-            std::forward<decltype(func)>(func)(std::forward<decltype(params)>(params)...);
-            auto stop = chrono::high_resolution_clock::now();
-            auto duration = duration_cast<chrono::seconds>(stop - start);
-            cout << "Time elapsed: " <<  duration.count() << " seconds" << endl;
-        };
-*/
 
 int main() {
 

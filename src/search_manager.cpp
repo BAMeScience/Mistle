@@ -77,9 +77,9 @@ bool search_manager::perform_searches() {
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];
 
         for (unsigned int &s_id : search_ids) {
-            //search_spectrum(s_id);
+            search_spectrum(s_id);
             //search_spectrum_avx(s_id);
-            search_spectrum_avx2(s_id);
+            //search_spectrum_avx2(s_id);
         }
     }
     return true;
@@ -92,6 +92,7 @@ bool search_manager::perform_searches_parallel() {
     for (int i = 0; i < config->num_indices; ++i) {
         std::cout << "Loading index number " << i << std::endl;
         frag_idx->load_index_from_binary_file(config->sub_idx_file_names[i]);
+        frag_idx->prepare_axv2_access();
         //TODO set precursor index limits by subindex borders... has to be properly implemented
         std::cout << "Searching ... " << std::endl;
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];
@@ -101,7 +102,8 @@ bool search_manager::perform_searches_parallel() {
             //auto f = [&](int s) {test(s);};
             //pool->enqueue([f, s_id] { return f(s_id); });
 
-            pool->enqueue([this, s_id] () {task_search_spectrum(s_id);}); //TODO THIS WORKS
+            //pool->enqueue([this, s_id] () {search_spectrum(s_id);});
+            pool->enqueue([this, s_id] () {search_spectrum_avx2(s_id);});
         }
         pool->wait_for_all_threads();
     }
@@ -109,59 +111,6 @@ bool search_manager::perform_searches_parallel() {
 }
 
 bool search_manager::search_spectrum(unsigned int search_id) {
-
-    std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
-
-
-    // Determine range of candidate spectra
-    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - mz_tolerance);
-    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + mz_tolerance);
-
-    if (lower_rank < 0 || upper_rank < 0 || lower_rank > upper_rank) { // todo necessary? No matching precursor masses
-        return false;
-    }
-
-
-    // Init candidate scores
-    std::vector<float> dot_scores(upper_rank - lower_rank + 1, 0.f);
-
-    // Update scores by matching all peaks using the fragment ion index
-    for (int j = 0; j < spec->binned_peaks.size(); ++j) {
-
-        // Open ion mz bin for corresponding peak
-        fragment_bin &ion_bin = frag_idx->fragment_bins[spec->binned_peaks[j]];
-
-        // Determine starting point of lowest (candidate) parent index inside bin
-        int starting_point_inside_bin = std::lower_bound(ion_bin.begin(), ion_bin.end(), lower_rank, [&](fragment &f, int rank) {
-            return precursor_idx->get_rank(f.parent_id) < rank;
-        }) - ion_bin.begin();
-        int end_point = std::upper_bound(ion_bin.begin() + starting_point_inside_bin, ion_bin.end(), upper_rank, [&](int rank, fragment &f) {
-            return precursor_idx->get_rank(f.parent_id) > rank;
-        }) - ion_bin.begin();
-
-        //Update scores for all parents with fragments in the range
-        for (int k = starting_point_inside_bin; k < end_point; ++k) {
-            fragment &f = ion_bin[k];
-            dot_scores[precursor_idx->get_rank(f.parent_id) - lower_rank] += f.intensity * spec->binned_intensities[j];
-            //std::cout << k << std::endl;
-        }
-        //std::cout << end_point << std::endl;
-        //exit(12);
-    }
-
-    // Prepare best-scoring PSM
-    int max_elem = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
-    int target_rank = max_elem + lower_rank;
-    float dot = dot_scores[max_elem];
-
-    float mass_diff = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
-    // Record match
-    matches.emplace_back(match(search_id, precursor_idx->get_precursor_by_rank(target_rank).id, dot, mass_diff, 1));
-
-    return true;
-}
-
-bool search_manager::task_search_spectrum(unsigned int search_id) {
     std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
     // Determine range of candidate spectra
     int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - mz_tolerance);
@@ -336,6 +285,7 @@ bool search_manager::search_spectrum_avx(unsigned int search_id) {
 
     float mass_diff = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
     // Record match
+    std::lock_guard<std::mutex> guard(pool->mtx);
     matches.emplace_back(match(search_id, precursor_idx->get_precursor_by_rank(target_rank).id, dot, mass_diff, 1));
 
     return true;
@@ -390,9 +340,11 @@ bool search_manager::search_spectrum_avx2(unsigned int search_id) {
 
 
 
-        //Update scores for all parents with fragments in the range
+        /*
         __m256 _scalar = _mm256_set1_ps(spec->binned_intensities[j]);
         __m256i _lower_rank = _mm256_set1_epi32(lower_rank);
+         */
+        //Update scores for all parents with fragments in the range
         /*for (int k = starting_point_inside_bin; k < end_point; k+=8) {
 
             //Fill vectors with 8 float values
@@ -412,6 +364,9 @@ bool search_manager::search_spectrum_avx2(unsigned int search_id) {
                 dot_scores[precursor_idx->get_rank(ion_bin[k + l].parent_id) - lower_rank] = _result[l];
             }
         }*/
+
+        __m256 _scalar = _mm256_set1_ps(spec->binned_intensities[j]);
+        __m256i _lower_rank = _mm256_set1_epi32(lower_rank);
 
         int k = starting_point_inside_bin;
         //First reach k mod 8 = 0
@@ -459,9 +414,11 @@ bool search_manager::search_spectrum_avx2(unsigned int search_id) {
 
     float mass_diff = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
     // Record match
+    std::lock_guard<std::mutex> guard(pool->mtx);
     matches.emplace_back(match(search_id, precursor_idx->get_precursor_by_rank(target_rank).id, dot, mass_diff, 1));
 
     return true;
 }
+
 
 //__m256 _mini_vector = {ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity}; //_mm256_set_ps(ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity);//_mm256_load_ps(&vec[i]);

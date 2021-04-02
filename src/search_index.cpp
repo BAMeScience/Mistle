@@ -18,7 +18,8 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
                 ("h, help", "Print this help message")
                 ("s,search", "search file or directory ", cxxopts::value<std::string>())
                 ("i,index", "index directory (must contain config.txt and index files )", cxxopts::value<std::string>())
-                ("t,threads", "number of threads", cxxopts::value<int>()->default_value("1"));
+                ("t,threads", "number of threads", cxxopts::value<int>()->default_value("1"))
+                ("m,mz_tolerance", "mz tolerance for candidate spectra", cxxopts::value<float>()->default_value("3.0"));
 
         options.parse_positional({"search", "input"});
 
@@ -32,6 +33,10 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
         }
         if (result.count("threads")) {
             settings::num_threads = result["threads"].as<int>();
+            settings::parallel = (settings::num_threads > 1);
+        }
+        if (result.count("mz_tolerance")) {
+            settings::mz_tolerance = result["mz_tolerance"].as<float>();
         }
 
         return result;

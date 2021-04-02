@@ -67,6 +67,9 @@ bool search_manager::prepare_precursor_index() {
 
 bool search_manager::perform_searches() {
 
+    if (settings::parallel) {
+        return perform_searches_parallel();
+    }
     frag_idx = std::make_shared<fragment_ion_index>();
     frag_idx->precursor_idx = precursor_idx;
     for (int i = 0; i < config->num_indices; ++i) {

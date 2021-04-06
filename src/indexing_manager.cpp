@@ -12,9 +12,35 @@ using namespace std;
 
 indexing_manager::indexing_manager() {
     cout << "Empty Constructor not in use" << endl;
+    exit(1);
 }
 
 indexing_manager::indexing_manager(string path) : path(path) {
+    cout << "! Using IndexingManager without config parameter is deprecated" << endl;
+
+    /*
+     * Init
+     * TODO delete (eventually)
+     */
+
+    precursorIndex = make_unique<precursor_index>();
+
+    config->sub_idx_range = (STANDARD_PARENT_UPPER_MZ - STANDARD_PARENT_LOWER_MZ) / config->num_indices;
+    for (int i = 1; i < config->num_indices; ++i) { //Starting from 1
+        cout << "LIMIT: " << STANDARD_PARENT_LOWER_MZ + config->sub_idx_range * i << endl;
+        config->sub_idx_limits.push_back(STANDARD_PARENT_LOWER_MZ + config->sub_idx_range * i);
+    }
+
+
+    for (const auto & entry : std::filesystem::directory_iterator(path)) {
+        if (entry.path().extension() == ".msp") {
+            lib_files.push_back(entry);
+        }
+    }
+}
+
+
+indexing_manager::indexing_manager(std::string path, std::shared_ptr<configuration> config) : path(path), config(config) {
     cout << "Calling Manager" << endl;
 
     /*
@@ -35,9 +61,8 @@ indexing_manager::indexing_manager(string path) : path(path) {
             lib_files.push_back(entry);
         }
     }
-
-
 }
+
 
 bool indexing_manager::build_indices() {
     cout << "Manager too busy to answer phone. Calling back later" << endl;

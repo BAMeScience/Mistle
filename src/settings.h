@@ -11,6 +11,8 @@ public:
      */
 
     static bool parallel;
+    static bool avx2;
+    static bool avx512;
     static int num_threads;
     static int batch_size;
 

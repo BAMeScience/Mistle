@@ -8,6 +8,7 @@
 #include "configuration.h"
 #include "precursor_index.h"
 
+
 class indexing_manager {
 
     std::string path;
@@ -28,6 +29,7 @@ class indexing_manager {
 public:
     indexing_manager();
     explicit indexing_manager(std::string path);
+    indexing_manager(std::string path, std::shared_ptr<configuration> config);
 
 
     bool build_indices();

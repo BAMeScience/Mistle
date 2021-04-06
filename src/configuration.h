@@ -5,6 +5,13 @@
 #include <string>
 #include <vector>
 
+/*
+ * Config class
+ *
+ * Handles all (meta-)information about index set-up and configuration
+ * Can be set by arguments or loaded from file.
+ */
+
 class configuration {
 public:
 

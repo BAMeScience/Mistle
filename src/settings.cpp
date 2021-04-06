@@ -1,6 +1,8 @@
 #include "settings.h"
 
 bool settings::parallel = false;
+bool settings::avx2 = false;
+bool settings::avx512 = false;
 int settings::num_threads = 4;
 int settings::batch_size = 100000;
 

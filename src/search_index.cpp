@@ -8,7 +8,7 @@
 
 using namespace std;
 
-cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
+cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search_path, std::string &index_path) {
     try {
         cxxopts::Options options("mistle-search", "Search experimental mass spectra in mistle fragment ion index");
 
@@ -16,20 +16,27 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
 
         options.add_options()
                 ("h, help", "Print this help message")
-                ("s,search", "search file or directory ", cxxopts::value<std::string>())
-                ("i,index", "index directory (must contain config.txt and index files )", cxxopts::value<std::string>())
-                ("t,threads", "number of threads", cxxopts::value<int>()->default_value("1"))
-                ("m,mz_tolerance", "mz tolerance for candidate spectra", cxxopts::value<float>()->default_value("3.0"));
+                ("s,search", "search file or directory ", cxxopts::value<std::string>(), "PATH")
+                ("i,index", "index directory (must contain config.txt and binary index files)", cxxopts::value<std::string>(), "PATH")
+                ("t,threads", "number of threads", cxxopts::value<int>()->default_value("1"), "NUM")
+                ("avx2", "Use avx2 instructions for summation and multiplication of 8 floats simultaneously")
+                ("avx512", "Use avx512 instructions for summation and multiplication of 16 floats simultaneously")
+                ("m,mz_tolerance", "mz tolerance for candidate spectra", cxxopts::value<float>()->default_value("3.0"), "NUM");
 
-        options.parse_positional({"search", "input"});
+        options.parse_positional({"search", "index"});
 
         auto result = options.parse(argc,argv);
 
 
-        if (result.count("help"))
-        {
+        if (result.count("help")) {
             std::cout << options.help() << std::endl;
             exit(0);
+        }
+        if (result.count("search")) {
+            search_path = result["search"].as<std::string>();
+        }
+        if (result.count("index")) {
+            index_path = result["index"].as<std::string>();
         }
         if (result.count("threads")) {
             settings::num_threads = result["threads"].as<int>();
@@ -38,6 +45,10 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
         if (result.count("mz_tolerance")) {
             settings::mz_tolerance = result["mz_tolerance"].as<float>();
         }
+        settings::avx2 = result.count("avx2");
+        settings::avx512 = result.count("avx512");
+
+
 
         return result;
 
@@ -50,18 +61,19 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
 
 int main(int argc, const char* argv[]) {
 
-    parseArgs(argc, argv);
-    cout << "Hello World Explorer" << endl;
-
-
-    auto start = chrono::high_resolution_clock::now();
-
     /*
      * Args
      */
 
     std::string search_file = "/home/ynowatzk/data/9MM/mgf/9MM_FASP.mgf";
     std::string index_dir = "./test/";
+    parseArgs(argc, argv, search_file, index_dir);
+    cout << "Hello World Explorer" << endl;
+
+
+    auto start = chrono::high_resolution_clock::now();
+
+
 
 
     /*

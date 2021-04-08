@@ -19,8 +19,8 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
                 ("s,search", "search file or directory ", cxxopts::value<std::string>(), "PATH")
                 ("i,index", "index directory (must contain config.txt and binary index files)", cxxopts::value<std::string>(), "PATH")
                 ("t,threads", "number of threads", cxxopts::value<int>()->default_value("1"), "NUM")
-                ("avx2", "Use avx2 instructions for summation and multiplication of 8 floats simultaneously")
-                ("avx512", "Use avx512 instructions for summation and multiplication of 16 floats simultaneously")
+                ("avx2", "Use avx2 instructions for arithmetic operations of 8 floats simultaneously")
+                ("avx512", "Use avx512 instructions for arithmetic operations of 16 floats simultaneously")
                 ("m,mz_tolerance", "mz tolerance for candidate spectra", cxxopts::value<float>()->default_value("3.0"), "NUM");
 
         options.parse_positional({"search", "index"});

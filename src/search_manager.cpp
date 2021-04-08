@@ -81,9 +81,9 @@ bool search_manager::perform_searches() {
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];
 
         for (unsigned int &s_id : search_ids) {
-            search_spectrum(s_id);
+            //search_spectrum(s_id);
             //search_spectrum_avx(s_id);
-            //search_spectrum_avx2(s_id);
+            search_spectrum_avx2(s_id);
         }
     }
     return true;

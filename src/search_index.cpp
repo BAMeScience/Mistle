@@ -65,6 +65,12 @@ int main(int argc, const char* argv[]) {
      * Args
      */
 
+#if USE_AVX_2
+    std::cout << "2" << endl;
+#endif
+#if USE_AVX_512
+    std::cout << "512" << endl;
+#endif
     std::string search_file = "/home/ynowatzk/data/9MM/mgf/9MM_FASP.mgf";
     std::string index_dir = "./test/";
     parseArgs(argc, argv, search_file, index_dir);

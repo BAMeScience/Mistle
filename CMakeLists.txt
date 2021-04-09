@@ -6,14 +6,14 @@ option(AVX_2 "Add compiler flags to support avx2 instructions" ON)
 option(AVX_512 "Add compiler flags to support avx512 instruction" OFF)
 
 if (AVX_2)
-    set(AVX_COMPILE_FLAGS "-mavx2 -march=skylake")
+    set(AVX_COMPILE_FLAGS "-mavx2 -march=skylake -DUSE_AVX_2=true")
 endif ()
 
 if (AVX_512)
-    set(AVX_COMPILE_FLAGS "-mavx512f")
+    set(AVX_COMPILE_FLAGS "-mavx2 -march=skylake -mavx512f -DUSE_AVX2=true")
 endif ()
 
-set(CMAKE_CXX_FLAGS "-Ofast -pthread ${AVX_COMPILE_FLAGS}")
+set(CMAKE_CXX_FLAGS "-Ofast -pthread ${AVX_COMPILE_FLAGS} ")
 # Add main.cpp file of project root directory as source file
 set(SOURCE_FILES src/spectrum.cpp src/msp_reader.cpp src/scores.cpp src/library.cpp src/library.h src/mgf_reader.cpp src/mgf_reader.h src/spectral_search.h src/match.cpp src/match.h src/fragment_ion_index.cpp src/fragment_ion_index.h src/precursor_index.cpp src/precursor_index.h src/index_file_reader.h src/index_file_reader.cpp src/index_file_writer.cpp src/index_file_writer.h) #deleted src/spectral_search.cpp
 

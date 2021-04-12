@@ -50,10 +50,10 @@ public:
     bool save_search_results_to_file(const std::string &file_path);
 
 private:
+    /*
+     * Search: 3-fold implementation, depending on cpu instruction level (STANDARD, AVX2, AVX512)
+     */
     bool search_spectrum(unsigned int search_id);
-    bool search_spectrum_avx(unsigned int search_id);
-    bool search_spectrum_avx2(unsigned int search_id);
-    bool search_spectrum_avx512(unsigned int search_id);
 };
 
 

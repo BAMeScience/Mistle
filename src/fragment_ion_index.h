@@ -20,10 +20,13 @@ typedef std::vector<fragment> fragment_bin;
 struct __attribute__ ((aligned (32))) fragment_binn {
     __attribute__ ((aligned (32))) std::vector<float> intensities;
     __attribute__ ((aligned (32))) std::vector<unsigned> parent_ids;
+#if USE_AVX_512
+    __attribute__ ((aligned (32))) std::vector<__m512> _intensities;
+#elif USE_AVX_2
     __attribute__ ((aligned (32))) std::vector<__m256> _intensities;
     __attribute__ ((aligned (32))) std::vector<__m256i> _parent_ids;
     __attribute__ ((aligned (32))) std::vector<__m256i> _parent_ranks;
-
+#endif
 };
 
 class fragment_ion_index {
@@ -41,7 +44,7 @@ public:
     bool sort_index(std::unique_ptr<precursor_index>& parent_index);
 
 
-    bool prepare_axv2_access();
+    bool prepare_axv_access();
     bool load_index_from_file(const std::string& path);
     bool load_index_from_binary_file(const std::string& path);
     bool save_index_to_file(const std::string& path);

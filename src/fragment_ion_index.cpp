@@ -42,7 +42,7 @@ fragment_ion_index::fragment_ion_index(string path) : file_path(path) {
 
     //load_index_from_file(file_path);
     load_index_from_binary_file(file_path);
-    prepare_axv2_access();
+    prepare_axv_access();
 
 }
 
@@ -163,7 +163,34 @@ bool fragment_ion_index::save_index_to_binary_file(const string &path) {
     return true;
 }
 
-bool fragment_ion_index::prepare_axv2_access() {
+#if USE_AVX_512
+bool fragment_ion_index::prepare_axv_access() {
+    frag_bins.clear();
+    frag_bins.resize(fragment_bins.size());
+    for (int i = 0; i < fragment_bins.size(); ++i) {
+        __m512 intensity_x16;
+        __m512i identity_x16;
+        int ranks[16];
+        for (int j = 0; j < fragment_bins[i].size(); ++j) {
+            frag_bins[i].intensities.push_back(fragment_bins[i][j].intensity);
+            frag_bins[i].parent_ids.push_back(fragment_bins[i][j].parent_id);
+            if(j % 16 == 0 && j > 0) {
+                intensity_x16 = _mm512_loadu_ps(&frag_bins[i].intensities[j-16]);
+                //identity_x16 = _mm256_loadu_si256((__m256i*)&frag_bins[i].parent_ids[j-16]);
+                frag_bins[i]._intensities.push_back(intensity_x16);
+                //frag_bins[i]._parent_ids.push_back(identity_x16);
+                //frag_bins[i]._parent_ranks.push_back(_mm256_load_si256((__m256i*)& ranks));
+            }
+            //ranks[j % 16] = (int) precursor_idx->get_rank(fragment_bins[i][j].parent_id);
+        }
+        assert(reinterpret_cast<uintptr_t>(frag_bins[i]._intensities.data()) % alignof(__m512) == 0);
+        //assert(reinterpret_cast<uintptr_t>(frag_bins[i]._parent_ids.data()) % alignof(__m256i) == 0);
+        //assert(reinterpret_cast<uintptr_t>(frag_bins[i]._parent_ranks.data()) % alignof(__m256i) == 0);
+    }
+    return true;
+}
+#elif USE_AVX_2
+bool fragment_ion_index::prepare_axv_access() {
     frag_bins.clear();
     frag_bins.resize(fragment_bins.size());
     for (int i = 0; i < fragment_bins.size(); ++i) {
@@ -188,3 +215,4 @@ bool fragment_ion_index::prepare_axv2_access() {
     }
     return true;
 }
+#endif

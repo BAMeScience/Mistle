@@ -66,10 +66,10 @@ int main(int argc, const char* argv[]) {
      */
 
 #if USE_AVX_2
-    std::cout << "2" << endl;
+    std::cout << "USING AVX2" << endl;
 #endif
 #if USE_AVX_512
-    std::cout << "512" << endl;
+    std::cout << "USING AVX512" << endl;
 #endif
     std::string search_file = "/home/ynowatzk/data/9MM/mgf/9MM_FASP.mgf";
     std::string index_dir = "./test/";

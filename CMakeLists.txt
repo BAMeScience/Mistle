@@ -10,7 +10,7 @@ if (AVX_2)
 endif ()
 
 if (AVX_512)
-    set(AVX_COMPILE_FLAGS "-mavx2 -march=skylake -mavx512f -DUSE_AVX2=true")
+    set(AVX_COMPILE_FLAGS "-mavx2 -march=skylake -mavx512f -DUSE_AVX_512=true")
 endif ()
 
 set(CMAKE_CXX_FLAGS "-Ofast -pthread ${AVX_COMPILE_FLAGS} ")

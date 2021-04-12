@@ -424,5 +424,14 @@ bool search_manager::search_spectrum_avx2(unsigned int search_id) {
     return true;
 }
 
+#if USE_AVX_512
+bool search_manager::search_spectrum_avx512(unsigned int) {
+
+    __m512 _scalar = _mm512_set1_ps(1.f);
+    //__m256 _scalar = _mm256_set1_ps(spec->binned_intensities[j]);
+    return false;
+}
+#endif
+
 
 //__m256 _mini_vector = {ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity}; //_mm256_set_ps(ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity);//_mm256_load_ps(&vec[i]);

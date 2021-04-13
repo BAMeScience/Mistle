@@ -22,6 +22,8 @@ struct __attribute__ ((aligned (32))) fragment_binn {
     __attribute__ ((aligned (32))) std::vector<unsigned> parent_ids;
 #if USE_AVX_512
     __attribute__ ((aligned (32))) std::vector<__m512> _intensities;
+    __attribute__ ((aligned (32))) std::vector<__m512i> _parent_ids;
+
 #elif USE_AVX_2
     __attribute__ ((aligned (32))) std::vector<__m256> _intensities;
     __attribute__ ((aligned (32))) std::vector<__m256i> _parent_ids;

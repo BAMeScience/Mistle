@@ -176,15 +176,15 @@ bool fragment_ion_index::prepare_axv_access() {
             frag_bins[i].parent_ids.push_back(fragment_bins[i][j].parent_id);
             if(j % 16 == 0 && j > 0) {
                 intensity_x16 = _mm512_loadu_ps(&frag_bins[i].intensities[j-16]);
-                //identity_x16 = _mm256_loadu_si256((__m256i*)&frag_bins[i].parent_ids[j-16]);
+                identity_x16 = _mm512_loadu_si512((__m256i*)&frag_bins[i].parent_ids[j-16]);
                 frag_bins[i]._intensities.push_back(intensity_x16);
-                //frag_bins[i]._parent_ids.push_back(identity_x16);
+                frag_bins[i]._parent_ids.push_back(identity_x16);
                 //frag_bins[i]._parent_ranks.push_back(_mm256_load_si256((__m256i*)& ranks));
             }
             //ranks[j % 16] = (int) precursor_idx->get_rank(fragment_bins[i][j].parent_id);
         }
         assert(reinterpret_cast<uintptr_t>(frag_bins[i]._intensities.data()) % alignof(__m512) == 0);
-        //assert(reinterpret_cast<uintptr_t>(frag_bins[i]._parent_ids.data()) % alignof(__m256i) == 0);
+        assert(reinterpret_cast<uintptr_t>(frag_bins[i]._parent_ids.data()) % alignof(__m512i) == 0);
         //assert(reinterpret_cast<uintptr_t>(frag_bins[i]._parent_ranks.data()) % alignof(__m256i) == 0);
     }
     return true;

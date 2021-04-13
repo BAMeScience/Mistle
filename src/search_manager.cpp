@@ -210,10 +210,10 @@ bool search_manager::search_spectrum(unsigned int search_id) {
             //__m256i _score_pos1 = _mm256_setr_epi32(score_pos(k), score_pos(k + 1), score_pos(k + 2), score_pos(k + 3),
             //score_pos(k + 4), score_pos(k + 5), score_pos(k + 6), score_pos(k + 7));
 
-            _scores = {valid_score(k), valid_score(k+1), valid_score(k+2), valid_score(k+3),
+            _scores = _mm512_setr_ps(valid_score(k), valid_score(k+1), valid_score(k+2), valid_score(k+3),
                               valid_score(k+4), valid_score(k+5), valid_score(k+6), valid_score(k+7),
                               valid_score(k+8), valid_score(k+9), valid_score(k+10), valid_score(k+11),
-                              valid_score(k+12), valid_score(k+13), valid_score(k+14), valid_score(k+15)};
+                              valid_score(k+12), valid_score(k+13), valid_score(k+14), valid_score(k+15));
 
 
             _result = _mm512_fmadd_ps(_scalar, _mini_vector, _scores);

@@ -321,7 +321,7 @@ bool search_manager::search_spectrum(unsigned int search_id) {
 
         __m256 _scalar = _mm256_set1_ps(spec->binned_intensities[j]);
         __m256i _lower_rank = _mm256_set1_epi32(lower_rank);
-
+        __m256 _mini_vector, _scores, _result;
         int k = starting_point_inside_bin;
         //First reach k mod 8 = 0
         for (; k % 8 != 0 && k < end_point; ++k) {
@@ -330,7 +330,7 @@ bool search_manager::search_spectrum(unsigned int search_id) {
         }
         for (; k+8 < end_point; k+=8) {
             //Fill vectors with 8 float values
-            __m256 _mini_vector = bin._intensities[k/8];
+            _mini_vector = bin._intensities[k/8];
             //__m256 _mini_vector = _mm256_load_ps(&bin.intensities[k]);
             /*__m256i _score_pos0 = bin._parent_ids[k/8];
             __m256i _score_pos1 = _mm256_i32gather_epi32(&precursor_idx->to_rank[0], _score_pos0, 4); //TODO why 4????
@@ -340,11 +340,11 @@ bool search_manager::search_spectrum(unsigned int search_id) {
             //__m256i _score_pos1 = _mm256_setr_epi32(score_pos(k), score_pos(k + 1), score_pos(k + 2), score_pos(k + 3),
             //score_pos(k + 4), score_pos(k + 5), score_pos(k + 6), score_pos(k + 7));
 
-            __m256 _scores = {valid_score(k), valid_score(k+1), valid_score(k+2), valid_score(k+3),
+            _scores = {valid_score(k), valid_score(k+1), valid_score(k+2), valid_score(k+3),
                               valid_score(k+4), valid_score(k+5), valid_score(k+6), valid_score(k+7)};
 
 
-            __m256 _result = _mm256_fmadd_ps(_scalar, _mini_vector, _scores);
+            _result = _mm256_fmadd_ps(_scalar, _mini_vector, _scores);
 
             //_mm256_i32scatter_ps(&dot_scores[0], _score_pos, _result, 4);
             for (int l = 0; l < 8; ++l) {

@@ -104,6 +104,7 @@ bool indexing_manager::build_indices() {
         output_streams[i].close();
     }
 
+    cout << "Sorting fragment ion indices" << endl;
     for (int i = 0; i < config->sub_idx_file_names.size(); ++i) {
         string file_name = config->idx_path + config->sub_idx_file_names[i];
 
@@ -114,7 +115,7 @@ bool indexing_manager::build_indices() {
         //cout << "Saving..." << endl << endl;
         frag_index.save_index_to_binary_file(file_name);
     }
-
+    cout << "Done" << endl;
 
     return true;
 }

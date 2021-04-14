@@ -90,6 +90,7 @@ int main(int argc, const char* argv[]) {
 
     std::cout << "Preparing libraries and indices" << std::endl;
     sm.prepare_search_library();
+    std::cout << "Loading precursor index" << std::endl;
     sm.prepare_precursor_index();
 
 

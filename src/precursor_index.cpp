@@ -159,6 +159,9 @@ bool precursor_index::load_index_from_file(const string &file_path) {
 
         add_precursor_record(precursor(id, rank, mz, charge, peptide));
     }
+
+    f.close();
+
     if (get_size() != size) {
         std::cerr << "Wrong number of precursors" << std::endl;
     }
@@ -182,6 +185,55 @@ bool precursor_index::set_size(unsigned int size) {
     ranking.resize(size);
 
     return true;
+}
+
+bool precursor_index::save_index_to_binary_file(const string &file_path) {
+
+    //Saving spectrum bookmarks (precursor info)
+    index_file_writer::save_precursor_index_to_binary_file(file_path, precursors);
+
+    return true;
+
+}
+
+bool precursor_index::load_index_from_binary_file(const string &file_path) {
+    ifstream f(file_path, ios::binary | ios::in);
+
+    //Read header
+    unsigned int size;
+    f.read((char *) &size, sizeof(unsigned int));
+    set_size(size);
+
+    unsigned int id, rank;
+    float mz;
+    int charge;
+    size_t pep_size;
+    std::string peptide;
+    while (f.read((char *) &id, sizeof(unsigned int))) {
+        f.read((char *) &rank, sizeof(unsigned int));
+        f.read((char *) &mz, sizeof(float));
+        f.read((char *) &charge, sizeof(int));
+        f.read((char *) &pep_size, sizeof(size_t));
+        peptide.resize(pep_size);
+        f.read((char *) &peptide[0], pep_size);
+
+        add_precursor_record(precursor(id, rank, mz, charge, peptide));
+    }
+
+    f.close();
+
+    if (get_size() != size) {
+        std::cerr << "Wrong number of precursors" << std::endl;
+        std::cout << get_size() << " " << size << endl;
+    }
+
+    //TODO delete this if not used anymore
+    for (auto & precursor : precursors) {
+        to_rank.push_back(precursor.rank);
+    }
+
+    return true;
+
 }
 
 

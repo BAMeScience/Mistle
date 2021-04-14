@@ -61,7 +61,9 @@ public:
 
     bool sort_index();
     bool save_index_to_file(const std::string &file_path);
+    bool save_index_to_binary_file(const std::string &file_path);
     bool load_index_from_file(const std::string &file_path);
+    bool load_index_from_binary_file(const std::string &file_path);
 
 
     int get_size();

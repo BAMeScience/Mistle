@@ -61,7 +61,7 @@ bool search_manager::prepare_search_library() {
 
 bool search_manager::prepare_precursor_index() {
     precursor_idx = std::make_shared<precursor_index>();
-    precursor_idx->load_index_from_file(config->precursor_index_path);
+    precursor_idx->load_index_from_binary_file(config->precursor_index_path);
     return true;
 }
 

@@ -125,8 +125,7 @@ bool fragment_ion_index::load_index_from_binary_file(const string &path) {
     fragment_bins.clear();
     fragment_bins.resize(BIN_MAX_MZ + 1);
 
-    string line;
-    while (!f.eof()) {
+    while (!f.eof()) { //TODO might not actually end the loop correctly
         unsigned int id;
         int mz_bin;
         float intensity;

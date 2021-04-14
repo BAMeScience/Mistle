@@ -69,12 +69,40 @@ bool index_file_writer::stream_peaks_to_binary_file(std::fstream &f, unsigned in
         int bin = spec->binned_peaks[i];
         float intensity = spec->binned_intensities[i];
 
-        f.write((char *) &parent_id, sizeof(unsigned int)); //TODO
+        f.write((char *) &parent_id, sizeof(unsigned int));
         f.write((char *) &bin, sizeof(int));
         f.write((char *) &intensity, sizeof(float));
 
     }
 
+
+    return true;
+}
+
+bool index_file_writer::save_precursor_index_to_binary_file(const std::string &file_path,
+                                                            std::vector<precursor> &precursors) {
+
+    std::fstream f(file_path, std::ios::binary | std::ofstream::out);
+
+
+    //Save #of precursors as first element (needed for efficient parsing)
+    unsigned int size = precursors.size();
+    f.write((char *) &size, sizeof(unsigned int));
+
+    /*
+     * ENCODING: ID;RANK;MZ;CHARGE;SIZE_OF_PEPTIDE;PEPTIDE (No semi-colons in binary)
+     */
+    for (precursor &p : precursors) {
+        f.write((char *) &p.id, sizeof(unsigned int));
+        f.write((char *) &p.rank, sizeof(unsigned int));
+        f.write((char *) &p.mz, sizeof(float));
+        f.write((char *) &p.charge, sizeof(int));
+        size_t pep_size = p.peptide.size();
+        f.write((char *) &pep_size, sizeof(pep_size));
+        f.write(p.peptide.c_str(), pep_size);
+    }
+
+    f.close();
 
     return true;
 }

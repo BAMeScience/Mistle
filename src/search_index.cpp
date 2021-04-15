@@ -91,8 +91,9 @@ int main(int argc, const char* argv[]) {
     std::cout << "Preparing libraries and indices" << std::endl;
     sm.prepare_search_library();
     std::cout << "Loading precursor index" << std::endl;
+    auto check_point = chrono::high_resolution_clock::now();
     sm.prepare_precursor_index();
-
+    std::cout << "Loading time: " << duration_cast<chrono::seconds>(chrono::high_resolution_clock::now() - check_point).count() << " seconds" << std::endl;
 
     std::cout << "Searching fragment-ion-indices in batches" << endl;
     sm.perform_searches();

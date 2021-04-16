@@ -31,6 +31,12 @@ public:
     unsigned int assign_to_index(float mz);
 
 
+    /*
+     * Build only
+     */
+
+    int num_build_threads = 1;
+
 };
 
 

@@ -48,6 +48,7 @@ indexing_manager::indexing_manager(std::string path, std::shared_ptr<configurati
      */
 
     precursorIndex = make_unique<precursor_index>();
+    pool = std::make_shared<thread_pool>(config->num_build_threads - 1);
 
     config->sub_idx_range = (STANDARD_PARENT_UPPER_MZ - STANDARD_PARENT_LOWER_MZ) / config->num_indices;
     for (int i = 1; i < config->num_indices; ++i) { //Starting from 1
@@ -80,9 +81,10 @@ bool indexing_manager::build_indices() {
     auto start = chrono::high_resolution_clock::now();
     for (int i = 0; i < lib_files.size(); ++i) {
         cout << "Parsing library file no. " << i << " (" << lib_files[i].path().filename() << ")" << endl;
-
-        parse_file_buffered(i); //TODO choose best
-
+        parse_file(i); //TODO choose best
+    }
+    if (pool->get_size() > 0) {
+        pool->wait_for_all_threads();
     }
     auto stop = chrono::high_resolution_clock::now();
     auto duration = duration_cast<chrono::seconds>(stop - start);
@@ -139,7 +141,7 @@ bool indexing_manager::parse_file(unsigned int file_num) {
     string file_path = lib_files[file_num].path().string();
 
     ifstream f(file_path, ios::in);
-    f.precision(FLOAT_OUTPUT_PRECISION);
+    //f.precision(FLOAT_OUTPUT_PRECISION);
 
     string buffer;
 
@@ -152,17 +154,27 @@ bool indexing_manager::parse_file(unsigned int file_num) {
 
         //Read spectrum from file and pre-processing
         msp_reader::read_next_entry_into_buffer(f, buffer);
-        shared_ptr<spectrum> tmp_spectrum = msp_reader::read_spectrum_from_buffer(buffer);
+        auto read_and_stream = [this, buffer]() {
+            shared_ptr<spectrum> tmp_spectrum = msp_reader::read_spectrum_from_buffer(buffer);
 
-        //Save bookmark in precursor index
-        precursor &bookmark = precursorIndex->record_new_precursor(tmp_spectrum);
+            //Lock for recording and streaming
+            std::lock_guard<std::mutex> guard(pool->mtx);
 
-        //Stream (binned) peaks into corresponding sub-index file
-        unsigned int idx_num = config->assign_to_index(bookmark.mz);
-        index_file_writer::stream_peaks_to_file(output_streams[idx_num], bookmark.id, tmp_spectrum);
+            //Save bookmark in precursor index
+            precursor &bookmark = precursorIndex->record_new_precursor(tmp_spectrum);
 
+            //Stream (binned) peaks into corresponding sub-index file
+            unsigned int idx_num = config->assign_to_index(bookmark.mz);
+            index_file_writer::stream_peaks_to_binary_file(output_streams[idx_num], bookmark.id, tmp_spectrum);
+        };
 
+        if (pool->get_size() > 0) {
+            pool->enqueue(read_and_stream);
+        } else {
+            read_and_stream();
+        }
     }
+
     return true;
 }
 
@@ -170,7 +182,7 @@ bool indexing_manager::parse_file_buffered(unsigned int file_num) {
     string file_path = lib_files[file_num].path().string();
 
     ifstream f(file_path, ios::in);
-    f.precision(FLOAT_OUTPUT_PRECISION);
+    f.precision(FLOAT_OUTPUT_PRECISION); //TODO
 
     unsigned int buffer_size = 40960;//1048576; //Byte //TODO fix if too small
     unsigned int carryover_pos = 0;
@@ -197,7 +209,7 @@ bool indexing_manager::parse_file_buffered(unsigned int file_num) {
 
             //Stream (binned) peaks into corresponding sub-index file
             unsigned int idx_num = config->assign_to_index(bookmark.mz);
-            index_file_writer::stream_peaks_to_binary_file(output_streams[idx_num], bookmark.id, tmp_spectrum); //TODO made binary
+            index_file_writer::stream_peaks_to_binary_file(output_streams[idx_num], bookmark.id, tmp_spectrum);
             current_pos = next_pos;
         }
 

@@ -35,10 +35,13 @@ public:
     //void enqueue(F f, Args&&... args);
 
     void enqueue(std::function<void()> task);
-
     std::mutex mtx;
 
+
     void thread_waiting_loop();
+
+    //Getter
+    size_t get_size() const;
 private:
 
 };

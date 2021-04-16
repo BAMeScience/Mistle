@@ -74,6 +74,10 @@ void thread_pool::thread_waiting_loop() {
     }
 }
 
+size_t thread_pool::get_size() const {
+    return size;
+}
+
 /*
 template<typename F, typename... Args>
 void thread_pool::enqueue(F f, Args &&... args) {

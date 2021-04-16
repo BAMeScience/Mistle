@@ -29,7 +29,7 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &input_
             exit(0);
         }
         if (result.count("threads")) {
-
+            config->num_build_threads = result["threads"].as<int>();
         }
         if (result.count("num_indices")) {
             config->num_indices = result["num_indices"].as<unsigned int>();
@@ -75,6 +75,8 @@ int main(int argc, const char* argv[]) {
     im.build_indices();
     auto stop = chrono::high_resolution_clock::now();
     auto duration = duration_cast<chrono::seconds>(stop - start);
-    cout << "Loading Time: " <<  duration.count() << " seconds" << endl;
+    cout << "Total time elapsed: " <<  duration.count() << " seconds" << endl;
+
+    return 0;
 
 }

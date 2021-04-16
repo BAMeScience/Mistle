@@ -7,6 +7,7 @@
 #include <filesystem>
 #include "configuration.h"
 #include "precursor_index.h"
+#include "thread_pool.h"
 
 
 class indexing_manager {
@@ -25,6 +26,12 @@ class indexing_manager {
     std::shared_ptr<configuration> config = std::make_shared<configuration>();
     std::vector<std::fstream> output_streams;
 
+
+    /*
+     * Threading
+     */
+
+    std::shared_ptr<thread_pool> pool;
 
 public:
     indexing_manager();

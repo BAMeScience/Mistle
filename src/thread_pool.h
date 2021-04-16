@@ -28,6 +28,8 @@ public:
     void start();
     void stop();
 
+
+    void add_thread();
     void wait_for_all_threads();
     void join_all();
 

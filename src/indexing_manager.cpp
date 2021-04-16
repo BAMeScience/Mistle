@@ -81,9 +81,10 @@ bool indexing_manager::build_indices() {
     auto start = chrono::high_resolution_clock::now();
     for (int i = 0; i < lib_files.size(); ++i) {
         cout << "Parsing library file no. " << i << " (" << lib_files[i].path().filename() << ")" << endl;
-        parse_file(i); //TODO choose best
+        parse_file(i); //TODO has multi-threading experimental
     }
     if (pool->get_size() > 0) {
+        pool->add_thread(); //Have "main" thread help out with the computation
         pool->wait_for_all_threads();
     }
     auto stop = chrono::high_resolution_clock::now();

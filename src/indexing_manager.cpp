@@ -52,7 +52,7 @@ indexing_manager::indexing_manager(std::string path, std::shared_ptr<configurati
 
     config->sub_idx_range = (STANDARD_PARENT_UPPER_MZ - STANDARD_PARENT_LOWER_MZ) / config->num_indices;
     for (int i = 1; i < config->num_indices; ++i) { //Starting from 1
-        cout << "LIMIT: " << STANDARD_PARENT_LOWER_MZ + config->sub_idx_range * i << endl;
+        //cout << "LIMIT: " << STANDARD_PARENT_LOWER_MZ + config->sub_idx_range * i << endl;
         config->sub_idx_limits.push_back(STANDARD_PARENT_LOWER_MZ + config->sub_idx_range * i);
     }
 

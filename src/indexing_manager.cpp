@@ -81,9 +81,10 @@ bool indexing_manager::build_indices() {
     auto start = chrono::high_resolution_clock::now();
     for (int i = 0; i < lib_files.size(); ++i) {
         cout << "Parsing library file no. " << i << " (" << lib_files[i].path().filename() << ")" << endl;
-        parse_file(i); //TODO has multi-threading experimental
+        parse_file(i); //TODO has multi-threading (experimental)
     }
     if (pool->get_size() > 0) {
+        std::cout << "Waiting for threads to finish processing" << std::endl;
         pool->add_thread(); //Have "main" thread help out with the computation
         pool->wait_for_all_threads();
     }

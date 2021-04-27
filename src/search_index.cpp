@@ -19,9 +19,8 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
                 ("s,search", "search file or directory ", cxxopts::value<std::string>(), "PATH")
                 ("i,index", "index directory (must contain config.txt and binary index files)", cxxopts::value<std::string>(), "PATH")
                 ("t,threads", "number of threads", cxxopts::value<int>()->default_value("1"), "NUM")
-                ("avx2", "Use avx2 instructions for arithmetic operations of 8 floats simultaneously")
-                ("avx512", "Use avx512 instructions for arithmetic operations of 16 floats simultaneously")
-                ("m,mz_tolerance", "mz tolerance for candidate spectra", cxxopts::value<float>()->default_value("3.0"), "NUM");
+                ("m,mz_tolerance", "mz tolerance for candidate spectra", cxxopts::value<float>()->default_value("3.0"), "NUM")
+                ("p,ppm_tolerance", "precursor mz tolerance given in ppm", cxxopts::value<float>()->default_value("10"), "NUM");
 
         options.parse_positional({"search", "index"});
 
@@ -45,8 +44,15 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
         if (result.count("mz_tolerance")) {
             settings::mz_tolerance = result["mz_tolerance"].as<float>();
         }
-        settings::avx2 = result.count("avx2");
-        settings::avx512 = result.count("avx512");
+        if (result.count("ppm_tolerance")) {
+            settings::mz_tolerance = result["ppm_tolerance"].as<float>();
+            if (result.count("ppm_tolerance")) {
+                cerr << "precursor mass tolerance given in ppm and dalton. Please choose either or" << endl;
+                exit(1);
+            }
+        }
+        //settings::avx2 = result.count("avx2");
+        //settings::avx512 = result.count("avx512");
 
 
 

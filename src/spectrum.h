@@ -41,6 +41,9 @@ public:
 
     bool bin_peaks(bool root_rescale=false, bool normalize=false);
     bool bin_peaks_sparse(bool root_rescale=false, bool normalize=false);
+
+    bool root_scale_intensities();
+    bool normalize_intensities();
     bool normalize_bins(float magnitude=-1.f);
     bool normalize_sparse_bins(float magnitude=-1.f);
 

@@ -182,3 +182,22 @@ bool spectrum::operator<(pair<int, float> charge_mass_tuple) const {
 bool spectrum::operator<=(pair<int, float> charge_mass_tuple) const {
     return charge < charge_mass_tuple.first || (charge == charge_mass_tuple.first && precursor_mass <= charge_mass_tuple.second);
 }
+
+bool spectrum::root_scale_intensities() {
+    for (float &intensity : intensities) {
+        intensity = sqrt(intensity);
+    }
+}
+
+bool spectrum::normalize_intensities() {
+    float magnitude = 0.f;
+    for (float &i : intensities) {
+        magnitude += i*i;
+    }
+    magnitude = sqrt(magnitude);
+
+    for (float &i : intensities) {
+        i = i / magnitude;
+    }
+
+}

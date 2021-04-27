@@ -8,3 +8,4 @@ int settings::batch_size = 100000;
 
 
 float settings::mz_tolerance = 3.0f;
+float settings::ppm_tolerance = 10.0f;

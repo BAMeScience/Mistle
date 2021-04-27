@@ -164,8 +164,9 @@ shared_ptr<spectrum> msp_reader::read_spectrum_from_buffer(const string& buffer)
     }
     //c_spectrum->intensity_bin_spanning_factor = -1.f; //TODO figure out if neighbor_spanning here
     //c_spectrum->bin_peaks(true,true);
-    c_spectrum->bin_peaks_sparse(true, true);
-
+    //c_spectrum->bin_peaks_sparse(true, true);
+    c_spectrum->root_scale_intensities();
+    c_spectrum->normalize_intensities();
     return c_spectrum;
 }
 

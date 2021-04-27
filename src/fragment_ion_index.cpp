@@ -94,7 +94,7 @@ bool fragment_ion_index::load_index_from_file(const std::string& path) {
 bool fragment_ion_index::save_index_to_file(const string &path) {
 
     /*
-     * Save Index to file TODO use file_writer::
+     * TODO: OBSOLETE using binary file reader
      */
 
     ofstream f(path, ios::out);
@@ -127,14 +127,18 @@ bool fragment_ion_index::load_index_from_binary_file(const string &path) {
 
     while (!f.eof()) { //TODO might not actually end the loop correctly
         unsigned int id;
-        int mz_bin;
+        float mz;
         float intensity;
 
         f.read((char *) &id, sizeof(unsigned int));
-        f.read((char *) &mz_bin, sizeof(int));
+        f.read((char *) &mz, sizeof(float));
         f.read((char *) &intensity, sizeof(float));
 
-        fragment_bins[mz_bin].emplace_back(fragment(id, intensity));
+        if (mz > BIN_MAX_MZ) {
+            continue;
+        }
+        int mz_bin = get_mz_bin(mz);
+        fragment_bins[mz_bin].emplace_back(fragment(id, intensity, mz));
 
     }
 
@@ -148,12 +152,11 @@ bool fragment_ion_index::save_index_to_binary_file(const string &path) {
     ofstream f(path, ios::binary | ios::out);
 
 
-    for (int i = 0; i < fragment_bins.size(); ++i) {
+    for (auto &bin : fragment_bins) {
 
-        fragment_bin  bin = fragment_bins[i];
         for (auto & j : bin) {
             f.write((char *) &j.parent_id, sizeof(unsigned int)); //TODO
-            f.write((char *) &i, sizeof(int));
+            f.write((char *) &j.mz, sizeof(float));
             f.write((char *) &j.intensity, sizeof(float));
         }
     }
@@ -214,4 +217,39 @@ bool fragment_ion_index::prepare_axv_access() {
     }
     return true;
 }
+
+bool fragment_ion_index::load_preliminary_index_from_binary_file(const string &path) {
+    /*
+     * Read index from binary file
+     */
+
+    ifstream f(path, ios::binary | ios::in);
+
+    fragment_bins.clear();
+    fragment_bins.resize(1);
+
+    while (!f.eof()) { //TODO might not actually end the loop correctly
+        unsigned int id;
+        float mz;
+        float intensity;
+
+        f.read((char *) &id, sizeof(unsigned int));
+        f.read((char *) &mz, sizeof(float));
+        f.read((char *) &intensity, sizeof(float));
+
+        fragment_bins[0].emplace_back(fragment(id, intensity, mz));
+
+    }
+
+
+    f.close();
+    return true;
+}
+
+int fragment_ion_index::get_mz_bin(float mz) const {
+
+    int bin = int((mz - BIN_MIN_MZ) / bin_size);
+    return bin;
+}
+
 #endif

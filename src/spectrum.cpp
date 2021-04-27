@@ -187,6 +187,7 @@ bool spectrum::root_scale_intensities() {
     for (float &intensity : intensities) {
         intensity = sqrt(intensity);
     }
+    return true;
 }
 
 bool spectrum::normalize_intensities() {
@@ -200,4 +201,6 @@ bool spectrum::normalize_intensities() {
         i = i / magnitude;
     }
 
+    return true;
 }
+

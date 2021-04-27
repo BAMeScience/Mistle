@@ -8,8 +8,10 @@
 struct fragment {
     unsigned int parent_id;
     float intensity;
+    float mz{}; //needed when not binned
 
     fragment(unsigned int parent_id, float intensity) : parent_id(parent_id), intensity(intensity) {};
+    fragment(unsigned int parent_id, float intensity, float mz) : parent_id(parent_id), intensity(intensity), mz(mz) {};
 };
 
 
@@ -33,7 +35,9 @@ struct __attribute__ ((aligned (32))) fragment_binn {
 
 class fragment_ion_index {
 public:
+
     std::shared_ptr<precursor_index> precursor_idx;
+    float bin_size = 0.5f;
     std::string file_path;
     std::vector<fragment_bin> fragment_bins;
     __attribute__ ((aligned (32))) std::vector<fragment_binn> frag_bins;
@@ -49,8 +53,11 @@ public:
     bool prepare_axv_access();
     bool load_index_from_file(const std::string& path);
     bool load_index_from_binary_file(const std::string& path);
+    bool load_preliminary_index_from_binary_file(const std::string& path);
     bool save_index_to_file(const std::string& path);
     bool save_index_to_binary_file(const std::string& path);
+
+    int get_mz_bin(float mz) const;
 };
 
 

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <cmath>
 #include "fragment_ion_index.h"
 #include "DefineConstants.h"
 
@@ -123,7 +124,7 @@ bool fragment_ion_index::load_index_from_binary_file(const string &path) {
     ifstream f(path, ios::binary | ios::in);
 
     fragment_bins.clear();
-    fragment_bins.resize(BIN_MAX_MZ + 1);
+    fragment_bins.resize(int((BIN_MAX_MZ - BIN_MIN_MZ) / bin_size) + 1);
 
     while (!f.eof()) { //TODO might not actually end the loop correctly
         unsigned int id;
@@ -138,7 +139,16 @@ bool fragment_ion_index::load_index_from_binary_file(const string &path) {
             continue;
         }
         int mz_bin = get_mz_bin(mz);
-        fragment_bins[mz_bin].emplace_back(fragment(id, intensity, mz));
+
+        // Same parent peak falling into the same bin
+        if (!fragment_bins[mz_bin].empty() && fragment_bins[mz_bin].back().parent_id == id) {
+            fragment &frag = fragment_bins[mz_bin].back();
+            frag.intensity = sqrt(frag.intensity * frag.intensity + intensity * intensity);
+            //TODO !! Save the mz too!? (for precise rescoring) ??
+        }
+        else {
+            fragment_bins[mz_bin].emplace_back(fragment(id, intensity, mz));
+        }
 
     }
 

@@ -13,6 +13,8 @@ spectrum::spectrum() {
 
 
 bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
+
+    //TODO: OBSOLETE use sparse binning instead
     int num_bins = BIN_MAX_MZ - BIN_MIN_MZ; // spectrast + 1 // TODO maybe smart
 
     bins = vector<float>(num_bins, 0.0);
@@ -36,14 +38,14 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
         if (root_rescale)
             intensity = sqrt(intensity);
 
-        bins[bin] += intensity; //+= accumulate if multiple peaks fall into the sam bin
+        bins[bin] = sqrt(bins[bin] * bins[bin] + intensity + intensity); //sqrt-accumulate if multiple peaks fall into the sam bin
         if (intensity_bin_spanning_factor > 0.f) {
             float neighbor_intensity = intensity * intensity_bin_spanning_factor;
             if (bin > 0) {
-                bins[bin-1] += neighbor_intensity;
+                bins[bin-1] = sqrt(intensity * intensity + neighbor_intensity * neighbor_intensity);
             }
             if (bin < bins.size()) {
-                bins[bin+1] += neighbor_intensity;
+                bins[bin+1] = sqrt(intensity * intensity + neighbor_intensity * neighbor_intensity);
             }
         }
     }
@@ -136,7 +138,7 @@ bool spectrum::bin_peaks_sparse(bool root_rescale, bool normalize) {
         for (int j = 0; j < binned_peaks.size(); ++j) {
             if (binned_peaks[j] == bin) {
                 bin_exists = true;
-                binned_intensities[j] += intensity;
+                binned_intensities[j] = sqrt(binned_intensities[j] * binned_intensities[j] + intensity * intensity);
             }
         }
 

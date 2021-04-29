@@ -6,6 +6,7 @@
 #include <cmath>
 #include "fragment_ion_index.h"
 #include "DefineConstants.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -124,7 +125,7 @@ bool fragment_ion_index::load_index_from_binary_file(const string &path) {
     ifstream f(path, ios::binary | ios::in);
 
     fragment_bins.clear();
-    fragment_bins.resize(int((BIN_MAX_MZ - BIN_MIN_MZ) / bin_size) + 1);
+    fragment_bins.resize(int((BIN_MAX_MZ - BIN_MIN_MZ) / settings::bin_size) + 1);
 
     while (!f.eof()) { //TODO might not actually end the loop correctly
         unsigned int id;
@@ -132,13 +133,17 @@ bool fragment_ion_index::load_index_from_binary_file(const string &path) {
         float intensity;
 
         f.read((char *) &id, sizeof(unsigned int));
+        if (f.eof()) { //Double check
+            break;
+        }
         f.read((char *) &mz, sizeof(float));
         f.read((char *) &intensity, sizeof(float));
 
-        if (mz > BIN_MAX_MZ) {
+
+        if (mz > BIN_MAX_MZ || mz < BIN_MIN_MZ) {
             continue;
         }
-        int mz_bin = get_mz_bin(mz);
+        int mz_bin = spectrum::get_mz_bin(mz);
 
         // Same parent peak falling into the same bin
         if (!fragment_bins[mz_bin].empty() && fragment_bins[mz_bin].back().parent_id == id) {
@@ -256,10 +261,6 @@ bool fragment_ion_index::load_preliminary_index_from_binary_file(const string &p
     return true;
 }
 
-int fragment_ion_index::get_mz_bin(float mz) const {
 
-    int bin = int((mz - BIN_MIN_MZ) / bin_size);
-    return bin;
-}
 
 #endif

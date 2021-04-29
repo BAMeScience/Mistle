@@ -20,7 +20,8 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
                 ("i,index", "index directory (must contain config.txt and binary index files)", cxxopts::value<std::string>(), "PATH")
                 ("t,threads", "number of threads", cxxopts::value<int>()->default_value("1"), "NUM")
                 ("m,mz_tolerance", "mz tolerance for candidate spectra", cxxopts::value<float>()->default_value("3.0"), "NUM")
-                ("p,ppm_tolerance", "precursor mz tolerance given in ppm", cxxopts::value<float>()->default_value("10"), "NUM");
+                ("p,ppm_tolerance", "precursor mz tolerance given in ppm", cxxopts::value<float>()->default_value("10"), "NUM")
+                ("b,bin_size", "bin size for fragment ion binning (in Da)", cxxopts::value<float>()->default_value("1"), "NUM");
 
         options.parse_positional({"search", "index"});
 
@@ -46,13 +47,14 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
         }
         if (result.count("ppm_tolerance")) {
             settings::mz_tolerance = result["ppm_tolerance"].as<float>();
-            if (result.count("ppm_tolerance")) {
+            if (result.count("mz_tolerance")) {
                 cerr << "precursor mass tolerance given in ppm and dalton. Please choose either or" << endl;
                 exit(1);
             }
         }
-        //settings::avx2 = result.count("avx2");
-        //settings::avx512 = result.count("avx512");
+        if (result.count("bin_size")) {
+            settings::bin_size = result["bin_size"].as<float>();
+        }
 
 
 

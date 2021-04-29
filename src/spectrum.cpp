@@ -3,6 +3,7 @@
 #include <numeric>
 #include "spectrum.h"
 #include "DefineConstants.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -15,12 +16,13 @@ spectrum::spectrum() {
 bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
 
     //TODO: OBSOLETE use sparse binning instead
-    int num_bins = BIN_MAX_MZ - BIN_MIN_MZ; // spectrast + 1 // TODO maybe smart
 
-    bins = vector<float>(num_bins, 0.0);
+    int num_bins = int((BIN_MAX_MZ - BIN_MIN_MZ) / settings::bin_size) + 1; // TODO maybe smart
+
+    bins = vector<float>(num_bins, 0.f);
 
     for (int i = 0; i < peak_positions.size(); ++i) {
-        int bin = int(peak_positions[i]) - BIN_MIN_MZ;
+        int bin = get_mz_bin(peak_positions[i]);
         if (bin < 0 || bin > bins.size()) { // TODO spectraST light ion, cut_off. bin < 180 ??
             //TODO what would spectrast do?
             //cout << "Warning peak out of bin range :: discarding intensity" << endl;
@@ -60,10 +62,6 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
         return normalize_bins();
     }
     return true;
-}
-
-float spectrum::rescale_intensity(float intensity) { //todo cross check spectraST
-    return sqrt(intensity);
 }
 
 
@@ -120,13 +118,15 @@ bool spectrum::bin_peaks_sparse(bool root_rescale, bool normalize) {
     for (int i = 0; i < peak_positions.size(); ++i) {
 
         //Determine bin
-        int bin = int(peak_positions[i]) - BIN_MIN_MZ;
-        if (bin < 0 || bin > BIN_MAX_MZ) { //TODO drop upper border (probably)
+        if (peak_positions[i] > BIN_MAX_MZ || peak_positions[i] < BIN_MIN_MZ) {
             continue;
         }
+
         if (remove_charge_reduced_precursor && spectrast_isNearPrecursor(peak_positions[i])) {
             continue;
         }
+
+        int bin = get_mz_bin(peak_positions[i]);
 
         //Retrieve and scale intensity
         float intensity = intensities[i];
@@ -204,5 +204,10 @@ bool spectrum::normalize_intensities() {
     }
 
     return true;
+}
+
+int spectrum::get_mz_bin(float mz) {
+    int bin = int((mz - BIN_MIN_MZ) / settings::bin_size);
+    return bin;
 }
 

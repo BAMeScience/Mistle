@@ -26,7 +26,7 @@ bool mgf_reader::read_file(string path, vector<std::shared_ptr<spectrum>> &outpu
         if (line == "END IONS") {
             // Post-process and save the current spectrum
             //c_spectrum->intensity_bin_spanning_factor = -1.f; //TODO figure out if neighbor_spanning here
-            c_spectrum->bin_peaks(true,true); //TODO comment out
+            //c_spectrum->bin_peaks(true,true); //TODO comment out
             c_spectrum->bin_peaks_sparse(true, true);
             output_spectra.push_back(c_spectrum);
             continue;

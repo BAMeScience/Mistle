@@ -37,7 +37,6 @@ class fragment_ion_index {
 public:
 
     std::shared_ptr<precursor_index> precursor_idx;
-    float bin_size = 1.0f;
     std::string file_path;
     std::vector<fragment_bin> fragment_bins;
     __attribute__ ((aligned (32))) std::vector<fragment_binn> frag_bins;
@@ -57,7 +56,6 @@ public:
     bool save_index_to_file(const std::string& path);
     bool save_index_to_binary_file(const std::string& path);
 
-    int get_mz_bin(float mz) const;
 };
 
 

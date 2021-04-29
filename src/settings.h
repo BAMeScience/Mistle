@@ -11,8 +11,6 @@ public:
      */
 
     static bool parallel;
-    static bool avx2;
-    static bool avx512;
     static int num_threads;
     static int batch_size;
 
@@ -22,6 +20,7 @@ public:
     static float mz_tolerance;
     static float ppm_tolerance;
     //todo add parameters like neighbors bin scoring. sqrt normalization etc.
+    static float bin_size;
     static bool neighbors;
 
 

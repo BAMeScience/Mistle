@@ -46,6 +46,8 @@ public:
     bool normalize_intensities();
     bool normalize_bins(float magnitude=-1.f);
     bool normalize_sparse_bins(float magnitude=-1.f);
+    static int get_mz_bin(float mz);
+
 
     //Compare
     //friend bool operator<(const spectrum &one, const spectrum &other);
@@ -54,7 +56,6 @@ public:
     bool operator<=(std::pair<int,float> charge_mass_tuple) const;
 
 private:
-    static float rescale_intensity(float intensity);
     bool spectrast_isNearPrecursor(double mz);
 };
 

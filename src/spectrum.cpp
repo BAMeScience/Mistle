@@ -117,7 +117,6 @@ bool spectrum::bin_peaks_sparse(bool root_rescale, bool normalize) {
 
     for (int i = 0; i < peak_positions.size(); ++i) {
 
-        //Determine bin
         if (peak_positions[i] > BIN_MAX_MZ || peak_positions[i] < BIN_MIN_MZ) {
             continue;
         }
@@ -125,7 +124,7 @@ bool spectrum::bin_peaks_sparse(bool root_rescale, bool normalize) {
         if (remove_charge_reduced_precursor && spectrast_isNearPrecursor(peak_positions[i])) {
             continue;
         }
-
+        //Determine bin
         int bin = get_mz_bin(peak_positions[i]);
 
         //Retrieve and scale intensity

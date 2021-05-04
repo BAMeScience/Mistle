@@ -18,7 +18,9 @@ public:
      * Search properties
      */
     static float mz_tolerance;
+    static bool use_ppm_tolerance;
     static float ppm_tolerance;
+    static float ppm_factor;
     //todo add parameters like neighbors bin scoring. sqrt normalization etc.
     static float bin_size;
     static bool neighbors;

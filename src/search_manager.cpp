@@ -37,8 +37,15 @@ bool search_manager::prepare_search_library() {
     for (unsigned int i = 0; i < search_library.spectrum_list.size(); ++i) {
 
         float mz = search_library.spectrum_list[i]->precursor_mass;
-        float min_mz = mz - settings::mz_tolerance;
-        float max_mz = mz + settings::mz_tolerance;
+        float min_mz, max_mz;
+        if (settings::use_ppm_tolerance) {
+            float mz_deviation = (mz * settings::ppm_factor);
+            min_mz = mz - mz_deviation;
+            max_mz = mz + mz_deviation;
+        } else {
+            min_mz = mz - settings::mz_tolerance;
+            max_mz = mz + settings::mz_tolerance;
+        }
 
         // Map id (i) to every sub-index where min/max bounds fall into
         for (int idx_num = 0; idx_num < (config->num_indices - 1); ++idx_num) {
@@ -119,8 +126,12 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
 
     // Determine range of candidate spectra
-    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - settings::mz_tolerance);
-    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + settings::mz_tolerance);
+    float mz_tolerance = settings::mz_tolerance;
+    if (settings::use_ppm_tolerance) {
+        mz_tolerance = settings::ppm_factor * spec->precursor_mass;
+    }
+    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - mz_tolerance);
+    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + mz_tolerance);
 
     if (lower_rank < 0 || upper_rank < 0 || lower_rank > upper_rank) {
         return false;
@@ -252,8 +263,12 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
 
     // Determine range of candidate spectra
-    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - settings::mz_tolerance);
-    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + settings::mz_tolerance);
+    float mz_tolerance = settings::mz_tolerance;
+    if (settings::use_ppm_tolerance) {
+        mz_tolerance = settings::ppm_factor * spec->precursor_mass;
+    }
+    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - mz_tolerance);
+    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + mz_tolerance);
 
     if (lower_rank < 0 || upper_rank < 0 || lower_rank > upper_rank) {
         return false;
@@ -379,9 +394,14 @@ bool search_manager::search_spectrum(unsigned int search_id) {
 #else
 bool search_manager::search_spectrum(unsigned int search_id) {
     std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
+
     // Determine range of candidate spectra
-    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - settings::mz_tolerance);
-    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + settings::mz_tolerance);
+    float mz_tolerance = settings::mz_tolerance;
+    if (settings::use_ppm_tolerance) {
+        mz_tolerance = settings::ppm_factor * spec->precursor_mass;
+    }
+    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - mz_tolerance);
+    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + mz_tolerance);
 
     if (lower_rank < 0 || upper_rank < 0 || lower_rank > upper_rank) { // todo necessary? No matching precursor masses
         return false;

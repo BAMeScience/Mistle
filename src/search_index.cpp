@@ -19,8 +19,8 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
                 ("s,search", "search file or directory ", cxxopts::value<std::string>(), "PATH")
                 ("i,index", "index directory (must contain config.txt and binary index files)", cxxopts::value<std::string>(), "PATH")
                 ("t,threads", "number of threads", cxxopts::value<int>()->default_value("1"), "NUM")
-                ("m,mz_tolerance", "mz tolerance for candidate spectra", cxxopts::value<float>()->default_value("3.0"), "NUM")
                 ("p,ppm_tolerance", "precursor mz tolerance given in ppm", cxxopts::value<float>()->default_value("10"), "NUM")
+                ("m,mz_tolerance", "precursor mz tolerance (absolut value in Da)", cxxopts::value<float>(), "NUM")
                 ("b,bin_size", "bin size for fragment ion binning (in Da)", cxxopts::value<float>()->default_value("1"), "NUM");
 
         options.parse_positional({"search", "index"});
@@ -44,11 +44,14 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
         }
         if (result.count("mz_tolerance")) {
             settings::mz_tolerance = result["mz_tolerance"].as<float>();
+            settings::use_ppm_tolerance = false;
         }
         if (result.count("ppm_tolerance")) {
-            settings::mz_tolerance = result["ppm_tolerance"].as<float>();
+            settings::use_ppm_tolerance = true;
+            settings::ppm_tolerance = result["ppm_tolerance"].as<float>();
+            settings::ppm_factor = settings::ppm_tolerance / 1000000.0f;
             if (result.count("mz_tolerance")) {
-                cerr << "precursor mass tolerance given in ppm and dalton. Please choose either or" << endl;
+                cerr << "Precursor mz tolerance given in ppm and Dalton. Please choose one." << endl;
                 exit(1);
             }
         }

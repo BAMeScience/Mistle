@@ -133,8 +133,10 @@ bool spectrum::bin_peaks_sparse(bool root_rescale, bool normalize) {
             intensity = sqrt(intensity);
 
         //Update existing bin (if possible)
-        bool bin_exists = false;
-        for (int j = 0; j < binned_peaks.size(); ++j) {
+        add_intensity_to_bin(bin, intensity);
+
+
+        /*for (int j = 0; j < binned_peaks.size(); ++j) {
             if (binned_peaks[j] == bin) {
                 bin_exists = true;
                 binned_intensities[j] = sqrt(binned_intensities[j] * binned_intensities[j] + intensity * intensity);
@@ -145,7 +147,7 @@ bool spectrum::bin_peaks_sparse(bool root_rescale, bool normalize) {
         if (!bin_exists) {
             binned_peaks.push_back(bin);
             binned_intensities.push_back(intensity);
-        }
+        }*/
     }
 
     //Note: Neighboring bins are ignored in sparse bin representation
@@ -208,5 +210,17 @@ bool spectrum::normalize_intensities() {
 int spectrum::get_mz_bin(float mz) {
     int bin = int((mz - BIN_MIN_MZ) / settings::bin_size);
     return bin;
+}
+
+bool spectrum::add_intensity_to_bin(int bin, float intensity) {
+    const vector<int>::iterator &bin_iter = std::find(binned_peaks.begin(), binned_peaks.end(), bin);
+    if (bin_iter != binned_peaks.end()) {
+        int j = bin_iter - binned_peaks.begin();
+        binned_intensities[j] = sqrt(binned_intensities[j] * binned_intensities[j] + intensity * intensity);
+    } else {
+        binned_peaks.push_back(bin);
+        binned_intensities.push_back(intensity);
+    }
+    return false;
 }
 

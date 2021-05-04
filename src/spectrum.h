@@ -56,6 +56,7 @@ public:
     bool operator<=(std::pair<int,float> charge_mass_tuple) const;
 
 private:
+    bool add_intensity_to_bin(int bin, float intensity);
     bool spectrast_isNearPrecursor(double mz);
 };
 

@@ -23,7 +23,8 @@ public:
     static float ppm_factor;
     //todo add parameters like neighbors bin scoring. sqrt normalization etc.
     static float bin_size;
-    static bool neighbors;
+    static int neighbors;
+    static float neighbors_intensity_factor;
 
 
 

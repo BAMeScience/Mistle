@@ -31,7 +31,7 @@ public:
     std::vector<float> bins; //vector over all bins (including zeros)
     std::vector<int> binned_peaks; //vector listing existing peaks binned
     std::vector<float> binned_intensities; //vector listing intensities corresponding to binned peaks
-
+    int num_bins;
 
     //factor of intensity carried over to neighboring bins to account for mz-shifts
     float intensity_bin_spanning_factor = -0.5f; //set to -1.f to turn off (negative)

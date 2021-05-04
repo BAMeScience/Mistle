@@ -145,11 +145,19 @@ bool fragment_ion_index::load_index_from_binary_file(const string &path) {
         }
         int mz_bin = spectrum::get_mz_bin(mz);
 
-        // Same parent peak falling into the same bin
+        // Same parent peaks falling into the same bin
         if (!fragment_bins[mz_bin].empty() && fragment_bins[mz_bin].back().parent_id == id) {
             fragment &frag = fragment_bins[mz_bin].back();
+
+            //Track peak composition in fragment
+            if (frag.peak_composition.empty()) {
+                frag.peak_composition.emplace_back(frag.mz, frag.intensity);
+            }
+            frag.peak_composition.emplace_back(mz, intensity);
+
+            //Update overall intensity
             frag.intensity = sqrt(frag.intensity * frag.intensity + intensity * intensity);
-            //TODO !! Save the mz too!? (for precise rescoring) ??
+
         }
         else {
             fragment_bins[mz_bin].emplace_back(fragment(id, intensity, mz));

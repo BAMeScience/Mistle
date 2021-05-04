@@ -17,13 +17,13 @@ bool spectrum::bin_peaks(bool root_rescale, bool normalize) {
 
     //TODO: OBSOLETE use sparse binning instead
 
-    int num_bins = int((BIN_MAX_MZ - BIN_MIN_MZ) / settings::bin_size) + 1; // TODO maybe smart
+    num_bins = int((BIN_MAX_MZ - BIN_MIN_MZ) / settings::bin_size) + 1; // TODO maybe smart
 
     bins = vector<float>(num_bins, 0.f);
 
     for (int i = 0; i < peak_positions.size(); ++i) {
         int bin = get_mz_bin(peak_positions[i]);
-        if (bin < 0 || bin > bins.size()) { // TODO spectraST light ion, cut_off. bin < 180 ??
+        if (bin < 0 || bin > bins.size() - 1) { // TODO spectraST light ion, cut_off. bin < 180 ??
             //TODO what would spectrast do?
             //cout << "Warning peak out of bin range :: discarding intensity" << endl;
             bin = 0;
@@ -114,10 +114,11 @@ bool spectrum::bin_peaks_sparse(bool root_rescale, bool normalize) {
 
     binned_peaks.clear();
     binned_intensities.clear();
+    num_bins = int((BIN_MAX_MZ - BIN_MIN_MZ) / settings::bin_size) + 1;
 
     for (int i = 0; i < peak_positions.size(); ++i) {
 
-        if (peak_positions[i] > BIN_MAX_MZ || peak_positions[i] < BIN_MIN_MZ) {
+        if (peak_positions[i] < BIN_MIN_MZ || peak_positions[i] > BIN_MAX_MZ) {
             continue;
         }
 
@@ -134,23 +135,12 @@ bool spectrum::bin_peaks_sparse(bool root_rescale, bool normalize) {
 
         //Update existing bin (if possible)
         add_intensity_to_bin(bin, intensity);
-
-
-        /*for (int j = 0; j < binned_peaks.size(); ++j) {
-            if (binned_peaks[j] == bin) {
-                bin_exists = true;
-                binned_intensities[j] = sqrt(binned_intensities[j] * binned_intensities[j] + intensity * intensity);
-            }
+        for (int j = 1; j <= settings::neighbors; ++j) { //Adding intensity fraction to neighboring bins
+            add_intensity_to_bin(bin + j, intensity * pow(settings::neighbors_intensity_factor, j));
+            add_intensity_to_bin(bin - 1, intensity * pow(settings::neighbors_intensity_factor, j));
         }
 
-        //Add new bin
-        if (!bin_exists) {
-            binned_peaks.push_back(bin);
-            binned_intensities.push_back(intensity);
-        }*/
     }
-
-    //Note: Neighboring bins are ignored in sparse bin representation
 
     //Normalize sparse bins
     if (normalize) {
@@ -213,6 +203,9 @@ int spectrum::get_mz_bin(float mz) {
 }
 
 bool spectrum::add_intensity_to_bin(int bin, float intensity) {
+    if (bin < 0 || bin > num_bins - 1) {
+        return false;
+    }
     const vector<int>::iterator &bin_iter = std::find(binned_peaks.begin(), binned_peaks.end(), bin);
     if (bin_iter != binned_peaks.end()) {
         int j = bin_iter - binned_peaks.begin();
@@ -221,6 +214,6 @@ bool spectrum::add_intensity_to_bin(int bin, float intensity) {
         binned_peaks.push_back(bin);
         binned_intensities.push_back(intensity);
     }
-    return false;
+    return true;
 }
 

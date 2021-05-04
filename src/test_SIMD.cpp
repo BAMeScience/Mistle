@@ -5,6 +5,7 @@
 
 #include <immintrin.h>
 #include <memory>
+#include <complex>
 
 using namespace std;
 
@@ -44,12 +45,33 @@ void multiply256(__m256 _scalar, std::vector<float> &vec, std::vector<float> &re
     }
 }
 
+float normal_pdf(float x, float m, float s)
+{
+    static const float inv_sqrt_2pi = 0.3989422804014327;
+    float a = (x - m) / s;
+
+    return inv_sqrt_2pi / s * std::exp(-0.5f * a * a);
+}
+
+float normal_pdf_div(float x, float m, float s)
+{
+    return normal_pdf(x,m,s) / normal_pdf(m,m,s);
+}
 
 int main() {
 
     cout << "Hello SIMD user" << endl;
 
+    for (int i = -3; i <= 3; ++i) {
+        cout << i << ":\t" << normal_pdf_div(i,0,1) << endl;
+    }
+    float i1 = 0.3f;
+    float i2 = 0.25f;
+    float dist = 0.1; //Daltons
+    float s = 0.1;
 
+    cout << i1 * i2  << " " << i1 * normal_pdf_div(dist, 0,s) * i2 << " " << i1 * normal_pdf_div(dist/2.f, 0, s)  * normal_pdf_div(dist/2, 0, s) * i2 << endl;
+    exit(12);
     /*
      * Args
      */

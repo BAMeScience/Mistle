@@ -23,7 +23,7 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
                 ("m,mz_tolerance", "precursor mz tolerance (absolut value in Da)", cxxopts::value<float>(), "NUM")
                 ("b,bin_size", "bin size for fragment ion binning (in Da)", cxxopts::value<float>()->default_value("1"), "NUM")
                 ("neighbors", "number of neighboring bins intensity is carried over (on search spectrum peaks)", cxxopts::value<int>()->default_value("0"), "NUM")
-                ("neighbor_intensity_factor", "fraction [0, 1] of intensity carried over to neighboring bin(s)", cxxopts::value<float>()->default_value("0.5"), "NUM");
+                ("neighbors_intensity_factor", "fraction [0, 1] of intensity carried over to neighboring bin(s)", cxxopts::value<float>()->default_value("0.5"), "NUM");
 
         options.parse_positional({"search", "index"});
 
@@ -61,8 +61,8 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
             settings::bin_size = result["bin_size"].as<float>();
         }
         if (result.count("neighbors")) {
-            std::cout << result["neighbors"].as<int>() << std::endl;
-            exit(12);
+            settings::neighbors = result["neighbors"].as<int>();
+            settings::neighbors_intensity_factor = result["neighbors_intensity_factor"].as<float>();
         }
 
 

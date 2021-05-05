@@ -19,3 +19,8 @@ match::match(std::shared_ptr<spectrum> search_spectrum, std::shared_ptr<spectrum
 match::match(unsigned int query_id, unsigned int target_id, float dot_product, float mass_difference, int hit_rank) : query_id(query_id), target_id(target_id), dot_product(dot_product), mass_difference(mass_difference), hit_rank(hit_rank) {
 
 }
+
+match::match(unsigned int query_id, unsigned int target_id, float similarity_score, float dot_product,
+             float mass_difference, int hit_rank) : query_id(query_id), target_id(target_id), similarity_score(similarity_score), dot_product(dot_product), mass_difference(mass_difference), hit_rank(hit_rank) {
+
+}

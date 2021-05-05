@@ -54,6 +54,8 @@ private:
      * Search: 3-fold implementation, depending on cpu instruction level (STANDARD, AVX2, AVX512)
      */
     bool search_spectrum(unsigned int search_id);
+    float rescore_spectrum(unsigned int search_id, unsigned int target_id);
+    float normal_pdf(float x, float mean, float standard_deviation);
 };
 
 

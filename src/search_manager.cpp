@@ -6,6 +6,7 @@
 
 //#include <x86intrin.h>
 #include <immintrin.h>
+#include <complex>
 
 #include "search_manager.h"
 #include "settings.h"
@@ -377,18 +378,90 @@ bool search_manager::search_spectrum(unsigned int search_id) {
         }
     }
 
-    //exit(12);
+    /*
+     * Do precise rescoring
+     */
+
     // Prepare best-scoring PSM
     int max_elem = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
     int target_rank = max_elem + lower_rank;
+    unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
     float dot = dot_scores[max_elem];
+    float sim = rescore_spectrum(search_id, target_id);
 
     float mass_diff = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
     // Record match
     std::lock_guard<std::mutex> guard(pool->mtx);
-    matches.emplace_back(match(search_id, precursor_idx->get_precursor_by_rank(target_rank).id, dot, mass_diff, 1));
+    matches.emplace_back(match(search_id, target_id, sim, dot, mass_diff, 1));
 
     return true;
+}
+
+float search_manager::rescore_spectrum(unsigned int search_id, unsigned int target_id) {
+    std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
+
+    float score = 0.f;
+    float sigma = settings::bin_size;
+    float max_normal = normal_pdf(0,0, sigma);
+
+    for (int i = 0; i < spec->peak_positions.size(); ++i) {
+        float mz = spec->peak_positions[i];
+        float intensity = spec->intensities[i]; //TODO normalize
+
+        /*
+         * Extract all matching peaks within a range of +-5 sigma
+         */
+
+        std::vector<std::pair<float, float>> peaks;
+        int lower_bin = spectrum::get_mz_bin(mz - 5 * sigma);
+        int upper_bin = spectrum::get_mz_bin(mz + 5 * sigma);
+
+        for (int bin = lower_bin; bin <= upper_bin; ++bin) {
+            if (bin < 0 || bin >= spec->num_bins) {
+                continue;
+            }
+            fragment_bin &ion_bin = frag_idx->fragment_bins[bin];
+            if (ion_bin.empty())
+                continue;
+
+            fragment &f = *std::lower_bound(ion_bin.begin(), ion_bin.end(), precursor_idx->get_rank(target_id), [&](fragment &f, int rank) {
+                return precursor_idx->get_rank(f.parent_id) < rank;
+            });
+
+            if (f.parent_id != target_id) {
+                continue;
+            }
+
+
+            if (!f.peak_composition.empty()) {
+                for (std::pair<float, float> p : f.peak_composition) {
+                    peaks.push_back(p);
+                }
+            } else {
+                peaks.emplace_back(f.mz, f.intensity);
+            }
+
+        }
+
+        /*
+         * Score spectrum peak to all peaks of target using normal distribution for intensity fall-off
+         */
+
+        for (auto &peak : peaks) {
+            float distance = mz - peak.first;
+            float normal_factor = normal_pdf(distance / 2.f, 0, sigma) / max_normal;
+
+            score += intensity * peak.second * normal_factor * normal_factor;
+        }
+    }
+
+    return score;
+
+
+
+
+
+
 }
 
 #else
@@ -481,18 +554,27 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
         return false;
 
     // Add header
-    outfile << "spectrum"+delimiter+"match"+delimiter+"peptide"+delimiter+"dot-product"+delimiter+"mass-difference\n";
+    outfile << "spectrum"+delimiter+"match"+delimiter+"peptide"+delimiter+"similarity"+delimiter+"dot-product"+delimiter+"mass-difference\n";
 
     // Go through matches and parse relevant information for each
     for (int i = 0; i < matches.size(); ++i) {
         match psm = matches[i];
         precursor &target = precursor_idx->get_precursor(psm.target_id);
-        outfile << search_library.spectrum_list[psm.query_id]->name << delimiter << target.id << delimiter << target.peptide << delimiter << psm.dot_product << delimiter << psm.mass_difference << "\n";
+        outfile << search_library.spectrum_list[psm.query_id]->name << delimiter << target.id << delimiter << target.peptide << delimiter << psm.similarity_score << delimiter << psm.dot_product << delimiter << psm.mass_difference << "\n";
     }
 
     outfile.close();
     return true;
 }
+
+float search_manager::normal_pdf(float x, float mean, float standard_deviation) {
+    static const float inv_sqrt_2pi = 0.3989422804014327;
+    float x_deviation = (x - mean) / standard_deviation;
+
+    return inv_sqrt_2pi / standard_deviation * std::exp(-0.5f * x_deviation * x_deviation);
+}
+
+
 
 /*
 bool search_manager::search_spectrum_avx(unsigned int search_id) {

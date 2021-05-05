@@ -126,16 +126,6 @@ int main(int argc, const char* argv[]) {
     auto duration = duration_cast<chrono::seconds>(stop - start);
     cout << "Total time elapsed: " <<  duration.count() << " seconds" << endl;
 
-
-    /*indexing_manager im(directory);
-    auto start = chrono::high_resolution_clock::now();
-    im.build_indices();
-    auto stop = chrono::high_resolution_clock::now();
-    auto duration = duration_cast<chrono::seconds>(stop - start);
-    cout << "Loading Time: " <<  duration.count() << " seconds" << endl;
-    */
-
-
     return 0;
 
 }

@@ -12,6 +12,7 @@ public:
     unsigned int query_id;
     unsigned int target_id;
 
+    float similarity_score;
     float dot_product;
     float mass_difference;
     int hit_rank;
@@ -23,6 +24,7 @@ public:
     match(std::shared_ptr<spectrum> search_spectrum, std::shared_ptr<spectrum> matched_spectrum);
     match(std::shared_ptr<spectrum> search_spectrum, std::shared_ptr<spectrum> matched_spectrum, float dot_product, int hit_rank);
     match(unsigned int query_id, unsigned int target_id, float dot_product, float mass_difference, int hit_rank);
+    match(unsigned int query_id, unsigned int target_id, float similarity_score, float dot_product, float mass_difference, int hit_rank);
 
 };
 

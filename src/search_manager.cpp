@@ -406,15 +406,15 @@ float search_manager::rescore_spectrum(unsigned int search_id, unsigned int targ
 
     for (int i = 0; i < spec->peak_positions.size(); ++i) {
         float mz = spec->peak_positions[i];
-        float intensity = spec->intensities[i]; //TODO normalize
+        float intensity = spec->intensities[i];
 
         /*
          * Extract all matching peaks within a range of +-5 sigma
          */
 
         std::vector<std::pair<float, float>> peaks;
-        int lower_bin = spectrum::get_mz_bin(mz - 5 * sigma);
-        int upper_bin = spectrum::get_mz_bin(mz + 5 * sigma);
+        int lower_bin = spectrum::get_mz_bin(mz - 3 * sigma);
+        int upper_bin = spectrum::get_mz_bin(mz + 3 * sigma);
 
         for (int bin = lower_bin; bin <= upper_bin; ++bin) {
             if (bin < 0 || bin >= spec->num_bins) {
@@ -449,9 +449,9 @@ float search_manager::rescore_spectrum(unsigned int search_id, unsigned int targ
 
         for (auto &peak : peaks) {
             float distance = mz - peak.first;
-            float normal_factor = normal_pdf(distance / 2.f, 0, sigma) / max_normal;
+            float normal_factor = normal_pdf(distance, 0, sigma) / max_normal;
 
-            score += intensity * peak.second * normal_factor * normal_factor;
+            score += intensity * peak.second * normal_factor;
         }
     }
 

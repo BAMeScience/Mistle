@@ -401,7 +401,7 @@ float search_manager::rescore_spectrum(unsigned int search_id, unsigned int targ
     std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
 
     float score = 0.f;
-    float sigma = settings::bin_size;
+    float sigma = settings::bin_size / 2.f;
     float max_normal = normal_pdf(0,0, sigma);
 
     for (int i = 0; i < spec->peak_positions.size(); ++i) {

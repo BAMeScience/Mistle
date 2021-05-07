@@ -55,7 +55,10 @@ private:
      */
     bool search_spectrum(unsigned int search_id);
     float rescore_spectrum(unsigned int search_id, unsigned int target_id);
-    float normal_pdf(float x, float mean, float standard_deviation);
+
+    float sigma;
+    float max_normal;
+    static float normal_pdf(float x, float mean, float standard_deviation);
 };
 
 

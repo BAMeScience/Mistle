@@ -18,6 +18,11 @@ search_manager::search_manager(std::string search_file_path, std::string index_d
     config = std::make_shared<configuration>();
     config->load_configuration_from_file(index_directory_path + "config.txt");
     pool = std::make_shared<thread_pool>(settings::num_threads);
+
+    //Setting up scoring parameters
+    sigma = settings::bin_size / 2.f;
+    max_normal = normal_pdf(0,0, sigma);
+
 }
 
 
@@ -401,8 +406,6 @@ float search_manager::rescore_spectrum(unsigned int search_id, unsigned int targ
     std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
 
     float score = 0.f;
-    float sigma = settings::bin_size / 2.f;
-    float max_normal = normal_pdf(0,0, sigma);
 
     for (int i = 0; i < spec->peak_positions.size(); ++i) {
         float mz = spec->peak_positions[i];
@@ -413,8 +416,8 @@ float search_manager::rescore_spectrum(unsigned int search_id, unsigned int targ
          */
 
         std::vector<std::pair<float, float>> peaks;
-        int lower_bin = spectrum::get_mz_bin(mz - 3 * sigma);
-        int upper_bin = spectrum::get_mz_bin(mz + 3 * sigma);
+        int lower_bin = spectrum::get_mz_bin(mz - 5 * sigma);
+        int upper_bin = spectrum::get_mz_bin(mz + 5 * sigma);
 
         for (int bin = lower_bin; bin <= upper_bin; ++bin) {
             if (bin < 0 || bin >= spec->num_bins) {

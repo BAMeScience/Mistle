@@ -241,6 +241,13 @@ bool fragment_ion_index::prepare_axv_access() {
     return true;
 }
 
+#else
+bool fragment_ion_index::prepare_axv_access() {
+    return false;
+}
+#endif
+
+
 bool fragment_ion_index::load_preliminary_index_from_binary_file(const string &path) {
     /*
      * Read index from binary file
@@ -268,7 +275,3 @@ bool fragment_ion_index::load_preliminary_index_from_binary_file(const string &p
     f.close();
     return true;
 }
-
-
-
-#endif

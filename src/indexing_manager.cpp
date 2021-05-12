@@ -157,6 +157,11 @@ bool indexing_manager::parse_file(unsigned int file_num) {
         auto read_and_stream = [this, buffer]() {
             shared_ptr<spectrum> tmp_spectrum = msp_reader::read_spectrum_from_buffer(buffer);
 
+            if (tmp_spectrum->peptide.length() < config->minimum_peptide_length) {
+                return;
+            }
+
+
             //Lock for recording and streaming
             std::lock_guard<std::mutex> guard(pool->mtx);
 

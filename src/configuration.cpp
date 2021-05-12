@@ -26,6 +26,7 @@ bool configuration::save_configuration_to_file(const std::string& config_file_pa
         f << lim << delimiter;
     }
     f << "\n";
+    f << "Min peptide length: " << minimum_peptide_length << "\n";
 
     f.close();
     return true;

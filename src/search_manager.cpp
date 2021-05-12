@@ -255,12 +255,14 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     // Prepare best-scoring PSM
     int max_elem = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
     int target_rank = max_elem + lower_rank;
+    unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
     float dot = dot_scores[max_elem];
+    float sim = rescore_spectrum(search_id, target_id);
 
     float mass_diff = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
     // Record match
     std::lock_guard<std::mutex> guard(pool->mtx);
-    matches.emplace_back(match(search_id, precursor_idx->get_precursor_by_rank(target_rank).id, dot, mass_diff, 1));
+    matches.emplace_back(match(search_id, target_id, sim, dot, mass_diff, 1));
 
     return true;
 }
@@ -402,71 +404,6 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     return true;
 }
 
-float search_manager::rescore_spectrum(unsigned int search_id, unsigned int target_id) {
-    std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
-
-    float score = 0.f;
-
-    for (int i = 0; i < spec->peak_positions.size(); ++i) {
-        float mz = spec->peak_positions[i];
-        float intensity = spec->intensities[i];
-
-        /*
-         * Extract all matching peaks within a range of +-5 sigma
-         */
-
-        std::vector<std::pair<float, float>> peaks;
-        int lower_bin = spectrum::get_mz_bin(mz - 5 * sigma);
-        int upper_bin = spectrum::get_mz_bin(mz + 5 * sigma);
-
-        for (int bin = lower_bin; bin <= upper_bin; ++bin) {
-            if (bin < 0 || bin >= spec->num_bins) {
-                continue;
-            }
-            fragment_bin &ion_bin = frag_idx->fragment_bins[bin];
-            if (ion_bin.empty())
-                continue;
-
-            fragment &f = *std::lower_bound(ion_bin.begin(), ion_bin.end(), precursor_idx->get_rank(target_id), [&](fragment &f, int rank) {
-                return precursor_idx->get_rank(f.parent_id) < rank;
-            });
-
-            if (f.parent_id != target_id) {
-                continue;
-            }
-
-
-            if (!f.peak_composition.empty()) {
-                for (std::pair<float, float> p : f.peak_composition) {
-                    peaks.push_back(p);
-                }
-            } else {
-                peaks.emplace_back(f.mz, f.intensity);
-            }
-
-        }
-
-        /*
-         * Score spectrum peak to all peaks of target using normal distribution for intensity fall-off
-         */
-
-        for (auto &peak : peaks) {
-            float distance = mz - peak.first;
-            float normal_factor = normal_pdf(distance, 0, sigma) / max_normal;
-
-            score += intensity * peak.second * normal_factor;
-        }
-    }
-
-    return score;
-
-
-
-
-
-
-}
-
 #else
 bool search_manager::search_spectrum(unsigned int search_id) {
     std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
@@ -512,13 +449,15 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     // Prepare best-scoring PSM
     int max_elem = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
     int target_rank = max_elem + lower_rank;
+    unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
     float dot = dot_scores[max_elem];
+    float sim = rescore_spectrum(search_id, target_id);
 
     float mass_diff = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
     // Record match
-
     std::lock_guard<std::mutex> guard(pool->mtx);
-    matches.emplace_back(search_id, precursor_idx->get_precursor_by_rank(target_rank).id, dot, mass_diff, 1);
+    matches.emplace_back(match(search_id, target_id, sim, dot, mass_diff, 1));
+
     return true;
 
 }
@@ -646,3 +585,69 @@ bool search_manager::search_spectrum_avx(unsigned int search_id) {
 
 
 //__m256 _mini_vector = {ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity}; //_mm256_set_ps(ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity);//_mm256_load_ps(&vec[i]);
+
+
+float search_manager::rescore_spectrum(unsigned int search_id, unsigned int target_id) {
+    std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
+
+    float score = 0.f;
+
+    for (int i = 0; i < spec->peak_positions.size(); ++i) {
+        float mz = spec->peak_positions[i];
+        float intensity = spec->intensities[i];
+
+        /*
+         * Extract all matching peaks within a range of +-5 sigma
+         */
+
+        std::vector<std::pair<float, float>> peaks;
+        int lower_bin = spectrum::get_mz_bin(mz - 5 * sigma);
+        int upper_bin = spectrum::get_mz_bin(mz + 5 * sigma);
+
+        for (int bin = lower_bin; bin <= upper_bin; ++bin) {
+            if (bin < 0 || bin >= spec->num_bins) {
+                continue;
+            }
+            fragment_bin &ion_bin = frag_idx->fragment_bins[bin];
+            if (ion_bin.empty())
+                continue;
+
+            fragment &f = *std::lower_bound(ion_bin.begin(), ion_bin.end(), precursor_idx->get_rank(target_id), [&](fragment &f, int rank) {
+                return precursor_idx->get_rank(f.parent_id) < rank;
+            });
+
+            if (f.parent_id != target_id) {
+                continue;
+            }
+
+
+            if (!f.peak_composition.empty()) {
+                for (std::pair<float, float> p : f.peak_composition) {
+                    peaks.push_back(p);
+                }
+            } else {
+                peaks.emplace_back(f.mz, f.intensity);
+            }
+
+        }
+
+        /*
+         * Score spectrum peak to all peaks of target using normal distribution for intensity fall-off
+         */
+
+        for (auto &peak : peaks) {
+            float distance = mz - peak.first;
+            float normal_factor = normal_pdf(distance, 0, sigma) / max_normal;
+
+            score += intensity * peak.second * normal_factor;
+        }
+    }
+
+    return score;
+
+
+
+
+
+
+}

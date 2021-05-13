@@ -137,7 +137,7 @@ bool spectrum::bin_peaks_sparse(bool root_rescale, bool normalize) {
         add_intensity_to_bin(bin, intensity);
         for (int j = 1; j <= settings::neighbors; ++j) { //Adding intensity fraction to neighboring bins
             add_intensity_to_bin(bin + j, intensity * pow(settings::neighbors_intensity_factor, j));
-            add_intensity_to_bin(bin - 1, intensity * pow(settings::neighbors_intensity_factor, j));
+            add_intensity_to_bin(bin - j, intensity * pow(settings::neighbors_intensity_factor, j));
         }
 
     }

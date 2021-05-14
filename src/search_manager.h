@@ -55,6 +55,7 @@ private:
      */
     bool search_spectrum(unsigned int search_id);
     float rescore_spectrum(unsigned int search_id, unsigned int target_id);
+    bool rescore_match(match &psm);
 
     float sigma;
     float max_normal;

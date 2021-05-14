@@ -8,6 +8,14 @@ match::match() {
 
 }
 
+match::match(unsigned int query_id, unsigned int target_id) : query_id(query_id), target_id(target_id) {
+
+}
+
+/*
+ * Deprecated constructors
+ */
+
 match::match(std::shared_ptr<spectrum> search_spectrum, std::shared_ptr<spectrum> matched_spectrum) : query_spectrum(search_spectrum), matched_spectrum(matched_spectrum) {
     mass_difference = matched_spectrum->precursor_mass - search_spectrum->precursor_mass;
 }

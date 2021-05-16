@@ -10,7 +10,7 @@
 
 #include "search_manager.h"
 #include "settings.h"
-
+#include <set>
 search_manager::search_manager(std::string search_file_path, std::string index_directory_path) : search_file_path(search_file_path), index_directory_path(index_directory_path) {
     std::cout << "Calling MS2 recruiter" << std::endl;
 
@@ -500,13 +500,13 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
         return false;
 
     // Add header
-    outfile << "spectrum"+delimiter+"match"+delimiter+"peptide"+delimiter+"similarity"+delimiter+"dot-product"+delimiter+"mass-difference\n";
+    outfile << "spectrum"+delimiter+"match"+delimiter+"peptide"+delimiter+"similarity"+delimiter+"dot-product"+delimiter+"mass-difference"+delimiter+"peak_count_query"+delimiter+"peak_count_ref\n";
 
     // Go through matches and parse relevant information for each
     for (int i = 0; i < matches.size(); ++i) {
-        match psm = matches[i];
+        match &psm = matches[i];
         precursor &target = precursor_idx->get_precursor(psm.target_id);
-        outfile << search_library.spectrum_list[psm.query_id]->name << delimiter << target.id << delimiter << target.peptide << delimiter << psm.similarity_score << delimiter << psm.dot_product << delimiter << psm.mass_difference << "\n";
+        outfile << search_library.spectrum_list[psm.query_id]->name << delimiter << target.id << delimiter << target.peptide << delimiter << psm.similarity_score << delimiter << psm.dot_product << delimiter << psm.mass_difference << delimiter << psm.peak_count_query << delimiter << psm.peak_count_target << "\n";
     }
 
     outfile.close();
@@ -660,6 +660,8 @@ bool search_manager::rescore_match(match &psm) {
     std::shared_ptr<spectrum> spec = search_library.spectrum_list[psm.query_id];
 
     float score = 0.f;
+    int peak_count_query = 0;
+    std::set<float> matched_peaks; //on target side
 
     for (int i = 0; i < spec->peak_positions.size(); ++i) {
         float mz = spec->peak_positions[i];
@@ -704,18 +706,30 @@ bool search_manager::rescore_match(match &psm) {
          * Score spectrum peak to all peaks of target using normal distribution for intensity fall-off
          */
 
+        bool peak_matched = false;
         for (auto &peak : peaks) {
             float distance = mz - peak.first;
             float normal_factor = normal_pdf(distance, 0, sigma) / max_normal;
 
             score += intensity * peak.second * normal_factor;
+
+            if (distance <= sigma) {
+                matched_peaks.insert(peak.first);
+                peak_matched = true;
+            }
+        }
+        if (peak_matched) {
+            ++peak_count_query;
         }
     }
+
 
     /*
      * Update Match
      */
 
+    psm.peak_count_query = peak_count_query;
+    psm.peak_count_target = matched_peaks.size();
     psm.similarity_score = score;
 
     return true;

@@ -12,9 +12,13 @@ public:
     unsigned int query_id;
     unsigned int target_id;
 
+    float mass_difference;
+
     float similarity_score;
     float dot_product;
-    float mass_difference;
+    int peak_count_query;
+    int peak_count_target;
+
     int hit_rank;
     int query_index; //todo implement
 

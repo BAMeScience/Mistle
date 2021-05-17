@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <numeric>
@@ -500,13 +501,13 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
         return false;
 
     // Add header
-    outfile << "spectrum"+delimiter+"match"+delimiter+"peptide"+delimiter+"similarity"+delimiter+"dot-product"+delimiter+"mass-difference"+delimiter+"peak_count_query"+delimiter+"peak_count_ref\n";
+    outfile << "spectrum"+delimiter+"match"+delimiter+"peptide"+delimiter+"similarity"+delimiter+"bias"+delimiter+"dot-product"+delimiter+"mass-difference"+delimiter+"peak_count_query"+delimiter+"peak_count_ref\n";
 
     // Go through matches and parse relevant information for each
     for (int i = 0; i < matches.size(); ++i) {
         match &psm = matches[i];
         precursor &target = precursor_idx->get_precursor(psm.target_id);
-        outfile << search_library.spectrum_list[psm.query_id]->name << delimiter << target.id << delimiter << target.peptide << delimiter << psm.similarity_score << delimiter << psm.dot_product << delimiter << psm.mass_difference << delimiter << psm.peak_count_query << delimiter << psm.peak_count_target << "\n";
+        outfile << search_library.spectrum_list[psm.query_id]->name << delimiter << target.id << delimiter << target.peptide << delimiter << psm.similarity_score << delimiter << psm.bias << delimiter << psm.dot_product << delimiter << psm.mass_difference << delimiter << psm.peak_count_query << delimiter << psm.peak_count_target << "\n";
     }
 
     outfile.close();
@@ -656,7 +657,7 @@ float search_manager::rescore_spectrum(unsigned int search_id, unsigned int targ
 
 }
 
-bool search_manager::rescore_match(match &psm) {
+bool search_manager::rescore_match_old(match &psm) {
     std::shared_ptr<spectrum> spec = search_library.spectrum_list[psm.query_id];
 
     float score = 0.f;
@@ -731,6 +732,109 @@ bool search_manager::rescore_match(match &psm) {
     psm.peak_count_query = peak_count_query;
     psm.peak_count_target = matched_peaks.size();
     psm.similarity_score = score;
+
+    return true;
+}
+
+bool search_manager::rescore_match(match &psm) {
+    std::shared_ptr<spectrum> spec = search_library.spectrum_list[psm.query_id];
+
+    float score = 0.f;
+    float bias = 0.f;
+    float min_counter_score = 0.f;
+    std::set<std::pair<float, float>> target_peaks;
+
+    /*
+     * Extract all matching peaks within a range of +-5 sigma
+     */
+
+    for (int i = 0; i < spec->peak_positions.size(); ++i) {
+        float mz = spec->peak_positions[i];
+
+
+        std::vector<std::pair<float, float>> peaks;
+        int lower_bin = spectrum::get_mz_bin(mz - 5 * sigma);
+        int upper_bin = spectrum::get_mz_bin(mz + 5 * sigma);
+
+        for (int bin = lower_bin; bin <= upper_bin; ++bin) {
+            if (bin < 0 || bin >= spec->num_bins) {
+                continue;
+            }
+            fragment_bin &ion_bin = frag_idx->fragment_bins[bin];
+            if (ion_bin.empty())
+                continue;
+
+            fragment &f = *std::lower_bound(ion_bin.begin(), ion_bin.end(), precursor_idx->get_rank(psm.target_id), [&](fragment &f, int rank) {
+                return precursor_idx->get_rank(f.parent_id) < rank;
+            });
+
+            if (f.parent_id != psm.target_id)
+                continue;
+
+
+            if (!f.peak_composition.empty()) {
+                for (std::pair<float, float> p : f.peak_composition) {
+                    target_peaks.insert(p);
+                }
+            } else {
+                target_peaks.insert(std::make_pair(f.mz, f.intensity));
+            }
+
+        }
+
+
+    }
+
+    /*
+     * Score peaks (max score per peak match)
+     *
+     * From Target (reference) side
+     */
+
+    int peak_count_ref = 0;
+    for (auto &peak : target_peaks) {
+        float mz = peak.first;
+        float intensity = peak.second;
+        float peak_score = 0.f;
+        bool peak_matched = false;
+
+        for (int i = 0; i < spec->peak_positions.size(); ++i) {
+            float s_mz = spec->peak_positions[i];
+
+            float distance = mz - s_mz;
+            if (abs(distance) < 5 * sigma) {
+
+                float normal_factor = normal_pdf(distance, 0, sigma) / max_normal;
+                float new_score = intensity * spec->intensities[i] * normal_factor;
+                if (new_score > peak_score) {
+                    peak_score = new_score;
+                }
+                if (abs(distance) < sigma && new_score >= min_counter_score) {
+                    peak_matched = true;
+                }
+
+            }
+        }
+
+        score += peak_score;
+        bias += (peak_score * peak_score);
+        if (peak_matched) {
+            ++peak_count_ref;
+        }
+    }
+
+
+    /*
+     * Update Match
+     */
+
+    psm.peak_count_query = 1000;
+    psm.peak_count_target = peak_count_ref;
+    psm.similarity_score = score;
+    if (score > 0)
+        psm.bias = std::sqrt(bias) / score;
+    else
+        psm.bias = 0.f;
 
     return true;
 }

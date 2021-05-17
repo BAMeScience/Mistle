@@ -15,6 +15,7 @@ public:
     float mass_difference;
 
     float similarity_score;
+    float bias;
     float dot_product;
     int peak_count_query;
     int peak_count_target;

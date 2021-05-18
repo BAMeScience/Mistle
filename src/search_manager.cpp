@@ -252,15 +252,22 @@ bool search_manager::search_spectrum(unsigned int search_id) {
         }
     }
 
-    //exit(12);
+    /*
+     * Do precise rescoring
+     */
+
     // Prepare best-scoring PSM
     int max_elem = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
     int target_rank = max_elem + lower_rank;
     unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
-    float dot = dot_scores[max_elem];
-    float sim = rescore_spectrum(search_id, target_id);
 
-    float mass_diff = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
+    // Creating and rescore match
+    match top_match = match(search_id, target_id);
+    top_match.dot_product =  dot_scores[max_elem];
+    top_match.mass_difference = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
+
+    rescore_match(top_match);
+
     // Record match
     std::lock_guard<std::mutex> guard(pool->mtx);
     matches.emplace_back(match(search_id, target_id, sim, dot, mass_diff, 1));
@@ -451,14 +458,22 @@ bool search_manager::search_spectrum(unsigned int search_id) {
 
     }
 
+    /*
+     * Do precise rescoring
+     */
+
     // Prepare best-scoring PSM
     int max_elem = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
     int target_rank = max_elem + lower_rank;
     unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
-    float dot = dot_scores[max_elem];
-    float sim = rescore_spectrum(search_id, target_id);
 
-    float mass_diff = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
+    // Creating and rescore match
+    match top_match = match(search_id, target_id);
+    top_match.dot_product =  dot_scores[max_elem];
+    top_match.mass_difference = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
+
+    rescore_match(top_match);
+
     // Record match
     std::lock_guard<std::mutex> guard(pool->mtx);
     matches.emplace_back(match(search_id, target_id, sim, dot, mass_diff, 1));

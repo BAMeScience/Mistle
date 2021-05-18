@@ -270,7 +270,7 @@ bool search_manager::search_spectrum(unsigned int search_id) {
 
     // Record match
     std::lock_guard<std::mutex> guard(pool->mtx);
-    matches.emplace_back(match(search_id, target_id, sim, dot, mass_diff, 1));
+    matches.push_back(top_match);
 
     return true;
 }
@@ -476,7 +476,7 @@ bool search_manager::search_spectrum(unsigned int search_id) {
 
     // Record match
     std::lock_guard<std::mutex> guard(pool->mtx);
-    matches.emplace_back(match(search_id, target_id, sim, dot, mass_diff, 1));
+    matches.push_back(top_match);
 
     return true;
 

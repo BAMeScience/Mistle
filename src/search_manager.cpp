@@ -13,8 +13,6 @@
 #include "settings.h"
 #include <set>
 search_manager::search_manager(std::string search_file_path, std::string index_directory_path) : search_file_path(search_file_path), index_directory_path(index_directory_path) {
-    std::cout << "Calling MS2 recruiter" << std::endl;
-
     std::cout << "Configuring ... " << std::endl;
     config = std::make_shared<configuration>();
     config->load_configuration_from_file(index_directory_path + "config.txt");
@@ -87,11 +85,11 @@ bool search_manager::perform_searches() {
     frag_idx = std::make_shared<fragment_ion_index>();
     frag_idx->precursor_idx = precursor_idx;
     for (int i = 0; i < config->num_indices; ++i) {
-        std::cout << "Loading index number " << i << std::endl;
+        //std::cout << "Loading index number " << i << std::endl;
         frag_idx->load_index_from_binary_file(config->sub_idx_file_names[i]);
         frag_idx->prepare_axv_access();
         //TODO set precursor index limits by subindex borders... has to be properly implemented
-        std::cout << "Searching ... " << std::endl;
+        //std::cout << "Searching ... " << std::endl;
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];
 
         for (unsigned int &s_id : search_ids) {
@@ -108,11 +106,11 @@ bool search_manager::perform_searches_parallel() {
     frag_idx = std::make_shared<fragment_ion_index>();
 
     for (int i = 0; i < config->num_indices; ++i) {
-        std::cout << "Loading index number " << i << std::endl;
+        //std::cout << "Loading index number " << i << std::endl;
         frag_idx->load_index_from_binary_file(config->sub_idx_file_names[i]);
         frag_idx->prepare_axv_access();
         //TODO set precursor index limits by subindex borders... has to be properly implemented
-        std::cout << "Searching ... " << std::endl;
+        //std::cout << "Searching ... " << std::endl;
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];
         for (unsigned int &s_id : search_ids) {
             std::shared_ptr<spectrum> spec = search_library.spectrum_list[s_id];
@@ -488,7 +486,7 @@ bool search_manager::merge_matches() {
     /*
      * Sort by id ascending and then score descending
      */
-    std::cout << matches.size() << std::endl;
+    //std::cout << matches.size() << std::endl;
     std::sort(matches.begin(), matches.end(), [](match a, match b) {
         return (a.query_id == b.query_id && a.dot_product > b.dot_product) || a.query_id < b.query_id;
     });
@@ -503,7 +501,7 @@ bool search_manager::merge_matches() {
         }
         else ++it;
     }
-    std::cout << matches.size() << std::endl;
+    //std::cout << matches.size() << std::endl;
     return true;
 }
 

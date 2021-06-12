@@ -22,10 +22,10 @@ library::~library() {
 
 library::library(string &path) {
     if (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\') {
-        cout << "\nLoading library from directory:" << endl;
+        cout << "Loading library from directory:" << endl;
         load_library_from_directory(path);
     }
-    cout << "\nLoading library from single file:" << endl;
+    cout << "Loading library from single file:" << endl;
     load_spectra_from_file(path);
 }
 

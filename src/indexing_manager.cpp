@@ -41,7 +41,6 @@ indexing_manager::indexing_manager(string path) : path(path) {
 
 
 indexing_manager::indexing_manager(std::string path, std::shared_ptr<configuration> config) : path(path), config(config) {
-    cout << "Calling Manager" << endl;
 
     /*
      * Init
@@ -66,7 +65,6 @@ indexing_manager::indexing_manager(std::string path, std::shared_ptr<configurati
 
 
 bool indexing_manager::build_indices() {
-    cout << "Manager too busy to answer phone. Calling back later" << endl;
 
     /*
      * Prepare in/output
@@ -78,9 +76,10 @@ bool indexing_manager::build_indices() {
      * Parsing files and creating preliminary indices
      */
 
+    cout << "Parsing library files" << endl;
     auto start = chrono::high_resolution_clock::now();
     for (int i = 0; i < lib_files.size(); ++i) {
-        cout << "Parsing library file no. " << i << " (" << lib_files[i].path().filename() << ")" << endl;
+        //cout << "Parsing library file no. " << i << " (" << lib_files[i].path().filename() << ")" << endl;
         parse_file(i); //TODO has multi-threading (experimental)
     }
     if (pool->get_size() > 0) {
@@ -128,7 +127,7 @@ bool indexing_manager::set_up_output_streams() {
 
     for (int i = 0; i < config->num_indices; ++i) {
         string file_name = config->idx_path + "frag_idx_" + to_string(i) + ".bin";
-        cout << file_name << endl;
+        //cout << file_name << endl;
         config->sub_idx_file_names.push_back("frag_idx_" + to_string(i) + ".bin");
         output_streams.emplace_back(fstream(file_name, std::ios::binary | std::ofstream::out));
     }

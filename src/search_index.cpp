@@ -78,6 +78,9 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
 
 int main(int argc, const char* argv[]) {
 
+    cout << "+++ Mistle Search +++" << endl;
+
+
     /*
      * Args
      */
@@ -91,12 +94,8 @@ int main(int argc, const char* argv[]) {
     std::string search_file = "/home/ynowatzk/data/9MM/mgf/9MM_FASP.mgf";
     std::string index_dir = "./test/";
     parseArgs(argc, argv, search_file, index_dir);
-    cout << "Hello World Explorer" << endl;
-
 
     auto start = chrono::high_resolution_clock::now();
-
-
 
 
     /*
@@ -105,18 +104,18 @@ int main(int argc, const char* argv[]) {
 
     search_manager sm(search_file, index_dir);
 
-    std::cout << "Preparing libraries and indices" << std::endl;
+    std::cout << "Preparing libraries and indices ..." << std::endl;
     sm.prepare_search_library();
     std::cout << "Loading precursor index" << std::endl;
     auto check_point = chrono::high_resolution_clock::now();
     sm.prepare_precursor_index();
-    std::cout << "Loading time: " << duration_cast<chrono::seconds>(chrono::high_resolution_clock::now() - check_point).count() << " seconds" << std::endl;
+    std::cout << "Loading time (index): " << duration_cast<chrono::seconds>(chrono::high_resolution_clock::now() - check_point).count() << " seconds" << std::endl;
 
     std::cout << "Searching fragment-ion-indices in batches" << endl;
     sm.perform_searches();
     std::cout << "Merging overlapping results" << std::endl;
     sm.merge_matches();
-    std::cout << "Writing results to file" << std::endl;
+    //std::cout << "Writing results to file" << std::endl;
     sm.save_search_results_to_file(index_dir + "results.csv");
 
 

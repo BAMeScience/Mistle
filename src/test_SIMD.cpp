@@ -6,6 +6,7 @@
 #include <immintrin.h>
 #include <memory>
 #include <complex>
+#include "library.h"
 
 using namespace std;
 
@@ -59,6 +60,9 @@ float normal_pdf_div(float x, float m, float s)
 }
 
 int main() {
+
+    library lib;
+    lib.is_indexed;
 
     cout << "Hello SIMD user" << endl;
 

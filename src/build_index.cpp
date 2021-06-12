@@ -55,8 +55,7 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &input_
 
 
 int main(int argc, const char* argv[]) {
-    cout << "Hello World Builder" << endl;
-
+    cout << "+++ Mistle Build +++" << endl;
 
     /*
      * Args

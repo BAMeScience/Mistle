@@ -119,6 +119,7 @@ int main(int argc, const char* argv[]) {
     sm.save_search_results_to_file(index_dir + "results.csv");
 
 
+    cout << "Inner search time elapsed: " << sm.get_time_spent_in_inner_search() << " seconds" << endl;
 
 
     auto stop = chrono::high_resolution_clock::now();

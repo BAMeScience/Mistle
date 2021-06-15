@@ -2,6 +2,7 @@
 #define SIMPLE_EXAMPLE_SEARCH_MANAGER_H
 
 #include <string>
+#include <chrono>
 #include "library.h"
 #include "configuration.h"
 #include "match.h"
@@ -38,6 +39,12 @@ class search_manager {
     long total_time_elapsed;
     std::vector<match> matches;
 
+    /*
+     * Timer
+     */
+
+    std::chrono::duration<double> inner_search_duration;
+
 public:
 
     search_manager(std::string search_file_path, std::string index_directory_path);
@@ -48,6 +55,8 @@ public:
     bool perform_searches_parallel();
     bool merge_matches(); //todo probably going over ids back to front and popping matches in the back
     bool save_search_results_to_file(const std::string &file_path);
+
+    long get_time_spent_in_inner_search();
 
 private:
     /*

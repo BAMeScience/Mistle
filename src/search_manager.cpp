@@ -90,13 +90,17 @@ bool search_manager::perform_searches() {
         frag_idx->prepare_axv_access();
         //TODO set precursor index limits by subindex borders... has to be properly implemented
         //std::cout << "Searching ... " << std::endl;
-        std::vector<unsigned int> &search_ids = mapped_search_ids[i];
 
+        auto t1 = std::chrono::high_resolution_clock::now();
+        std::vector<unsigned int> &search_ids = mapped_search_ids[i];
         for (unsigned int &s_id : search_ids) {
             //search_spectrum(s_id);
             //search_spectrum_avx(s_id);
             search_spectrum(s_id);
         }
+        auto t2 = std::chrono::high_resolution_clock::now();
+        inner_search_duration += (t2 - t1);
+
     }
     return true;
 }
@@ -111,6 +115,8 @@ bool search_manager::perform_searches_parallel() {
         frag_idx->prepare_axv_access();
         //TODO set precursor index limits by subindex borders... has to be properly implemented
         //std::cout << "Searching ... " << std::endl;
+
+        auto t1 = std::chrono::high_resolution_clock::now();
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];
         for (unsigned int &s_id : search_ids) {
             std::shared_ptr<spectrum> spec = search_library.spectrum_list[s_id];
@@ -121,6 +127,8 @@ bool search_manager::perform_searches_parallel() {
             pool->enqueue([this, s_id] () {search_spectrum(s_id);});
         }
         pool->wait_for_all_threads();
+        auto t2 = std::chrono::high_resolution_clock::now();
+        inner_search_duration += (t2 - t1);
     }
     return true;
 }
@@ -850,4 +858,8 @@ bool search_manager::rescore_match(match &psm) {
         psm.bias = 0.f;
 
     return true;
+}
+
+long search_manager::get_time_spent_in_inner_search() {
+    return std::chrono::duration_cast<std::chrono::seconds>(inner_search_duration).count();
 }

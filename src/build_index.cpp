@@ -71,8 +71,8 @@ int main(int argc, const char* argv[]) {
      */
 
 
-    indexing_manager im(input_directory, config);
     auto start = chrono::high_resolution_clock::now();
+    indexing_manager im(input_directory, config);
     im.build_indices();
     auto stop = chrono::high_resolution_clock::now();
     auto duration = duration_cast<chrono::seconds>(stop - start);

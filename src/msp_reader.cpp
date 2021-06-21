@@ -317,3 +317,9 @@ bool msp_reader::read_next_entry_into_buffer(ifstream &f, string &buffer) {
     return true;
 }
 
+bool msp_reader::continue_read_file(vector<std::shared_ptr<spectrum>> &output_spectra) {
+
+
+    return false;
+}
+

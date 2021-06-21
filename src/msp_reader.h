@@ -14,6 +14,7 @@ static std::fstream infile;
 public:
 
     static bool read_file(std::string &path, std::vector<std::shared_ptr<spectrum>> &output_spectra);
+    static bool continue_read_file(std::vector<std::shared_ptr<spectrum>> &output_spectra);
     static bool read_file_precursors(std::string &path, std::vector<precursor *> &precursor_list);
     static bool read_file_precursors_efficient(std::string &path, std::vector<precursor *> &precursor_list);
 

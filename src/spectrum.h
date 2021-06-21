@@ -16,6 +16,7 @@ public:
     float precursor_mass;
     int charge;
 
+    int search_counter = 0;
 
     /*
      * Raw peaks

@@ -15,6 +15,7 @@ class search_manager {
     std::string index_directory_path;
     std::shared_ptr<configuration> config;
 
+    bool full_search = true;
     library search_library; //TODO probably replace by simple list of spectra
 
     //Mapped ms2 ids to sub-index where they might occur

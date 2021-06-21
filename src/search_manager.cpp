@@ -86,6 +86,8 @@ bool search_manager::perform_searches() {
     frag_idx->precursor_idx = precursor_idx;
     for (int i = 0; i < config->num_indices; ++i) {
         //std::cout << "Loading index number " << i << std::endl;
+        if (!full_search && mapped_search_ids.size() < settings::batch_size / config->num_indices)
+            continue;
         frag_idx->load_index_from_binary_file(config->sub_idx_file_names[i]);
         frag_idx->prepare_axv_access();
         //TODO set precursor index limits by subindex borders... has to be properly implemented
@@ -94,14 +96,21 @@ bool search_manager::perform_searches() {
         auto t1 = std::chrono::high_resolution_clock::now();
         std::vector<unsigned int> &search_ids = mapped_search_ids[i];
         for (unsigned int &s_id : search_ids) {
-            //search_spectrum(s_id);
-            //search_spectrum_avx(s_id);
             search_spectrum(s_id);
         }
+        mapped_search_ids[i].clear();
         auto t2 = std::chrono::high_resolution_clock::now();
         inner_search_duration += (t2 - t1);
+    }
+
+    /*
+     * Load next batch
+     */
+    if (!full_search) {
+        search_library;
 
     }
+
     return true;
 }
 

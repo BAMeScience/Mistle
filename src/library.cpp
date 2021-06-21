@@ -5,6 +5,7 @@
 #include <filesystem>
 #include "msp_reader.h"
 #include "mgf_reader.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -31,6 +32,10 @@ library::library(string &path) {
 
 bool library::load_library_from_directory(string &path) {
 
+    if (settings::load_batches) {
+        cerr << "Warning: Batch search for multiple files not fully implemented" << endl;
+        exit(1);
+    }
     for (const auto & entry : std::filesystem::directory_iterator(path)) {
         load_spectra_from_file(entry.path().string());
         //cout << spectrum_list.size() << endl;

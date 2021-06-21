@@ -12,6 +12,7 @@ public:
 
     static bool parallel;
     static int num_threads;
+    static bool load_batches;
     static int batch_size;
 
     /*

@@ -23,7 +23,9 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
                 ("m,mz_tolerance", "precursor mz tolerance (absolut value in Da)", cxxopts::value<float>(), "NUM")
                 ("b,bin_size", "bin size for fragment ion binning (in Da)", cxxopts::value<float>()->default_value("1"), "NUM")
                 ("neighbors", "number of neighboring bins intensity is carried over (on search spectrum peaks)", cxxopts::value<int>()->default_value("0"), "NUM")
-                ("neighbors_intensity_factor", "fraction [0, 1] of intensity carried over to neighboring bin(s)", cxxopts::value<float>()->default_value("0.5"), "NUM");
+                ("neighbors_intensity_factor", "fraction [0, 1] of intensity carried over to neighboring bin(s)", cxxopts::value<float>()->default_value("0.5"), "NUM")
+                ("B,batch_size", "number of mass spectra loaded in a batch", cxxopts::value<int>(), "NUM");
+
 
         options.parse_positional({"search", "index"});
 
@@ -64,8 +66,10 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
             settings::neighbors = result["neighbors"].as<int>();
             settings::neighbors_intensity_factor = result["neighbors_intensity_factor"].as<float>();
         }
-
-
+        if (result.count("batch_size")) {
+            settings::batch_size = result["batch_size"].as<int>();
+            settings::load_batches = true;
+        }
 
         return result;
 

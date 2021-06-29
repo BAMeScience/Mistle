@@ -28,7 +28,8 @@ search_manager::search_manager(std::string search_file_path, std::string index_d
 bool search_manager::prepare_search_library() {
 
     // Load search library
-    search_library = library(search_file_path);
+    search_library.construct(search_file_path);
+    last_batch = search_library.last_batch;
 
     // Map ms2 ids to search container (corresponding to sub-index)
     mapped_search_ids = std::vector<std::vector<unsigned int>>(config->num_indices);
@@ -57,6 +58,7 @@ bool search_manager::prepare_search_library() {
             if (min_mz <= config->sub_idx_limits[idx_num]) {
                 if (idx_num == 0 || max_mz >= config->sub_idx_limits[idx_num - 1]) {
                     mapped_search_ids[idx_num].push_back(i);
+                    ++search_library.spectrum_list[i]->search_counter;
                 } else {
                     break; // because max_mz is below lower border of that and every subsequent sub-indices todo >(equality)< not needed for both I think, just there to be sure
                 }
@@ -64,6 +66,63 @@ bool search_manager::prepare_search_library() {
         }
         if (max_mz >= config->sub_idx_limits.back()) { // check if it falls into last sub index (without upper border)
             mapped_search_ids.back().push_back(i);
+            ++search_library.spectrum_list[i]->search_counter;
+        }
+
+    }
+
+    return true;
+}
+
+
+bool search_manager::prepare_next_batch() {
+
+    std::cout << "Loading next batch" << std::endl;
+    //Delete Spectra not being searched anymore
+    /*for (int i = 0; i < search_library.spectrum_list.size(); ++i) {
+        if (search_library.spectrum_list[i]->search_counter == 0) {
+            search_library.spectrum_list[i] = nullptr;
+        }
+    }*/
+
+
+    // Load
+    int k = search_library.spectrum_list.size();
+    last_batch = search_library.load_next_batch();
+
+    if (config->num_indices == 1) { //TODO TEST THIS
+        mapped_search_ids[0].resize(search_library.spectrum_list.size() - k);
+        std::iota(mapped_search_ids[0].begin(), mapped_search_ids[0].end(), k);
+        return true;
+    }
+
+    for (unsigned int i = k; i < search_library.spectrum_list.size(); ++i) {
+
+        float mz = search_library.spectrum_list[i]->precursor_mass;
+        float min_mz, max_mz;
+        if (settings::use_ppm_tolerance) {
+            float mz_deviation = (mz * settings::ppm_factor);
+            min_mz = mz - mz_deviation;
+            max_mz = mz + mz_deviation;
+        } else {
+            min_mz = mz - settings::mz_tolerance;
+            max_mz = mz + settings::mz_tolerance;
+        }
+
+        // Map id (i) to every sub-index where min/max bounds fall into
+        for (int idx_num = 0; idx_num < (config->num_indices - 1); ++idx_num) {
+            if (min_mz <= config->sub_idx_limits[idx_num]) {
+                if (idx_num == 0 || max_mz >= config->sub_idx_limits[idx_num - 1]) {
+                    mapped_search_ids[idx_num].push_back(i);
+                    ++search_library.spectrum_list[i]->search_counter;
+                } else {
+                    break; // because max_mz is below lower border of that and every subsequent sub-indices todo >(equality)< not needed for both I think, just there to be sure
+                }
+            }
+        }
+        if (max_mz >= config->sub_idx_limits.back()) { // check if it falls into last sub index (without upper border)
+            mapped_search_ids.back().push_back(i);
+            ++search_library.spectrum_list[i]->search_counter;
         }
 
     }
@@ -86,7 +145,7 @@ bool search_manager::perform_searches() {
     frag_idx->precursor_idx = precursor_idx;
     for (int i = 0; i < config->num_indices; ++i) {
         //std::cout << "Loading index number " << i << std::endl;
-        if (!full_search && mapped_search_ids.size() < settings::batch_size / config->num_indices)
+        if (!last_batch && mapped_search_ids[i].size() < settings::batch_size / config->num_indices)
             continue;
         frag_idx->load_index_from_binary_file(config->sub_idx_file_names[i]);
         frag_idx->prepare_axv_access();
@@ -106,9 +165,9 @@ bool search_manager::perform_searches() {
     /*
      * Load next batch
      */
-    if (!full_search) {
-        search_library;
-
+    if (!last_batch) {
+        prepare_next_batch();
+        perform_searches();
     }
 
     return true;
@@ -117,9 +176,12 @@ bool search_manager::perform_searches() {
 
 bool search_manager::perform_searches_parallel() {
     frag_idx = std::make_shared<fragment_ion_index>();
+    frag_idx->precursor_idx = precursor_idx;
 
     for (int i = 0; i < config->num_indices; ++i) {
         //std::cout << "Loading index number " << i << std::endl;
+        if (!last_batch && mapped_search_ids[i].size() < settings::batch_size / config->num_indices)
+            continue;
         frag_idx->load_index_from_binary_file(config->sub_idx_file_names[i]);
         frag_idx->prepare_axv_access();
         //TODO set precursor index limits by subindex borders... has to be properly implemented
@@ -136,8 +198,17 @@ bool search_manager::perform_searches_parallel() {
             pool->enqueue([this, s_id] () {search_spectrum(s_id);});
         }
         pool->wait_for_all_threads();
+
+        mapped_search_ids[i].clear();
         auto t2 = std::chrono::high_resolution_clock::now();
         inner_search_duration += (t2 - t1);
+        /*
+         * Load next batch
+         */
+        if (!last_batch) {
+            prepare_next_batch();
+            perform_searches();
+        }
     }
     return true;
 }
@@ -286,7 +357,7 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     // Record match
     std::lock_guard<std::mutex> guard(pool->mtx);
     matches.push_back(top_match);
-
+    --spec->search_counter;
     return true;
 }
 #elif USE_AVX_2
@@ -427,6 +498,7 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     // Record match
     std::lock_guard<std::mutex> guard(pool->mtx);
     matches.push_back(top_match);
+    --spec->search_counter;
 
     return true;
 }
@@ -492,6 +564,7 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     // Record match
     std::lock_guard<std::mutex> guard(pool->mtx);
     matches.push_back(top_match);
+    --spec->search_counter;
 
     return true;
 
@@ -872,3 +945,4 @@ bool search_manager::rescore_match(match &psm) {
 long search_manager::get_time_spent_in_inner_search() {
     return std::chrono::duration_cast<std::chrono::seconds>(inner_search_duration).count();
 }
+

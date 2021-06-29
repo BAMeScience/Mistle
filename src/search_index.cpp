@@ -115,7 +115,7 @@ int main(int argc, const char* argv[]) {
     sm.prepare_precursor_index();
     std::cout << "Loading time (index): " << duration_cast<chrono::seconds>(chrono::high_resolution_clock::now() - check_point).count() << " seconds" << std::endl;
 
-    std::cout << "Searching fragment-ion-indices in batches" << endl;
+    std::cout << "Searching fragment-ion-indices" << endl;
     sm.perform_searches();
     std::cout << "Merging overlapping results" << std::endl;
     sm.merge_matches();

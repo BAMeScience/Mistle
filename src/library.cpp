@@ -30,6 +30,17 @@ library::library(string &path) {
     load_spectra_from_file(path);
 }
 
+bool library::construct(string &path) {
+    if (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\') {
+        cout << "Loading library from directory:" << endl;
+        load_library_from_directory(path);
+    }
+    cout << "Loading library from single file:" << endl;
+    load_spectra_from_file(path);
+
+    return true;
+}
+
 bool library::load_library_from_directory(string &path) {
 
     if (settings::load_batches) {
@@ -54,7 +65,11 @@ bool library::load_spectra_from_file(string path) {
         }
     }
     else if (extension == "mgf") {
-        if (!mgf_reader::read_file(path, spectrum_list)) {
+        if (settings::load_batches) {
+            file_stream.open(path, ios::in);
+            last_batch = mgf_reader::read_file_batch(file_stream, spectrum_list, settings::batch_size);
+        }
+        else if (!mgf_reader::read_file(path, spectrum_list)) {
             cout << "Error reading file: " << path << endl;
             return false;
         }
@@ -82,5 +97,10 @@ bool library::build_library_index() {
 
 library::library(vector<std::shared_ptr<spectrum>> &spectra) {
     spectrum_list = spectra;
+}
+
+bool library::load_next_batch() {
+    last_batch = mgf_reader::read_file_batch(file_stream, spectrum_list, settings::batch_size);
+    return last_batch;
 }
 

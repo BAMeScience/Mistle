@@ -2,7 +2,10 @@
 
 About Mistle: w.i.p.
 
-Development of a search engine for spectral libraries consisting of predicted precursor_mass spectra with a focus on large meta-proteomic libraries.
+Mistle is a fast spectral search engine. It uses a fragment-indexing technique and SIMD intrinsics match experimental MS2 spectra to large spectral libraries at a high performance.
+## Requirements
+
+C++20
 
 ## Usage
 

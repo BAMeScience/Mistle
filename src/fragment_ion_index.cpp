@@ -139,6 +139,9 @@ bool fragment_ion_index::load_index_from_binary_file(const string &path) {
         f.read((char *) &mz, sizeof(float));
         f.read((char *) &intensity, sizeof(float));
 
+        if (settings::turn_off_fragment_intensities) {
+            intensity = 1.f;
+        }
 
         if (mz > BIN_MAX_MZ || mz < BIN_MIN_MZ) {
             continue;

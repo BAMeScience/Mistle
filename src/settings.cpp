@@ -20,4 +20,4 @@ float settings::neighbors_intensity_factor = 0.5f;
  * Debugging and testing
  */
 
-bool settings::turn_off_fragment_intensities = false;
+bool settings::turn_off_fragment_intensities = false; //when loading fragment, set intensity to 1

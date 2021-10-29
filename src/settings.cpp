@@ -14,3 +14,10 @@ float settings::bin_size = 1.0f;
 
 int settings::neighbors = 0;
 float settings::neighbors_intensity_factor = 0.5f;
+
+
+/*
+ * Debugging and testing
+ */
+
+bool settings::turn_off_fragment_intensities = false;

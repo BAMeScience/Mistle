@@ -28,6 +28,10 @@ public:
     static float neighbors_intensity_factor;
 
 
+    /*
+     * Debugging and testing
+     */
+    static bool turn_off_fragment_intensities;
 
 };
 

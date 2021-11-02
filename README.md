@@ -12,7 +12,9 @@ gcc (10.2.0)
 ## Build
 
 For building the project, please create (mkdir) a separate directory. From there run:
+
     cmake /path/to/mistle/
+    
 In order to make use SIMD instruction AVX2 or AVX512 build with -DAVX_2=ON or -DAVX_512=ON compiler flag. Check if CPU supports these. If necessary adjust CMakeList.txt according to the CPU.
 
 ## Usage

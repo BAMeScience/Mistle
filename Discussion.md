@@ -150,3 +150,11 @@ New:
 
 ### Fix
 * Currently: f.eof() might not stop for binary files correctly when loading, check this for frag_idx.bins
+
+### Latest todos
+
+* Update scoring mechanism
+  * feature new/more scores ala SpectraST and X!Tandem (X!Hunter?)
+  * track multiple hits not just top-ranked
+  * think about output format
+  * 

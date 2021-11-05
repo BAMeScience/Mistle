@@ -554,33 +554,50 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     // Prepare best-scoring PSM
 
     std::vector<int> order = order_of_scores(dot_scores);
-    int max_elem = order[0]; //max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
-    int m = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
-    if (max_elem != m) {
-        if (dot_scores[max_elem] != 0.f) {
-            if (order[1] != m && order[2] != m && order[3] != m && order[4] != m) {
-                std::cout << "PROBLEM" << std::endl;
-                std::cout << dot_scores[max_elem] << " " << dot_scores[order[1]] << " " << dot_scores[order[2]] << " " << dot_scores[m] << std::endl;
-                std::cout << max_elem << " " << order[1] << " " << order[2] << " " << m << std::endl;
-                std::cout << spec->name << ": " << precursor_idx->get_precursor_by_rank(max_elem + lower_rank).peptide << " " << precursor_idx->get_precursor_by_rank(order[1] + lower_rank).peptide << " " <<  precursor_idx->get_precursor_by_rank(m + lower_rank).peptide<< std::endl;
+    //int max_elem = order[0];
+    //int m = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
 
-            }
-        }
+
+
+    //TODO WIP THIS HERE
+    std::vector<match> top_matches;
+    int duplicates = 0;
+    for (int i = 0; i < (settings::num_hit_ranks + duplicates) && i < order.size(); ++i) {
+        int elem_idx = order[i];
+        int target_rank = elem_idx + lower_rank;
+        unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
+
+        //TODO if duplicate: continue and add duplicate
+
+
+        // Create and rescore match
+        match current_match = match(search_id, target_id);
+        current_match.dot_product =  dot_scores[elem_idx];
+        current_match.mass_difference = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
+        current_match.hit_rank = (i + 1) - duplicates; //TODO test
+
+        rescore_match(current_match);
+        top_matches.push_back(current_match);
     }
-    int target_rank = max_elem + lower_rank;
-    unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
 
-    // Creating and rescore match
-    match top_match = match(search_id, target_id);
-    top_match.dot_product =  dot_scores[max_elem];
-    top_match.mass_difference = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
-    top_match.hit_rank = 1;
+    //For spectraST
+    float reference_dot = 0.f;
+    float reference_similarity = 0.f;
+    if (top_matches.size() > 1) {
+        reference_dot = top_matches[1].dot_product; // second best hit
+        reference_similarity = top_matches[1].similarity;
+    }
 
-    rescore_match(top_match);
 
-    // Record match
+    // Record matches & update scores
+
     std::lock_guard<std::mutex> guard(pool->mtx);
-    matches.push_back(top_match);
+    for (auto &psm : top_matches) {
+        psm.delta_similarity -= psm.similarity - reference_similarity;
+        psm.delta_dot -= psm.dot_product - reference_dot;
+        //TODO Update ST-score (member function maybe?)
+        matches.push_back(psm);
+    }
     --spec->search_counter;
 
     return true;

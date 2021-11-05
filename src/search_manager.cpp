@@ -558,6 +558,7 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     match top_match = match(search_id, target_id);
     top_match.dot_product =  dot_scores[max_elem];
     top_match.mass_difference = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
+    top_match.hit_rank = 1;
 
     rescore_match(top_match);
 
@@ -597,100 +598,27 @@ bool search_manager::merge_matches() {
 
 bool search_manager::save_search_results_to_file(const std::string &file_path) {
     std::ofstream outfile;
-    std::string delimiter = "\t";
+    std::string delim = "\t";
 
     outfile.open(file_path, std::ios::out);
     if (!outfile.good())
         return false;
 
     // Add header
-    outfile << "spectrum"+delimiter+"match"+delimiter+"peptide"+delimiter+"similarity"+delimiter+"bias"+delimiter+"dot-product"+delimiter+"mass-difference"+delimiter+"peak_count_query"+delimiter+"peak_count_ref\n";
+    outfile << "id" + delim + "spectrum" + delim + "hit_rank" + delim + "match" + delim + "peptide" + delim + "similarity" + delim + "bias" + delim + "dot-product" + delim + "mass-difference" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "x_score" + delim + "x_score_dot\n";
 
     // Go through matches and parse relevant information for each
     for (int i = 0; i < matches.size(); ++i) {
         match &psm = matches[i];
         precursor &target = precursor_idx->get_precursor(psm.target_id);
-        outfile << search_library.spectrum_list[psm.query_id]->name << delimiter << target.id << delimiter << target.peptide << delimiter << psm.similarity_score << delimiter << psm.bias << delimiter << psm.dot_product << delimiter << psm.mass_difference << delimiter << psm.peak_count_query << delimiter << psm.peak_count_target << "\n";
+        std::string name = search_library.spectrum_list[psm.query_id]->name;
+        std::string id = name + "/" + std::to_string(psm.hit_rank);
+        outfile << id << delim << name << delim << psm.hit_rank << delim << target.id << delim << target.peptide << delim << psm.similarity << delim << psm.bias << delim << psm.dot_product << delim << psm.mass_difference << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << "\n";
     }
 
     outfile.close();
     return true;
 }
-
-float search_manager::normal_pdf(float x, float mean, float standard_deviation) {
-    static const float inv_sqrt_2pi = 0.3989422804014327;
-    float x_deviation = (x - mean) / standard_deviation;
-
-    return inv_sqrt_2pi / standard_deviation * std::exp(-0.5f * x_deviation * x_deviation);
-}
-
-
-
-/*
-bool search_manager::search_spectrum_avx(unsigned int search_id) {
-    std::shared_ptr<spectrum> spec = search_library.spectrum_list[search_id];
-
-
-    // Determine range of candidate spectra
-    int lower_rank = precursor_idx->get_lower_bound(spec->charge,spec->precursor_mass - settings::mz_tolerance);
-    int upper_rank = precursor_idx->get_upper_bound(spec->charge,spec->precursor_mass + settings::mz_tolerance);
-
-    if (lower_rank < 0 || upper_rank < 0 || lower_rank > upper_rank) { // todo necessary? No matching precursor masses
-        return false;
-    }
-
-
-    // Init candidate scores
-    std::vector<float> dot_scores(upper_rank - lower_rank + 1, 0.f);
-
-    // Update scores by matching all peaks using the fragment ion index
-    for (int j = 0; j < spec->binned_peaks.size(); ++j) {
-
-        // Open ion mz bin for corresponding peak
-        fragment_bin &ion_bin = frag_idx->fragment_bins[spec->binned_peaks[j]];
-
-        // Determine starting point of lowest (candidate) parent index inside bin
-        int starting_point_inside_bin = std::lower_bound(ion_bin.begin(), ion_bin.end(), lower_rank, [&](fragment f, int rank) {
-            return precursor_idx->get_rank(f.parent_id) < rank;
-        }) - ion_bin.begin();
-
-
-
-        __m256 _scalar = _mm256_set1_ps(spec->binned_intensities[j]);
-        //float res[8];
-
-        //Update scores for all parents with fragments in the range
-        for (int k = starting_point_inside_bin; k < ion_bin.size() && precursor_idx->get_rank(ion_bin[k].parent_id) <= upper_rank; k+=8) {
-
-            //Fill vector with 8 float values
-            //__m256 _mini_vector = _mm256_setr_ps(ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity);
-            __m256 _mini_vector = {ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity}; //_mm256_set_ps(ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity);//_mm256_load_ps(&vec[i]);
-            __m256 _result = _mm256_mul_ps(_scalar, _mini_vector);
-            //_mm256_store_ps(res, _result);
-            for (int l = 0; (l < 8) && (k + l < ion_bin.size()) && (precursor_idx->get_rank(ion_bin[k + l].parent_id) <= upper_rank); ++l) {
-                dot_scores[precursor_idx->get_rank(ion_bin[k + l].parent_id) - lower_rank] += _result[l];
-            }
-        }
-    }
-
-    // Prepare best-scoring PSM
-    int max_elem = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
-    int target_rank = max_elem + lower_rank;
-    float dot = dot_scores[max_elem];
-
-    float mass_diff = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
-    // Record match
-    std::lock_guard<std::mutex> guard(pool->mtx);
-    matches.emplace_back(match(search_id, precursor_idx->get_precursor_by_rank(target_rank).id, dot, mass_diff, 1));
-
-    return true;
-
-}*/
-
-
-
-
-
 
 //__m256 _mini_vector = {ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity}; //_mm256_set_ps(ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity);//_mm256_load_ps(&vec[i]);
 
@@ -759,6 +687,7 @@ float search_manager::rescore_spectrum(unsigned int search_id, unsigned int targ
 
 
 }
+
 
 bool search_manager::rescore_match_old(match &psm) {
     std::shared_ptr<spectrum> spec = search_library.spectrum_list[psm.query_id];
@@ -834,7 +763,7 @@ bool search_manager::rescore_match_old(match &psm) {
 
     psm.peak_count_query = peak_count_query;
     psm.peak_count_target = matched_peaks.size();
-    psm.similarity_score = score;
+    psm.similarity = score;
 
     return true;
 }
@@ -907,7 +836,7 @@ bool search_manager::rescore_match(match &psm) {
             float distance = mz - s_mz;
             if (abs(distance) < 5 * sigma) {
 
-                float normal_factor = normal_pdf(distance, 0, sigma) / max_normal;
+                float normal_factor = normal_pdf(distance, 0, sigma) / max_normal; //TODO remove division (simple formula, see thesis)
                 float new_score = intensity * spec->intensities[i] * normal_factor;
                 if (new_score > peak_score) {
                     peak_score = new_score;
@@ -933,16 +862,40 @@ bool search_manager::rescore_match(match &psm) {
 
     psm.peak_count_query = 1000;
     psm.peak_count_target = peak_count_ref;
-    psm.similarity_score = score;
-    if (score > 0)
+    psm.similarity = score;
+    if (score > 0) {
         psm.bias = std::sqrt(bias) / score;
-    else
+    }
+    else {
         psm.bias = 0.f;
+    }
+
+    // Advanced scores
+    psm.sim2 = psm.similarity * (1 - bias);
+    auto scp_factorial = (float) factorial(psm.peak_count_target);
+    psm.x_hunter_score = psm.similarity * scp_factorial;
+    psm.x_hunter_score_dot = psm.dot_product * scp_factorial;
+    //delta similarity and spectraST scores, need to access in relation to other matches
 
     return true;
 }
 
 long search_manager::get_time_spent_in_inner_search() {
     return std::chrono::duration_cast<std::chrono::seconds>(inner_search_duration).count();
+}
+
+float search_manager::normal_pdf(float x, float mean, float standard_deviation) {
+    static const float inv_sqrt_2pi = 0.3989422804014327;
+    float x_deviation = (x - mean) / standard_deviation;
+
+    return inv_sqrt_2pi / standard_deviation * std::exp(-0.5f * x_deviation * x_deviation);
+}
+
+int search_manager::factorial(int n) {
+    int fact = 1;
+    for (int i = 1; i <= n; ++i) {
+        fact *= i;
+    }
+    return fact;
 }
 

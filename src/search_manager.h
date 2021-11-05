@@ -73,6 +73,7 @@ private:
     float sigma;
     float max_normal;
     static float normal_pdf(float x, float mean, float standard_deviation);
+    static int factorial(int n);
 };
 
 

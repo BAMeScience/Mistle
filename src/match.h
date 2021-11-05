@@ -14,11 +14,25 @@ public:
 
     float mass_difference;
 
-    float similarity_score;
+    // Default scores
+    float similarity;
     float bias;
     float dot_product;
+
+    //Additional score
+    float delta_dot;
+    float delta_similarity;
     int peak_count_query;
     int peak_count_target;
+
+
+    //Advanced scores
+    float sim2;
+    float spectraST_score;
+    float spectraST_score_dot;
+    float x_hunter_score; //all peaks, not just top 20
+    float x_hunter_score_dot; //all peaks, not just top 20
+
 
     int hit_rank;
     int query_index; //todo implement

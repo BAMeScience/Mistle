@@ -29,6 +29,6 @@ match::match(unsigned int query_id, unsigned int target_id, float dot_product, f
 }
 
 match::match(unsigned int query_id, unsigned int target_id, float similarity_score, float dot_product,
-             float mass_difference, int hit_rank) : query_id(query_id), target_id(target_id), similarity_score(similarity_score), dot_product(dot_product), mass_difference(mass_difference), hit_rank(hit_rank) {
+             float mass_difference, int hit_rank) : query_id(query_id), target_id(target_id), similarity(similarity_score), dot_product(dot_product), mass_difference(mass_difference), hit_rank(hit_rank) {
 
 }

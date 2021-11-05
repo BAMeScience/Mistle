@@ -836,7 +836,7 @@ bool search_manager::rescore_match(match &psm) {
             float distance = mz - s_mz;
             if (abs(distance) < 5 * sigma) {
 
-                float normal_factor = normal_pdf(distance, 0, sigma) / max_normal; //TODO remove division (simple formula, see thesis)
+                float normal_factor = normal_pdf_scaled(distance, 0, sigma);
                 float new_score = intensity * spec->intensities[i] * normal_factor;
                 if (new_score > peak_score) {
                     peak_score = new_score;
@@ -889,6 +889,11 @@ float search_manager::normal_pdf(float x, float mean, float standard_deviation) 
     float x_deviation = (x - mean) / standard_deviation;
 
     return inv_sqrt_2pi / standard_deviation * std::exp(-0.5f * x_deviation * x_deviation);
+}
+
+float search_manager::normal_pdf_scaled(float x, float mean, float standard_deviation) {
+    float x_deviation = (x - mean) / standard_deviation;
+    return std::exp(-0.5f * x_deviation * x_deviation);
 }
 
 int search_manager::factorial(int n) {

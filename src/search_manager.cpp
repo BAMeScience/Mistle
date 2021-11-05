@@ -549,8 +549,24 @@ bool search_manager::search_spectrum(unsigned int search_id) {
      * Do precise rescoring
      */
 
+
+
     // Prepare best-scoring PSM
-    int max_elem = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
+
+    std::vector<int> order = order_of_scores(dot_scores);
+    int max_elem = order[0]; //max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
+    int m = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
+    if (max_elem != m) {
+        if (dot_scores[max_elem] != 0.f) {
+            if (order[1] != m && order[2] != m && order[3] != m && order[4] != m) {
+                std::cout << "PROBLEM" << std::endl;
+                std::cout << dot_scores[max_elem] << " " << dot_scores[order[1]] << " " << dot_scores[order[2]] << " " << dot_scores[m] << std::endl;
+                std::cout << max_elem << " " << order[1] << " " << order[2] << " " << m << std::endl;
+                std::cout << spec->name << ": " << precursor_idx->get_precursor_by_rank(max_elem + lower_rank).peptide << " " << precursor_idx->get_precursor_by_rank(order[1] + lower_rank).peptide << " " <<  precursor_idx->get_precursor_by_rank(m + lower_rank).peptide<< std::endl;
+
+            }
+        }
+    }
     int target_rank = max_elem + lower_rank;
     unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
 
@@ -902,5 +918,16 @@ int search_manager::factorial(int n) {
         fact *= i;
     }
     return fact;
+}
+
+std::vector<int> search_manager::order_of_scores(std::vector<float> &scores) {
+    std::vector<int> indices(scores.size());
+    std::iota(indices.begin(), indices.end(), 0);
+
+    std::sort(indices.begin(), indices.end(), [&scores](int a, int b) {
+        return scores[a] > scores[b];
+    });
+
+    return indices;
 }
 

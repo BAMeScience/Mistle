@@ -134,6 +134,7 @@ bool fragment_ion_index::load_index_from_binary_file(const string &path) {
 
         f.read((char *) &id, sizeof(unsigned int));
         if (f.eof()) { //Double check
+
             break;
         }
         f.read((char *) &mz, sizeof(float));

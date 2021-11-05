@@ -64,6 +64,7 @@ private:
      * Search: 3-fold implementation, depending on cpu instruction level (STANDARD, AVX2, AVX512)
      */
     bool search_spectrum(unsigned int search_id);
+    std::vector<int> order_of_scores(std::vector<float> &scores);
     float rescore_spectrum(unsigned int search_id, unsigned int target_id);
     bool rescore_match_old(match &psm);
     bool rescore_match(match &psm);

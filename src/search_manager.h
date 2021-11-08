@@ -75,7 +75,7 @@ private:
     float max_normal;
     static float normal_pdf(float x, float mean, float standard_deviation);
     static float normal_pdf_scaled(float x, float mean, float standard_deviation);
-    static int factorial(int n);
+    static long long unsigned int factorial(int n);
 };
 
 

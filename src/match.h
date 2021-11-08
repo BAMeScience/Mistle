@@ -30,8 +30,8 @@ public:
     float sim2;
     float spectraST_score;
     float spectraST_score_dot;
-    float x_hunter_score; //all peaks, not just top 20
-    float x_hunter_score_dot; //all peaks, not just top 20
+    double x_hunter_score; //all peaks, not just top 20
+    double x_hunter_score_dot; //all peaks, not just top 20
 
 
     int hit_rank;

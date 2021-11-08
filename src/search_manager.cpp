@@ -929,7 +929,9 @@ bool search_manager::rescore_match(match &psm) {
 
     // Advanced scores
     psm.sim2 = psm.similarity * (1.f - psm.bias);
-    auto scp_factorial = (float) factorial(psm.peak_count_target);
+
+    auto scp_factorial = (double) factorial(psm.peak_count_target);
+
     psm.x_hunter_score = psm.similarity * scp_factorial;
     psm.x_hunter_score_dot = psm.dot_product * scp_factorial;
     auto bias_penalty = [](float bias) {
@@ -965,8 +967,8 @@ float search_manager::normal_pdf_scaled(float x, float mean, float standard_devi
     return std::exp(-0.5f * x_deviation * x_deviation);
 }
 
-int search_manager::factorial(int n) {
-    int fact = 1;
+long long unsigned int search_manager::factorial(int n) {
+    long long unsigned int fact = 1;
     for (int i = 1; i <= n; ++i) {
         fact *= i;
     }

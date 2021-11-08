@@ -560,9 +560,10 @@ bool search_manager::search_spectrum(unsigned int search_id) {
 
 
     //TODO WIP THIS HERE
+    int num_required_rescore = std::max(2, settings::num_hit_ranks); //min 2 PSM to rescore (for delta dot)
     std::vector<match> top_matches;
     int duplicates = 0;
-    for (int i = 0; i < (settings::num_hit_ranks + duplicates) && i < order.size(); ++i) {
+    for (int i = 0; i < (num_required_rescore + duplicates) && i < order.size(); ++i) {
         int elem_idx = order[i];
         int target_rank = elem_idx + lower_rank;
         unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
@@ -658,15 +659,18 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
         return false;
 
     // Add header
-    outfile << "id" + delim + "spectrum" + delim + "hit_rank" + delim + "match" + delim + "peptide" + delim + "similarity" + delim + "bias" + delim + "dot-product" + delim + "mass-difference" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "x_score" + delim + "x_score_dot\n";
+    outfile << "id" + delim + "spectrum" + delim + "hit_rank" + delim + "match" + delim + "peptide" + delim + "similarity" + delim + "bias" + delim + "dot-product" + delim + "delta-dot" + delim + "delta-similarity" + delim + "mass-difference" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "sim2" + delim + "x_score" + delim + "x_score_dot" + delim + "st_score" + delim + "st_score_dot\n";
 
     // Go through matches and parse relevant information for each
     for (int i = 0; i < matches.size(); ++i) {
         match &psm = matches[i];
-        precursor &target = precursor_idx->get_precursor(psm.target_id);
-        std::string name = search_library.spectrum_list[psm.query_id]->name;
-        std::string id = name + "/" + std::to_string(psm.hit_rank);
-        outfile << id << delim << name << delim << psm.hit_rank << delim << target.id << delim << target.peptide << delim << psm.similarity << delim << psm.bias << delim << psm.dot_product << delim << psm.mass_difference << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << "\n";
+        if (psm.hit_rank <= settings::num_hit_ranks) {
+            precursor &target = precursor_idx->get_precursor(psm.target_id);
+            std::string name = search_library.spectrum_list[psm.query_id]->name;
+            std::string id = name + "/" + std::to_string(psm.hit_rank);
+            outfile << id << delim << name << delim << psm.hit_rank << delim << target.id << delim << target.peptide << delim << psm.similarity << delim << psm.bias << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.mass_difference << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << "\n";
+        }
+
     }
 
     outfile.close();
@@ -924,7 +928,7 @@ bool search_manager::rescore_match(match &psm) {
     }
 
     // Advanced scores
-    psm.sim2 = psm.similarity * (1 - bias);
+    psm.sim2 = psm.similarity * (1.f - psm.bias);
     auto scp_factorial = (float) factorial(psm.peak_count_target);
     psm.x_hunter_score = psm.similarity * scp_factorial;
     psm.x_hunter_score_dot = psm.dot_product * scp_factorial;

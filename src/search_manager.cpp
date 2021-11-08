@@ -574,18 +574,10 @@ bool search_manager::search_spectrum(unsigned int search_id) {
         match current_match = match(search_id, target_id);
         current_match.dot_product =  dot_scores[elem_idx];
         current_match.mass_difference = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
-        current_match.hit_rank = (i + 1) - duplicates; //TODO test
+        //current_match.hit_rank = (i + 1) - duplicates; //TODO test
 
         rescore_match(current_match);
         top_matches.push_back(current_match);
-    }
-
-    //For spectraST
-    float reference_dot = 0.f;
-    float reference_similarity = 0.f;
-    if (top_matches.size() > 1) {
-        reference_dot = top_matches[1].dot_product; // second best hit
-        reference_similarity = top_matches[1].similarity;
     }
 
 
@@ -593,9 +585,6 @@ bool search_manager::search_spectrum(unsigned int search_id) {
 
     std::lock_guard<std::mutex> guard(pool->mtx);
     for (auto &psm : top_matches) {
-        psm.delta_similarity -= psm.similarity - reference_similarity;
-        psm.delta_dot -= psm.dot_product - reference_dot;
-        //TODO Update ST-score (member function maybe?)
         matches.push_back(psm);
     }
     --spec->search_counter;
@@ -611,20 +600,51 @@ bool search_manager::merge_matches() {
      * Sort by id ascending and then score descending
      */
     //std::cout << matches.size() << std::endl;
-    std::sort(matches.begin(), matches.end(), [](match a, match b) {
+    std::sort(matches.begin(), matches.end(), [](match &a, match &b) {
         return (a.query_id == b.query_id && a.dot_product > b.dot_product) || a.query_id < b.query_id;
     });
 
     /*
-     * Remove subsequent entries with same query id (allowed by ordering based on id and score)
+     * Sort by id and determine delta scores, then sort by discriminant
      */
-    auto it = matches.begin() + 1;
-    while(it != matches.end()) {
-        if(it->query_id == (it - 1)->query_id) {
-            it = matches.erase(it);
+    auto start = matches.begin();
+    for (auto iter = matches.begin(); iter != matches.end() + 1; ++iter) {
+        if (iter == matches.end() || iter->query_id != start->query_id) {
+            auto end = iter - 1;
+
+            //Assess dot difference
+            float reference_dot = 0.f;
+            if (start != end) {
+                reference_dot = (start + 1)->dot_product;
+            }
+            for (auto iiter=start; iiter != (end+1); ++iiter) {
+                iiter->delta_dot = iiter->dot_product - reference_dot;
+                iiter->spectraST_score_dot += 0.4f * iiter->delta_dot;
+            }
+
+
+            //Assess sim difference
+            std::sort(start, end, [](match &a, match &b) {
+                return a.similarity > b.similarity;
+            });
+            float reference_sim = 0.f;
+            if (start != end) {
+                reference_sim = (start + 1)->similarity; //2nd of the same query id
+            }
+            int rank = 1;
+            for (auto iiter=start; iiter != end+1; ++iiter) {
+                iiter->delta_similarity = iiter->similarity - reference_sim;
+                iiter->spectraST_score += 0.4f * iiter->delta_similarity;
+                iiter->hit_rank = rank; //TODO move (down) to discriminant sorting
+                ++rank;
+            }
+
+            //Sort by discriminant function and assign hit ranks
+            //currently stick to similarity ...
+            start = iter;
         }
-        else ++it;
     }
+
     //std::cout << matches.size() << std::endl;
     return true;
 }
@@ -882,7 +902,7 @@ bool search_manager::rescore_match(match &psm) {
         }
 
         score += peak_score;
-        bias += (peak_score * peak_score);
+        bias += (peak_score * peak_score); //TODO dot bias
         if (peak_matched) {
             ++peak_count_ref;
         }
@@ -908,7 +928,19 @@ bool search_manager::rescore_match(match &psm) {
     auto scp_factorial = (float) factorial(psm.peak_count_target);
     psm.x_hunter_score = psm.similarity * scp_factorial;
     psm.x_hunter_score_dot = psm.dot_product * scp_factorial;
-    //delta similarity and spectraST scores, need to access in relation to other matches
+    auto bias_penalty = [](float bias) {
+        if (bias < 0.1 || bias > 0.35 && bias <= 0.4)
+            return 0.12f;
+        else if(bias > 0.4 && bias <= 0.45)
+            return 0.18f;
+        else if (bias > 0.45) {
+            return 0.24f;
+        }
+        return 0.f;
+    };
+    psm.spectraST_score_dot = 0.6f * psm.dot_product - bias_penalty(psm.bias); //TODO this should be dot bias
+    psm.spectraST_score = 0.6f * psm.similarity - bias_penalty(psm.bias); //delta sim is added when merging
+    psm.hit_rank = 0;
 
     return true;
 }

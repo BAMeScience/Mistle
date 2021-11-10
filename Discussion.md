@@ -154,7 +154,7 @@ New:
 ### Latest todos
 
 * Update scoring mechanism
-  * feature new/more scores ala SpectraST and X!Tandem (X!Hunter?)
-  * track multiple hits not just top-ranked
-  * think about output format
-  * 
+  * [x] feature new/more scores ala SpectraST and X!Tandem (X!Hunter?)
+  * [x] track multiple hits not just top-ranked
+  * [x] think about output format
+  * [ ] implement I=L isobaric recognition when finding "equal" peptides in the top ranking

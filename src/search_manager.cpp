@@ -625,7 +625,7 @@ bool search_manager::merge_matches() {
 
 
             //Assess sim difference
-            std::sort(start, end, [](match &a, match &b) {
+            std::sort(start, end+1, [](match &a, match &b) {
                 return a.similarity > b.similarity;
             });
             float reference_sim = 0.f;

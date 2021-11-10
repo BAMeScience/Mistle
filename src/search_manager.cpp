@@ -558,8 +558,6 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     //int m = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
 
 
-
-    //TODO WIP THIS HERE
     int num_required_rescore = std::max(2, settings::num_hit_ranks); //min 2 PSM to rescore (for delta dot)
     std::vector<match> top_matches;
     int duplicates = 0;
@@ -568,7 +566,18 @@ bool search_manager::search_spectrum(unsigned int search_id) {
         int target_rank = elem_idx + lower_rank;
         unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
 
-        //TODO if duplicate: continue and add duplicate
+        bool is_duplicate = false;
+        for (match &m : top_matches) { //Determine if matched peptide is already in the list
+            std::string peptide = precursor_idx->get_precursor_by_rank(target_rank).peptide;
+            if (peptide==precursor_idx->get_precursor_by_rank(m.target_id).peptide) {
+                is_duplicate = true;
+                break;
+            }
+        }
+        if (is_duplicate) {
+            ++duplicates;
+            continue;
+        }
 
 
         // Create and rescore match
@@ -632,16 +641,22 @@ bool search_manager::merge_matches() {
             if (start != end) {
                 reference_sim = (start + 1)->similarity; //2nd of the same query id
             }
-            int rank = 1;
             for (auto iiter=start; iiter != end+1; ++iiter) {
                 iiter->delta_similarity = iiter->similarity - reference_sim;
                 iiter->spectraST_score += 0.4f * iiter->delta_similarity;
-                iiter->hit_rank = rank; //TODO move (down) to discriminant sorting
-                ++rank;
             }
 
             //Sort by discriminant function and assign hit ranks
-            //currently stick to similarity ...
+            std::sort(start, end+1, [](match &a, match &b) {
+                return a.sim2 > b.sim2;
+            });
+
+            int rank = 1;
+            for (auto iiter=start; iiter != end+1; ++iiter) {
+                iiter->hit_rank = rank;
+                ++rank;
+            }
+
             start = iter;
         }
     }

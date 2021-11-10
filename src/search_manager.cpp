@@ -339,24 +339,49 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     }
 
     /*
-     * Do precise rescoring
+     * Prepare and rescore top matches
      */
 
-    // Prepare best-scoring PSM
-    int max_elem = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
-    int target_rank = max_elem + lower_rank;
-    unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
+    std::vector<int> order = order_of_scores(dot_scores);
 
-    // Creating and rescore match
-    match top_match = match(search_id, target_id);
-    top_match.dot_product =  dot_scores[max_elem];
-    top_match.mass_difference = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
+    int num_required_rescores = std::max(2, settings::num_hit_ranks); //min 2 PSM to rescore (for delta dot)
+    std::vector<match> top_matches;
+    int duplicates = 0;
+    for (int i = 0; i < (num_required_rescores + duplicates) && i < order.size(); ++i) {
+        int elem_idx = order[i];
+        int target_rank = elem_idx + lower_rank;
+        unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
 
-    rescore_match(top_match);
+        //Determine if matched peptide is already in the list
+        bool is_duplicate = false;
+        for (match &m : top_matches) {
+            std::string peptide = precursor_idx->get_precursor(target_id).peptide;
+            if (peptide==precursor_idx->get_precursor(m.target_id).peptide) { //TODO I=L
+                is_duplicate = true;
+                break;
+            }
+        }
+        if (is_duplicate) {
+            ++duplicates;
+            continue;
+        }
 
-    // Record match
+
+        // Create and rescore the current match
+        match current_match = match(search_id, target_id);
+        current_match.dot_product =  dot_scores[elem_idx];
+        current_match.mass_difference = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
+
+        rescore_match(current_match);
+        top_matches.push_back(current_match);
+    }
+
+
+    // Record matches
     std::lock_guard<std::mutex> guard(pool->mtx);
-    matches.push_back(top_match);
+    for (auto &psm : top_matches) {
+        matches.push_back(psm);
+    }
     --spec->search_counter;
     return true;
 }
@@ -480,26 +505,50 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     }
 
     /*
-     * Do precise rescoring
+     * Prepare and rescore top matches
      */
 
-    // Prepare best-scoring PSM
-    int max_elem = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
-    int target_rank = max_elem + lower_rank;
-    unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
+    std::vector<int> order = order_of_scores(dot_scores);
 
-    // Creating and rescore match
-    match top_match = match(search_id, target_id);
-    top_match.dot_product =  dot_scores[max_elem];
-    top_match.mass_difference = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
+    int num_required_rescores = std::max(2, settings::num_hit_ranks); //min 2 PSM to rescore (for delta dot)
+    std::vector<match> top_matches;
+    int duplicates = 0;
+    for (int i = 0; i < (num_required_rescores + duplicates) && i < order.size(); ++i) {
+        int elem_idx = order[i];
+        int target_rank = elem_idx + lower_rank;
+        unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
 
-    rescore_match(top_match);
+        //Determine if matched peptide is already in the list
+        bool is_duplicate = false;
+        for (match &m : top_matches) {
+            std::string peptide = precursor_idx->get_precursor(target_id).peptide;
+            if (peptide==precursor_idx->get_precursor(m.target_id).peptide) { //TODO I=L
+                is_duplicate = true;
+                break;
+            }
+        }
+        if (is_duplicate) {
+            ++duplicates;
+            continue;
+        }
 
-    // Record match
+
+        // Create and rescore the current match
+        match current_match = match(search_id, target_id);
+        current_match.dot_product =  dot_scores[elem_idx];
+        current_match.mass_difference = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
+
+        rescore_match(current_match);
+        top_matches.push_back(current_match);
+    }
+
+
+    // Record matches
     std::lock_guard<std::mutex> guard(pool->mtx);
-    matches.push_back(top_match);
+    for (auto &psm : top_matches) {
+        matches.push_back(psm);
+    }
     --spec->search_counter;
-
     return true;
 }
 
@@ -546,28 +595,22 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     }
 
     /*
-     * Do precise rescoring
+     * Prepare and rescore top matches
      */
 
-
-
-    // Prepare best-scoring PSM
-
     std::vector<int> order = order_of_scores(dot_scores);
-    //int max_elem = order[0];
-    //int m = max_element(dot_scores.begin(), dot_scores.end()) - dot_scores.begin();
 
-
-    int num_required_rescore = std::max(2, settings::num_hit_ranks); //min 2 PSM to rescore (for delta dot)
+    int num_required_rescores = std::max(2, settings::num_hit_ranks); //min 2 PSM to rescore (for delta dot)
     std::vector<match> top_matches;
     int duplicates = 0;
-    for (int i = 0; i < (num_required_rescore + duplicates) && i < order.size(); ++i) {
+    for (int i = 0; i < (num_required_rescores + duplicates) && i < order.size(); ++i) {
         int elem_idx = order[i];
         int target_rank = elem_idx + lower_rank;
         unsigned int target_id = precursor_idx->get_precursor_by_rank(target_rank).id;
 
+        //Determine if matched peptide is already in the list
         bool is_duplicate = false;
-        for (match &m : top_matches) { //Determine if matched peptide is already in the list
+        for (match &m : top_matches) {
             std::string peptide = precursor_idx->get_precursor(target_id).peptide;
             if (peptide==precursor_idx->get_precursor(m.target_id).peptide) { //TODO I=L
                 is_duplicate = true;
@@ -580,25 +623,22 @@ bool search_manager::search_spectrum(unsigned int search_id) {
         }
 
 
-        // Create and rescore match
+        // Create and rescore the current match
         match current_match = match(search_id, target_id);
         current_match.dot_product =  dot_scores[elem_idx];
         current_match.mass_difference = precursor_idx->get_precursor_by_rank(target_rank).mz - spec->precursor_mass;
-        //current_match.hit_rank = (i + 1) - duplicates; //TODO test
 
         rescore_match(current_match);
         top_matches.push_back(current_match);
     }
 
 
-    // Record matches & update scores
-
+    // Record matches
     std::lock_guard<std::mutex> guard(pool->mtx);
     for (auto &psm : top_matches) {
         matches.push_back(psm);
     }
     --spec->search_counter;
-
     return true;
 
 }

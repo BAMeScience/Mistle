@@ -568,8 +568,8 @@ bool search_manager::search_spectrum(unsigned int search_id) {
 
         bool is_duplicate = false;
         for (match &m : top_matches) { //Determine if matched peptide is already in the list
-            std::string peptide = precursor_idx->get_precursor_by_rank(target_rank).peptide;
-            if (peptide==precursor_idx->get_precursor_by_rank(m.target_id).peptide) {
+            std::string peptide = precursor_idx->get_precursor(target_id).peptide;
+            if (peptide==precursor_idx->get_precursor(m.target_id).peptide) { //TODO I=L
                 is_duplicate = true;
                 break;
             }

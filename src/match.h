@@ -22,6 +22,7 @@ public:
     //Additional score
     float delta_dot;
     float delta_similarity;
+    float delta_sim2;
     int peak_count_query;
     int peak_count_target;
 

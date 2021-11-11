@@ -691,8 +691,13 @@ bool search_manager::merge_matches() {
                 return a.sim2 > b.sim2;
             });
 
+            float reference_sim2 = 0.f;
+            if (start != end) {
+                reference_sim2 = (start + 1)->sim2; //2nd of the same query id
+            }
             int rank = 1;
             for (auto iiter=start; iiter != end+1; ++iiter) {
+                iiter->delta_sim2 = iiter->sim2 - reference_sim2;
                 iiter->hit_rank = rank;
                 ++rank;
             }
@@ -714,7 +719,7 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
         return false;
 
     // Add header
-    outfile << "id" + delim + "spectrum" + delim + "hit_rank" + delim + "match" + delim + "peptide" + delim + "similarity" + delim + "bias" + delim + "dot-product" + delim + "delta-dot" + delim + "delta-similarity" + delim + "mass-difference" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "sim2" + delim + "x_score" + delim + "x_score_dot" + delim + "st_score" + delim + "st_score_dot\n";
+    outfile << "id" + delim + "spectrum" + delim + "hit_rank" + delim + "match" + delim + "peptide" + delim + "similarity" + delim + "bias" + delim + "dot_product" + delim + "delta_dot" + delim + "delta_similarity" + delim + "delta_sim2" + delim + "mass_difference" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "sim2" + delim + "x_score" + delim + "x_score_dot" + delim + "st_score" + delim + "st_score_dot\n";
 
     // Go through matches and parse relevant information for each
     for (int i = 0; i < matches.size(); ++i) {
@@ -723,7 +728,7 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
             precursor &target = precursor_idx->get_precursor(psm.target_id);
             std::string name = search_library.spectrum_list[psm.query_id]->name;
             std::string id = name + "/" + std::to_string(psm.hit_rank);
-            outfile << id << delim << name << delim << psm.hit_rank << delim << target.id << delim << target.peptide << delim << psm.similarity << delim << psm.bias << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.mass_difference << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << "\n";
+            outfile << id << delim << name << delim << psm.hit_rank << delim << target.id << delim << target.peptide << delim << psm.similarity << delim << psm.bias << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.delta_sim2 << delim << psm.mass_difference << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << "\n";
         }
 
     }

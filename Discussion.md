@@ -158,3 +158,5 @@ New:
   * [x] track multiple hits not just top-ranked
   * [x] think about output format
   * [ ] implement I=L isobaric recognition when finding "equal" peptides in the top ranking
+* Save Params that were used for the search
+  * [ ] Thinkabout it

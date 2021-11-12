@@ -657,6 +657,7 @@ bool search_manager::merge_matches() {
     /*
      * Sort by id and determine delta scores, then sort by discriminant
      */
+    float spectraST_minimum = 0.00001f; //positive and negative (for invalid scores)
     auto start = matches.begin();
     for (auto iter = matches.begin(); iter != matches.end() + 1; ++iter) {
         if (iter == matches.end() || iter->query_id != start->query_id) {
@@ -669,7 +670,13 @@ bool search_manager::merge_matches() {
             }
             for (auto iiter=start; iiter != (end+1); ++iiter) {
                 iiter->delta_dot = iiter->dot_product - reference_dot;
-                iiter->spectraST_score_dot += 0.4f * iiter->delta_dot;
+                if (iiter->dot_product < spectraST_minimum) {
+                    iiter->spectraST_score_dot = -spectraST_minimum;
+                    continue;
+                }
+                float delta_norm = std::min(iiter->delta_dot / iiter->dot_product, 2.f * iiter->dot_product);
+                iiter->spectraST_score_dot += 0.4f * delta_norm;
+                iiter->spectraST_score_dot = std::max(iiter->spectraST_score_dot, -spectraST_minimum);
             }
 
 
@@ -683,7 +690,13 @@ bool search_manager::merge_matches() {
             }
             for (auto iiter=start; iiter != end+1; ++iiter) {
                 iiter->delta_similarity = iiter->similarity - reference_sim;
-                iiter->spectraST_score += 0.4f * iiter->delta_similarity;
+                if (iiter->similarity < spectraST_minimum) {
+                    iiter->spectraST_score = -spectraST_minimum;
+                    continue;
+                }
+                float delta_norm = std::min(iiter->delta_similarity / iiter->similarity, 2.f * iiter->similarity);
+                iiter->spectraST_score += 0.4f * delta_norm;
+                iiter->spectraST_score = std::max(iiter->spectraST_score, -spectraST_minimum);
             }
 
             //Sort by discriminant function and assign hit ranks

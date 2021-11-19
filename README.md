@@ -38,3 +38,9 @@ Use *-h* flag to print the help message.
 Input files coming from Windows distribution may have a line ending with \r\n (carriage return). Linux requires \n as line end only.
 Remove \r character (char 13) using the following commad line
 * *tr -d '\r' < FILE.mgf > FILE_FIXED.mgf*
+
+## Known issues
+
+Undetermined segmentation fault if the constants (eg. STANDARD_PARENT_UPPER_MZ and STANDARD_PARENT_LOWER_MZ) in DefineConstants.cpp are wrongly set and parent search spectra are falling out of bounds.
+If errors occurs, try expanding bound margins. Fix WIP. 
+Seems to also occur indepently of boundries, try changing number of threads. (source: peak_composition when rescoring, reason: unknown)

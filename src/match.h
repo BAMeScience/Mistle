@@ -13,6 +13,7 @@ public:
     unsigned int target_id;
 
     float mass_difference;
+    std::vector<std::string> peptides; //TODO maybe track homologous peptides
 
     // Default scores
     float similarity;
@@ -37,7 +38,6 @@ public:
 
     int hit_rank;
     int query_index; //todo implement
-
     int num_matched_peaks;
 
     match();

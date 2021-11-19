@@ -7,6 +7,12 @@ using namespace std;
 
 cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &input_directory, const std::shared_ptr<configuration>& config) {
     try {
+        for (int i = 0; i < argc; ++i) {
+            config->build_command += argv[i];
+            config->build_command += " ";
+        }
+        config->build_command.pop_back();
+
         cxxopts::Options options("mistle-build", "Build mistle's fragment ion index for spectral matching");
 
         options.positional_help("[optional args]").show_positional_help();

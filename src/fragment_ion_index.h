@@ -11,7 +11,7 @@ struct fragment {
     float mz;
 
     // If multiple peaks are contributing to the fragment - keep track of composition
-    std::vector<std::pair<float,float>> peak_composition; //<MZ, INTENSITY>
+    std::vector<std::pair<float,float>> peak_composition = {}; //<MZ, INTENSITY>
 
     fragment(unsigned int parent_id, float intensity) : parent_id(parent_id), intensity(intensity) {};
     fragment(unsigned int parent_id, float intensity, float mz) : parent_id(parent_id), intensity(intensity), mz(mz) {};

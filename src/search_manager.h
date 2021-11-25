@@ -76,6 +76,7 @@ private:
     static float normal_pdf(float x, float mean, float standard_deviation);
     static float normal_pdf_scaled(float x, float mean, float standard_deviation);
     static long long unsigned int factorial(int n);
+    static bool is_peptide_isomer(std::string &peptide, std::string &other);
 };
 
 

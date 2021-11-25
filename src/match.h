@@ -13,7 +13,7 @@ public:
     unsigned int target_id;
 
     float mass_difference;
-    std::vector<std::string> peptides; //TODO maybe track homologous peptides
+    std::vector<std::string> isomers; //tracking homologous peptides
 
     // Default scores
     float similarity;

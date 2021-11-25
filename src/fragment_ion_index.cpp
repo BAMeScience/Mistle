@@ -149,16 +149,25 @@ bool fragment_ion_index::load_index_from_binary_file(const string &path) {
         }
         int mz_bin = spectrum::get_mz_bin(mz);
 
+        if (BIN_MIN_MZ > 1)
+            std::cerr << "NEIJ: " << BIN_MIN_MZ << std::endl;
+
         // Same parent peaks falling into the same bin
         if (!fragment_bins[mz_bin].empty() && fragment_bins[mz_bin].back().parent_id == id) {
             fragment &frag = fragment_bins[mz_bin].back();
-
+            if (abs(frag.mz - mz) > settings::bin_size){
+                std::cerr << "NONO " << frag.mz << " " << mz << std::endl;
+                exit(1);
+            }
             //Track peak composition in fragment
             if (frag.peak_composition.empty()) {
                 frag.peak_composition.emplace_back(frag.mz, frag.intensity);
             }
             frag.peak_composition.emplace_back(mz, intensity);
 
+            if (frag.peak_composition.size() > 100) {
+                std::cerr << "NOT LIKE THIS :( " << std::endl;
+            }
             //Update overall intensity
             frag.intensity = sqrt(frag.intensity * frag.intensity + intensity * intensity);
 

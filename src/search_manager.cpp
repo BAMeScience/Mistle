@@ -923,13 +923,18 @@ bool search_manager::rescore_match(match &psm) {
                 continue;
             }
             fragment_bin &ion_bin = frag_idx->fragment_bins[bin];
-            if (ion_bin.empty())
+
+
+            if (ion_bin.empty()) //TODO maybe not necessary due to next if (!= end())
                 continue;
 
-            fragment &f = *std::lower_bound(ion_bin.begin(), ion_bin.end(), precursor_idx->get_rank(psm.target_id), [&](fragment &f, int rank) {
+            auto lower = std::lower_bound(ion_bin.begin(), ion_bin.end(), precursor_idx->get_rank(psm.target_id), [&](fragment &f, int rank) {
                 return precursor_idx->get_rank(f.parent_id) < rank;
             });
+            if (lower == ion_bin.end())
+                continue;
 
+            fragment &f = *lower;
             if (f.parent_id != psm.target_id)
                 continue;
 

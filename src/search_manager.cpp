@@ -356,9 +356,22 @@ bool search_manager::search_spectrum(unsigned int search_id) {
         bool is_duplicate = false;
         for (match &m : top_matches) {
             std::string peptide = precursor_idx->get_precursor(target_id).peptide;
-            if (peptide==precursor_idx->get_precursor(m.target_id).peptide) { //TODO I=L
+            if (is_peptide_isomer(peptide, precursor_idx->get_precursor(m.target_id).peptide)) {
+
                 is_duplicate = true;
+                if (peptide!=precursor_idx->get_precursor(m.target_id).peptide) { // Not identical (actually an isomer)
+                    bool is_new_isomer = true;
+                    for (std::string &isomer : m.isomers) {
+                        if (isomer == peptide) { // Check if peptide is already in isomer list
+                            is_new_isomer = false;
+                            break;
+                        }
+                    }
+                    if (is_new_isomer)
+                        m.isomers.push_back(peptide); //keeping track of matched isomers
+                }
                 break;
+
             }
         }
         if (is_duplicate) {
@@ -623,11 +636,24 @@ bool search_manager::search_spectrum(unsigned int search_id) {
 
         //Determine if matched peptide is already in the list
         bool is_duplicate = false;
-        std::string peptide = precursor_idx->get_precursor(target_id).peptide;
         for (match &m : top_matches) {
-            if (peptide==precursor_idx->get_precursor(m.target_id).peptide) { //TODO I=L
+            std::string peptide = precursor_idx->get_precursor(target_id).peptide;
+            if (is_peptide_isomer(peptide, precursor_idx->get_precursor(m.target_id).peptide)) {
+
                 is_duplicate = true;
+                if (peptide!=precursor_idx->get_precursor(m.target_id).peptide) { // Not identical (actually an isomer)
+                    bool is_new_isomer = true;
+                    for (std::string &isomer : m.isomers) {
+                        if (isomer == peptide) { // Check if peptide is already in isomer list
+                            is_new_isomer = false;
+                            break;
+                        }
+                    }
+                    if (is_new_isomer)
+                        m.isomers.push_back(peptide); //keeping track of matched isomers
+                }
                 break;
+
             }
         }
         if (is_duplicate) {
@@ -653,7 +679,6 @@ bool search_manager::search_spectrum(unsigned int search_id) {
     }
     --spec->search_counter;
     return true;
-
 }
 #endif
 
@@ -712,7 +737,7 @@ bool search_manager::merge_matches() {
                 iiter->spectraST_score = std::max(iiter->spectraST_score, -spectraST_minimum);
             }
 
-            //Sort by discriminant function and assign hit ranks
+            //Sort by sim2 and calculate sim2 dif
             std::sort(start, end+1, [](match &a, match &b) {
                 return a.sim2 > b.sim2;
             });
@@ -721,13 +746,19 @@ bool search_manager::merge_matches() {
             if (start != end) {
                 reference_sim2 = (start + 1)->sim2; //2nd of the same query id
             }
-            int rank = 1;
             for (auto iiter=start; iiter != end+1; ++iiter) {
                 iiter->delta_sim2 = iiter->sim2 - reference_sim2;
+            }
+
+            //Sort by discriminant scoring metric (here: st_score)
+            std::sort(start, end+1, [](match &a, match &b) {
+                return a.spectraST_score > b.spectraST_score;
+            });
+            int rank = 1;
+            for (auto iiter=start; iiter != end+1; ++iiter) {
                 iiter->hit_rank = rank;
                 ++rank;
             }
-
             start = iter;
         }
     }

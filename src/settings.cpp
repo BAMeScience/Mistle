@@ -11,7 +11,7 @@ bool settings::use_ppm_tolerance = true;
 float settings::ppm_tolerance = 10.0f;
 float settings::ppm_factor = 10.0f / 1000000.0f;
 float settings::bin_size = 1.0f;
-int settings::num_hit_ranks = 3;
+int settings::num_hit_ranks = 2;
 
 int settings::neighbors = 0;
 float settings::neighbors_intensity_factor = 0.5f;

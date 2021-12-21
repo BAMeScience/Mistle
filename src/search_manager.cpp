@@ -526,7 +526,15 @@ bool search_manager::search_spectrum(unsigned int search_id) {
 
                 is_duplicate = true;
                 if (peptide!=precursor_idx->get_precursor(m.target_id).peptide) { // Not identical (actually an isomer)
-                    m.isomers.push_back(peptide); //keeping track of matched isomers
+                    bool is_new_isomer = true;
+                    for (std::string &isomer : m.isomers) {
+                        if (isomer == peptide) { // Check if peptide is already in isomer list
+                            is_new_isomer = false;
+                            break;
+                        }
+                    }
+                    if (is_new_isomer)
+                        m.isomers.push_back(peptide); //keeping track of matched isomers
                 }
                 break;
 

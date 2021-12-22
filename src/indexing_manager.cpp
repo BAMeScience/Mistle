@@ -15,9 +15,9 @@ indexing_manager::indexing_manager() {
     exit(1);
 }
 
-indexing_manager::indexing_manager(string path) : path(path) {
+indexing_manager::indexing_manager(string path) {
     cout << "! Using IndexingManager without config parameter is deprecated" << endl;
-
+    exit(1);
     /*
      * Init
      * TODO delete (eventually)
@@ -40,7 +40,7 @@ indexing_manager::indexing_manager(string path) : path(path) {
 }
 
 
-indexing_manager::indexing_manager(std::string path, std::shared_ptr<configuration> config) : path(path), config(config) {
+indexing_manager::indexing_manager(std::vector<std::string> &input_paths, std::shared_ptr<configuration> config) : input_paths(input_paths), config(config) {
 
     /*
      * Init
@@ -56,9 +56,11 @@ indexing_manager::indexing_manager(std::string path, std::shared_ptr<configurati
     }
 
 
-    for (const auto & entry : std::filesystem::directory_iterator(path)) {
-        if (entry.path().extension() == ".msp") {
-            lib_files.push_back(entry);
+    for (std::string &path : input_paths) {
+        for (const auto & entry : std::filesystem::directory_iterator(path)) {
+            if (entry.path().extension() == ".msp") {
+                lib_files.push_back(entry);
+            }
         }
     }
 }

@@ -12,7 +12,7 @@
 
 class indexing_manager {
 
-    std::string path;
+    std::vector<std::string> input_paths;
     std::vector<std::filesystem::directory_entry> lib_files;
 
 
@@ -36,7 +36,7 @@ class indexing_manager {
 public:
     indexing_manager();
     explicit indexing_manager(std::string path);
-    indexing_manager(std::string path, std::shared_ptr<configuration> config);
+    indexing_manager(std::vector<std::string> &input_paths, std::shared_ptr<configuration> config);
 
 
     bool build_indices();

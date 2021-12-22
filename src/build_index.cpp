@@ -5,7 +5,7 @@
 using namespace std;
 
 
-cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &input_directory, const std::shared_ptr<configuration>& config) {
+cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::vector<std::string> &input_directories, const std::shared_ptr<configuration>& config) {
     try {
         for (int i = 0; i < argc; ++i) {
             config->build_command += argv[i];
@@ -42,7 +42,16 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &input_
             config->num_indices = result["num_indices"].as<unsigned int>();
         }
         if (result.count("input")) {
-            input_directory = result["input"].as<std::string>();
+            // Parse list of input directories (separated by black space)
+            std::string dir_list = result["input"].as<std::string>();
+            std::string::size_type start_pos = 0;
+            for (auto end_pos = 0; (end_pos = dir_list.find(' ', end_pos)) != std::string::npos; ++end_pos)
+            {
+                input_directories.push_back(dir_list.substr(start_pos, end_pos - start_pos));
+                start_pos = end_pos + 1;
+            }
+
+            input_directories.push_back(dir_list.substr(start_pos));
         }
         if (result.count("output")) {
             config->idx_path = result["output"].as<std::string>();
@@ -66,11 +75,10 @@ int main(int argc, const char* argv[]) {
     /*
      * Args
      */
-    std::string input_directory = "/home/ynowatzk/data/9MM/msp";
+    std::vector<std::string> input_directories;
     std::shared_ptr<configuration> config = std::make_shared<configuration>();
 
-    parseArgs(argc, argv, input_directory, config);
-
+    parseArgs(argc, argv, input_directories, config);
 
     /*
      * Build indices
@@ -78,7 +86,7 @@ int main(int argc, const char* argv[]) {
 
 
     auto start = chrono::high_resolution_clock::now();
-    indexing_manager im(input_directory, config);
+    indexing_manager im(input_directories, config);
     im.build_indices();
     auto stop = chrono::high_resolution_clock::now();
     auto duration = duration_cast<chrono::seconds>(stop - start);

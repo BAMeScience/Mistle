@@ -776,6 +776,9 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
         return false;
 
     // Add header
+    if (settings::save_search_command) {
+        outfile << "#" << settings::search_command << "\n";
+    }
     outfile << "id" + delim + "spectrum" + delim + "hit_rank" + delim + "match" + delim + "peptide" + delim + "isomers" + delim + "similarity" + delim + "bias" + delim + "dot_product" + delim + "delta_dot" + delim + "delta_similarity" + delim + "delta_sim2" + delim + "mass_difference" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "sim2" + delim + "x_score" + delim + "x_score_dot" + delim + "st_score" + delim + "st_score_dot\n";
 
     // Go through matches and parse relevant information for each

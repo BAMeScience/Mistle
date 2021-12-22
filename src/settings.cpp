@@ -21,4 +21,6 @@ float settings::neighbors_intensity_factor = 0.5f;
  * Debugging and testing
  */
 
+std::string settings::search_command;
+bool settings::save_search_command = true;
 bool settings::turn_off_fragment_intensities = false; //when loading fragment, set intensity to 1

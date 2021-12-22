@@ -10,6 +10,12 @@ using namespace std;
 
 cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search_path, std::string &index_path) {
     try {
+        for (int i = 0; i < argc; ++i) {
+            settings::search_command += argv[i];
+            settings::search_command += " ";
+        }
+        settings::search_command.pop_back();
+
         cxxopts::Options options("mistle-search", "Search experimental mass spectra in mistle fragment ion index");
 
         options.positional_help("[optional args]").show_positional_help();

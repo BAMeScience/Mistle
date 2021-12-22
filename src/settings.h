@@ -2,6 +2,7 @@
 #define SIMPLE_EXAMPLE_SETTINGS_H
 
 
+#include <string>
 
 class settings {
 
@@ -33,6 +34,8 @@ public:
     /*
      * Debugging and testing
      */
+    static bool save_search_command;
+    static std::string search_command;
     static bool turn_off_fragment_intensities;
 
 };

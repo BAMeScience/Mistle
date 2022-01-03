@@ -33,8 +33,9 @@ public:
     float spectraST_score;
     float spectraST_score_dot;
     double x_hunter_score; //all peaks, not just top 20
+    double x_lgamma;
     double x_hunter_score_dot; //all peaks, not just top 20
-
+    double x_lgamma_dot;
 
     int hit_rank;
     int query_index; //todo implement

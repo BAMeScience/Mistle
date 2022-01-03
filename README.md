@@ -44,3 +44,7 @@ Remove \r character (char 13) using the following commad line
 Undetermined segmentation fault if the constants (eg. STANDARD_PARENT_UPPER_MZ and STANDARD_PARENT_LOWER_MZ) in DefineConstants.cpp are wrongly set and parent search spectra are falling out of bounds.
 If errors occurs, try expanding bound margins. Fix WIP. 
 Seems to also occur indepently of boundries, try changing number of threads. (source: peak_composition when rescoring, reason: unknown)
+- Update: Bug Fixed, caused by rescoring upper bound function, that would rarely access wrong bin
+
+
+Similarity is the preferred score baseline. For the dot product certain properties (e.g. bias, lgamma score) are not defined or ill-defined

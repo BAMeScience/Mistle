@@ -8,6 +8,7 @@
 //#include <x86intrin.h>
 #include <immintrin.h>
 #include <complex>
+#include <cmath>
 
 #include "search_manager.h"
 #include "settings.h"
@@ -779,7 +780,7 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
     if (settings::save_search_command) {
         outfile << "#" << settings::search_command << "\n";
     }
-    outfile << "id" + delim + "spectrum" + delim + "hit_rank" + delim + "match" + delim + "peptide" + delim + "isomers" + delim + "similarity" + delim + "bias" + delim + "dot_product" + delim + "delta_dot" + delim + "delta_similarity" + delim + "delta_sim2" + delim + "mass_difference" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "sim2" + delim + "x_score" + delim + "x_score_dot" + delim + "st_score" + delim + "st_score_dot\n";
+    outfile << "id" + delim + "spectrum" + delim + "hit_rank" + delim + "match" + delim + "peptide" + delim + "isomers" + delim + "similarity" + delim + "bias" + delim + "dot_product" + delim + "delta_dot" + delim + "delta_similarity" + delim + "delta_sim2" + delim + "mass_difference" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "sim2" + delim + "x_score" + delim + "x_score_dot" + delim + "x_lgamma" + delim + "x_lgamma_dot" + delim + "st_score" + delim + "st_score_dot\n";
 
     // Go through matches and parse relevant information for each
     for (int i = 0; i < matches.size(); ++i) {
@@ -794,7 +795,7 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
             }
             if (!iso.empty())
                 iso.pop_back();
-            outfile << id << delim << name << delim << psm.hit_rank << delim << target.id << delim << target.peptide << delim << iso << delim << psm.similarity << delim << psm.bias << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.delta_sim2 << delim << psm.mass_difference << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << "\n";
+            outfile << id << delim << name << delim << psm.hit_rank << delim << target.id << delim << target.peptide << delim << iso << delim << psm.similarity << delim << psm.bias << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.delta_sim2 << delim << psm.mass_difference << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.x_lgamma << delim << psm.x_lgamma_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << "\n";
         }
 
     }
@@ -1065,6 +1066,18 @@ bool search_manager::rescore_match(match &psm) {
 
     psm.x_hunter_score = psm.similarity * scp_factorial;
     psm.x_hunter_score_dot = psm.dot_product * scp_factorial;
+
+    /*
+     * lgamma of the x!score
+     */
+    if (psm.similarity < 0.00001f || psm.peak_count_target == 0) { //catch log(0)
+        psm.x_lgamma = -100.f;
+        psm.x_lgamma_dot = -100.f;
+    } else {
+        psm.x_lgamma = log((double) psm.similarity) + lgamma(psm.peak_count_target);
+        psm.x_lgamma_dot = log((double) psm.dot_product) + lgamma(psm.peak_count_target);
+    }
+
     auto bias_penalty = [](float bias) {
         if (bias < 0.1 || bias > 0.35 && bias <= 0.4)
             return 0.12f;

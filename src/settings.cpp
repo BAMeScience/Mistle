@@ -16,6 +16,8 @@ int settings::num_hit_ranks = 2;
 int settings::neighbors = 0;
 float settings::neighbors_intensity_factor = 0.5f;
 
+std::string settings::output_name;
+
 
 /*
  * Debugging and testing

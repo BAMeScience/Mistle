@@ -30,6 +30,7 @@ public:
     static int neighbors;
     static float neighbors_intensity_factor;
 
+    static std::string output_name;
 
     /*
      * Debugging and testing

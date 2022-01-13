@@ -78,7 +78,7 @@ bool indexing_manager::build_indices() {
      * Parsing files and creating preliminary indices
      */
 
-    cout << "Parsing library files" << endl;
+    cout << "Parsing "<< lib_files.size() <<" library files ..." << endl;
     auto start = chrono::high_resolution_clock::now();
     for (int i = 0; i < lib_files.size(); ++i) {
         //cout << "Parsing library file no. " << i << " (" << lib_files[i].path().filename() << ")" << endl;

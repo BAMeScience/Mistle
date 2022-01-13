@@ -751,9 +751,9 @@ bool search_manager::merge_matches() {
                 iiter->delta_sim2 = iiter->sim2 - reference_sim2;
             }
 
-            //Sort by discriminant scoring metric (here: st_score)
+            //Sort by discriminant scoring metric (here: st_score, if equal lowest mass diff (to be deterministic))
             std::sort(start, end+1, [](match &a, match &b) {
-                return a.spectraST_score > b.spectraST_score;
+                return a.spectraST_score > b.spectraST_score || (a.spectraST_score == b.spectraST_score && abs(a.mass_difference) < abs(b.mass_difference));
             });
             int rank = 1;
             for (auto iiter=start; iiter != end+1; ++iiter) {

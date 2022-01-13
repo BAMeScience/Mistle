@@ -8,7 +8,7 @@
 
 using namespace std;
 
-cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search_path, std::string &index_path) {
+cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
     try {
         for (int i = 0; i < argc; ++i) {
             settings::search_command += argv[i];
@@ -24,7 +24,7 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
                 ("h, help", "Print this help message")
                 ("s,search", "search file or directory ", cxxopts::value<std::string>(), "PATH")
                 ("i,index", "index directory (must contain config.txt and binary index files)", cxxopts::value<std::string>(), "PATH")
-                ("o,output", "output name (will be saved index directory (-i))", cxxopts::value<std::string>()->default_value("results.csv"), "NAME")
+                ("o,output", "output name (will be saved index directory)", cxxopts::value<std::string>()->default_value("results.csv"), "NAME")
                 ("t,threads", "number of threads", cxxopts::value<int>()->default_value("1"), "NUM")
                 ("p,ppm_tolerance", "precursor mz tolerance given in ppm", cxxopts::value<float>()->default_value("10"), "NUM")
                 ("m,mz_tolerance", "precursor mz tolerance (absolut value in Da)", cxxopts::value<float>(), "NUM")
@@ -44,10 +44,19 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::string &search
             exit(0);
         }
         if (result.count("search")) {
-            search_path = result["search"].as<std::string>();
+            settings::search_path = result["search"].as<std::string>();
+        } else {
+            std::cerr << "Missing input: -s/--search" << std::endl;
+            exit(1);
         }
         if (result.count("index")) {
-            index_path = result["index"].as<std::string>();
+            settings::index_path = result["index"].as<std::string>();
+            if (!settings::index_path.ends_with('/')) {
+                settings::index_path += "/";
+            }
+        } else {
+            std::cerr << "Missing input: -i/--index" << std::endl;
+            exit(1);
         }
         settings::output_name = result["output"].as<std::string>();
 
@@ -104,9 +113,8 @@ int main(int argc, const char* argv[]) {
 #if USE_AVX_512
     std::cout << "USING AVX512" << endl;
 #endif
-    std::string search_file = "/home/ynowatzk/data/9MM/mgf/9MM_FASP.mgf";
-    std::string index_dir = "./test/";
-    parseArgs(argc, argv, search_file, index_dir);
+
+    parseArgs(argc, argv);
 
     auto start = chrono::high_resolution_clock::now();
 
@@ -115,7 +123,7 @@ int main(int argc, const char* argv[]) {
      * Preparation and Search
      */
 
-    search_manager sm(search_file, index_dir);
+    search_manager sm(settings::search_path, settings::index_path);
 
     std::cout << "Preparing libraries and indices ..." << std::endl;
     sm.prepare_search_library();
@@ -129,7 +137,7 @@ int main(int argc, const char* argv[]) {
     std::cout << "Merging overlapping results" << std::endl;
     sm.merge_matches();
     //std::cout << "Writing results to file" << std::endl;
-    sm.save_search_results_to_file(index_dir + settings::output_name);
+    sm.save_search_results_to_file(settings::index_path + settings::output_name);
 
 
     cout << "Inner search time elapsed: " << sm.get_time_spent_in_inner_search() << " seconds" << endl;

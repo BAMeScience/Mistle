@@ -30,6 +30,9 @@ public:
     static int neighbors;
     static float neighbors_intensity_factor;
 
+    //Names and strings
+    static std::string search_path;
+    static std::string index_path;
     static std::string output_name;
 
     /*

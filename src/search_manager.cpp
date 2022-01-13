@@ -753,7 +753,7 @@ bool search_manager::merge_matches() {
 
             //Sort by discriminant scoring metric (here: st_score, if equal lowest mass diff (to be deterministic))
             std::sort(start, end+1, [](match &a, match &b) {
-                return a.spectraST_score > b.spectraST_score || (a.spectraST_score == b.spectraST_score && abs(a.mass_difference) < abs(b.mass_difference));
+                return a.spectraST_score > b.spectraST_score || (a.spectraST_score == b.spectraST_score && a.similarity > b.similarity);
             });
             int rank = 1;
             for (auto iiter=start; iiter != end+1; ++iiter) {

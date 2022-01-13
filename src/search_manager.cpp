@@ -148,6 +148,9 @@ bool search_manager::perform_searches() {
         //std::cout << "Loading index number " << i << std::endl;
         if (!last_batch && mapped_search_ids[i].size() < settings::batch_size / config->num_indices)
             continue;
+        if (mapped_search_ids[i].empty()) {
+            continue;
+        }
         frag_idx->load_index_from_binary_file(config->sub_idx_file_names[i]);
         frag_idx->prepare_axv_access();
         //TODO set precursor index limits by subindex borders... has to be properly implemented
@@ -183,6 +186,9 @@ bool search_manager::perform_searches_parallel() {
         //std::cout << "Loading index number " << i << std::endl;
         if (!last_batch && mapped_search_ids[i].size() < settings::batch_size / config->num_indices)
             continue;
+        if (mapped_search_ids[i].empty()) {
+            continue;
+        }
         frag_idx->load_index_from_binary_file(config->sub_idx_file_names[i]);
         frag_idx->prepare_axv_access();
         //TODO set precursor index limits by subindex borders... has to be properly implemented
@@ -208,7 +214,7 @@ bool search_manager::perform_searches_parallel() {
          */
         if (!last_batch) {
             prepare_next_batch();
-            perform_searches();
+            perform_searches_parallel(); //TODO correct?
         }
     }
     return true;

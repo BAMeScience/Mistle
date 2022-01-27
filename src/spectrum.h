@@ -43,6 +43,8 @@ public:
     bool bin_peaks(bool root_rescale=false, bool normalize=false);
     bool bin_peaks_sparse(bool root_rescale=false, bool normalize=false);
 
+    bool denoise_mz_window(int topX, float window_size);
+
     bool root_scale_intensities();
     bool normalize_intensities();
     bool normalize_bins(float magnitude=-1.f);

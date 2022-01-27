@@ -217,3 +217,51 @@ bool spectrum::add_intensity_to_bin(int bin, float intensity) {
     return true;
 }
 
+bool spectrum::denoise_mz_window(int topX, float window_size) {
+
+    //TODO: this is a naive sliding window implementation. To find pairs of peaks with distance > window size could optimize this process -> in the future
+
+    auto start = *std::min_element(peak_positions.begin(), peak_positions.end());
+    for (int mz = int(start); mz <= int(BIN_MAX_MZ - window_size) + 1; ++mz) {
+        float mz_max = float(mz) + window_size;
+
+        std::vector<int> peak_idx;
+        std::vector<float> peak_int;
+        std::vector<int> delete_idx;
+
+        for (int i = 0; i < peak_positions.size(); ++i) {
+            if (peak_positions[i] >= float(mz)) {
+                if (peak_positions[i] > mz_max) {
+                    break;
+                }
+                peak_idx.push_back(i);
+                peak_int.push_back(intensities[i]);
+            }
+        }
+
+        if (peak_idx.size() > topX) {
+            vector<float> peak_int_sorted = peak_int; // Exists only to retrieve intensity of X-th highest peak
+            std::sort(peak_int_sorted.begin(), peak_int_sorted.end(),greater <>());
+
+            float ref_intensity = peak_int_sorted[topX - 1];
+            for (int i = 0; i < peak_idx.size(); ++i) {
+                if (peak_int[i] < ref_intensity) {
+                    delete_idx.push_back(peak_idx[i]);
+                }
+            }
+
+            //Do the deletion (starting from the highest index to avoid a shift in vector indices)
+            std::sort(delete_idx.begin(), delete_idx.end(),greater <>());
+
+            for (int i : delete_idx) {
+                peak_positions.erase(peak_positions.begin() + i);
+                intensities.erase(intensities.begin() + i);
+            }
+        }
+
+    }
+
+
+    return false;
+}
+

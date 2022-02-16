@@ -41,6 +41,7 @@ public:
     static bool save_search_command;
     static std::string search_command;
     static bool turn_off_fragment_intensities;
+
     static bool apply_topX_in_window_denoising;
     static int peaks_per_window;
     static float window_size;

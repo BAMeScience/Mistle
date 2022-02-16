@@ -149,8 +149,8 @@ bool fragment_ion_index::load_index_from_binary_file(const string &path) {
         }
         int mz_bin = spectrum::get_mz_bin(mz);
 
-        if (BIN_MIN_MZ > 1)
-            std::cerr << "NEIJ: " << BIN_MIN_MZ << std::endl;
+        //if (BIN_MIN_MZ > 1)
+        //    std::cerr << "NEIJ: " << BIN_MIN_MZ << std::endl;
 
         // Same parent peaks falling into the same bin
         if (!fragment_bins[mz_bin].empty() && fragment_bins[mz_bin].back().parent_id == id) {

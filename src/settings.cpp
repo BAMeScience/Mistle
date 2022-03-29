@@ -28,6 +28,6 @@ std::string settings::output_name;
 std::string settings::search_command;
 bool settings::save_search_command = true;
 bool settings::turn_off_fragment_intensities = false; //when loading fragment, set intensity to 1
-bool settings::apply_topX_in_window_denoising = true;
+bool settings::apply_topX_in_window_denoising = false;
 int settings::peaks_per_window = 5;
 float settings::window_size = 100.f;

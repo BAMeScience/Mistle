@@ -20,6 +20,10 @@ public:
     float bias;
     float dot_product;
 
+    //Annotation scores
+    float annotation_similarity;
+    float annotation_bias;
+
     //Additional score
     float delta_dot;
     float delta_similarity;

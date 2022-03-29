@@ -47,6 +47,8 @@ public:
 
     bool root_scale_intensities();
     bool normalize_intensities();
+    static bool normalize_intensity_vector(std::vector<float> &intensities);
+    static bool normalize_intensity_vector(std::vector<std::pair<float, float>> &peaks);
     bool normalize_bins(float magnitude=-1.f);
     bool normalize_sparse_bins(float magnitude=-1.f);
     static int get_mz_bin(float mz);

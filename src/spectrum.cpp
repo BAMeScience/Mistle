@@ -265,3 +265,31 @@ bool spectrum::denoise_mz_window(int topX, float window_size) {
     return false;
 }
 
+bool spectrum::normalize_intensity_vector(vector<float> &intensities) {
+    float magnitude = 0.f;
+    for (float &i : intensities) {
+        magnitude += i*i;
+    }
+    magnitude = sqrt(magnitude);
+
+    for (float &i : intensities) {
+        i = i / magnitude;
+    }
+
+    return true;
+}
+
+bool spectrum::normalize_intensity_vector(vector<std::pair<float, float>> &peaks) {
+    float magnitude = 0.f;
+    for (auto &p : peaks) {
+        magnitude += p.second * p.second;
+    }
+    magnitude = sqrt(magnitude);
+
+    for (auto &p : peaks) {
+        p.second = p.second / magnitude;
+    }
+
+    return true;
+}
+

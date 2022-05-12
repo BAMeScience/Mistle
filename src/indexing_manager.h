@@ -13,7 +13,7 @@
 class indexing_manager {
 
     std::vector<std::string> input_paths;
-    std::vector<std::filesystem::directory_entry> lib_files;
+    std::vector<std::filesystem::path> lib_files;
 
 
     //Precursor Index

@@ -57,11 +57,30 @@ indexing_manager::indexing_manager(std::vector<std::string> &input_paths, std::s
 
 
     for (std::string &path : input_paths) {
-        for (const auto & entry : std::filesystem::directory_iterator(path)) {
-            if (entry.path().extension() == ".msp") {
-                lib_files.push_back(entry);
+
+        if (!std::filesystem::exists(path)) {
+            std::cerr << "Bad file" << std::endl;
+            std::cerr << path << " is broken or does not exist!" << std::endl;
+            exit(1);
+        }
+
+        if (std::filesystem::is_directory(path)) {
+            for (const auto & entry : std::filesystem::directory_iterator(path)) {
+                if (entry.path().extension() == ".msp") {
+                    lib_files.push_back(entry.path());
+                }
+            }
+        } else {
+            std::filesystem::path file_path = path;
+            if (file_path.extension() == ".msp") {
+                lib_files.push_back(file_path);
+            } else {
+                std::cerr << "Unsupported file extension" << std::endl;
+                std::cerr << file_path << " file is not supported" << std::endl;
+                exit(1);
             }
         }
+
     }
 }
 
@@ -139,7 +158,7 @@ bool indexing_manager::set_up_output_streams() {
 }
 
 bool indexing_manager::parse_file(unsigned int file_num) {
-    string file_path = lib_files[file_num].path().string();
+    string file_path = lib_files[file_num].string();
 
     ifstream f(file_path, ios::in);
     //f.precision(FLOAT_OUTPUT_PRECISION);
@@ -185,7 +204,7 @@ bool indexing_manager::parse_file(unsigned int file_num) {
 }
 
 bool indexing_manager::parse_file_buffered(unsigned int file_num) {
-    string file_path = lib_files[file_num].path().string();
+    string file_path = lib_files[file_num].string();
 
     ifstream f(file_path, ios::in);
     f.precision(FLOAT_OUTPUT_PRECISION); //TODO

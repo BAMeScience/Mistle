@@ -19,7 +19,7 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::vector<std::st
 
         options.add_options()
                 ("h, help", "Print this help message")
-                ("i,input", "input directory containing mass spectra (.msp format)", cxxopts::value<std::string>(), "PATH")
+                ("i,input", "list of input files or directories containing mass spectra (.msp format)", cxxopts::value<std::string>(), "PATH")
                 ("o,output", "output directory where indices will be generated", cxxopts::value<std::string>(), "PATH")
                 ("n,num_indices", "number of buckets the fragment ion index will be split in", cxxopts::value<unsigned int>()->default_value("64"), "NUM")
                 ("min_pep_length", "Minimum peptide length for the reference spectrum to be loaded into the index", cxxopts::value<unsigned int>()->default_value("7"), "NUM")

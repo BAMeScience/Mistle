@@ -13,6 +13,7 @@ public:
     unsigned int target_id;
 
     float mass_difference;
+    unsigned int charge;
     std::vector<std::string> isomers; //tracking homologous peptides
 
     // Default scores

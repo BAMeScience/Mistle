@@ -5,7 +5,7 @@
 #define BIN_MAX_MZ 2000
 
 #define STANDARD_PARENT_UPPER_MZ 1500
-#define STANDARD_PARENT_LOWER_MZ 300
+#define STANDARD_PARENT_LOWER_MZ 400
 
 #define FLOAT_OUTPUT_PRECISION std::numeric_limits<float>::max_digits10
 

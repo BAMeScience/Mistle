@@ -29,9 +29,10 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
                 ("p,ppm_tolerance", "precursor mz tolerance given in ppm", cxxopts::value<float>()->default_value("10"), "NUM")
                 ("m,mz_tolerance", "precursor mz tolerance (absolut value in Da)", cxxopts::value<float>(), "NUM")
                 ("b,bin_size", "bin size for fragment ion binning (in Da)", cxxopts::value<float>()->default_value("1"), "NUM")
-                ("neighbors", "number of neighboring bins intensity is carried over (on search spectrum peaks)", cxxopts::value<int>()->default_value("0"), "NUM")
-                ("neighbors_intensity_factor", "fraction [0, 1] of intensity carried over to neighboring bin(s)", cxxopts::value<float>()->default_value("0.5"), "NUM")
-                ("B,batch_size", "number of mass spectra loaded in a batch", cxxopts::value<int>(), "NUM");
+                ("hits_per_spectrum", "number of output matches per input spectrum", cxxopts::value<int>()->default_value("1"), "NUM");
+                //("neighbors", "number of neighboring bins intensity is carried over (on search spectrum peaks)", cxxopts::value<int>()->default_value("0"), "NUM")
+                //("neighbors_intensity_factor", "fraction [0, 1] of intensity carried over to neighboring bin(s)", cxxopts::value<float>()->default_value("0.5"), "NUM")
+                //("B,batch_size", "number of mass spectra loaded in a batch", cxxopts::value<int>(), "NUM");
 
 
         options.parse_positional({"search", "index"});
@@ -64,6 +65,9 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
             settings::num_threads = result["threads"].as<int>();
             settings::parallel = (settings::num_threads > 1);
         }
+        if (result.count("hits_per_spectrum")) {
+            settings::num_hiat_ranks = result["hits_per_spectrum"].as<int>();
+        }
         if (result.count("mz_tolerance")) {
             settings::mz_tolerance = result["mz_tolerance"].as<float>();
             settings::use_ppm_tolerance = false;
@@ -80,14 +84,17 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
         if (result.count("bin_size")) {
             settings::bin_size = result["bin_size"].as<float>();
         }
-        if (result.count("neighbors")) {
+        if (result.count("bin_size")) {
+            settings::bin_size = result["bin_size"].as<float>();
+        }
+        /*if (result.count("neighbors")) {
             settings::neighbors = result["neighbors"].as<int>();
             settings::neighbors_intensity_factor = result["neighbors_intensity_factor"].as<float>();
         }
         if (result.count("batch_size")) {
             settings::batch_size = result["batch_size"].as<int>();
             settings::load_batches = true;
-        }
+        }*/
 
         return result;
 

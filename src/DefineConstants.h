@@ -7,7 +7,7 @@
 #define STANDARD_PARENT_UPPER_MZ 1500
 #define STANDARD_PARENT_LOWER_MZ 400
 
-#define FLOAT_OUTPUT_PRECISION std::numeric_limits<float>::max_digits10
+//#define FLOAT_OUTPUT_PRECISION std::numeric_limits<float>::max_digits10
 
 
 #endif //SIMPLE_EXAMPLE_DEFINECONSTANTS_H

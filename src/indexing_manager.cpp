@@ -207,7 +207,7 @@ bool indexing_manager::parse_file_buffered(unsigned int file_num) {
     string file_path = lib_files[file_num].string();
 
     ifstream f(file_path, ios::in);
-    f.precision(FLOAT_OUTPUT_PRECISION); //TODO
+    //f.precision(FLOAT_OUTPUT_PRECISION); //TODO
 
     unsigned int buffer_size = 40960;//1048576; //Byte //TODO fix if too small
     unsigned int carryover_pos = 0;

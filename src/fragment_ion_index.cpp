@@ -100,7 +100,7 @@ bool fragment_ion_index::save_index_to_file(const string &path) {
      */
 
     ofstream f(path, ios::out);
-    f.precision(FLOAT_OUTPUT_PRECISION);
+    //f.precision(FLOAT_OUTPUT_PRECISION);
 
     string delimiter = ";";
 

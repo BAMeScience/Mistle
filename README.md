@@ -15,7 +15,7 @@ For building the project, please create (mkdir) a separate directory. From there
 
     cmake --build /path/to/mistle/
     
-In order to make use SIMD instruction AVX2 or AVX512 build with -DAVX_2=ON or -DAVX_512=ON compiler flag. Check if CPU supports these. If necessary adjust CMakeList.txt according to the CPU.
+In order to make use of SIMD instruction AVX2 or AVX512 build with -DAVX_2=ON or -DAVX_512=ON compiler flag. Check if your CPU supports these. If necessary adjust CMakeList.txt according to the preferences of your CPU.
 
 Optionally, export the directory where *mistle* was build to executable PATH in *~/.bashrc* file. Add line
     
@@ -26,22 +26,37 @@ Optionally, export the directory where *mistle* was build to executable PATH in 
 
 ### Mistle build
 
-Build mistle's fragment ion index for spectral matching.
+Build Mistle's fragment ion index from spectral library.
 
     mistle-build [OPTION...] [optional args]
 
 ### Mistle search
 
-Search experimental mass spectra in mistle fragment ion index.
+Search experimental mass spectra in Mistle's fragment ion index.
 
 
     mistle-search [OPTION...] [optional args]
 
-Use *-h* flag to print the help message. 
+Use *-h* flag to print the help message. Refer to the example [README](example/README.md) and directory to see an example usage and to test the program.
 
 ## Output format
 
-Peptide spectrum matches (PSMs) are provided in tab separated format. Matched experimental spetra are listed and indexed by their scan name and the rank of the matched library spectrum. (Rank R is append with /R to the see: ) 
+Peptide spectrum matches (PSMs) are provided in tab separated format. 
+First line is a commend tagged by # name the exact command and parameters used to produce the output. 
+
+Next line is the header listing all tracked attributes (tab separated).
+
+    id	spectrum	charge	hit_rank	match	peptide	isomers	similarity	bias    [...]
+
+
+Below, all matched experimental spetra are listed and indexed by their scan name and the rank of the matched library spectrum. (Rank R is append with /R to the name). See example [output](example/index/example_results_control.csv).
+
+
+
+
+
+
+
 
 ## Important for usage on Linux
 

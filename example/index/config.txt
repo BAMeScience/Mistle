@@ -1,4 +1,0 @@
-Num indices: 4
-Index limits: 675;950;1225;
-Min peptide length: 7
-Build command: mistle-build -i yeast_1000.msp -o index/ -n 4 -t 1

@@ -4,12 +4,12 @@ A toy example is provided to test the program. A library of simulated mass spect
 
 ## Commands
 
-Change into build directory. Construct fragment index from spectral library:
+Open terminal or change into this example directory. To construct the fragment index from the example spectral library, run
 
-    mistle-build <path to mistle/examples/index/> -n 4 ...
+    mistle-build -i yeast_1000.msp -o index/ -n 4 -t 1
 
 Perform example searches.
     
-    mistle-search ...
+    mistle-search -s yeast_exp.mgf -i index/ -o example_results.csv -p 10 -b 0.2
 
 Compare output file to xxx

@@ -66,7 +66,7 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
             settings::parallel = (settings::num_threads > 1);
         }
         if (result.count("hits_per_spectrum")) {
-            settings::num_hiat_ranks = result["hits_per_spectrum"].as<int>();
+            settings::num_hit_ranks = result["hits_per_spectrum"].as<int>();
         }
         if (result.count("mz_tolerance")) {
             settings::mz_tolerance = result["mz_tolerance"].as<float>();

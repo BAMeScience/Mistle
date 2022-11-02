@@ -18,7 +18,7 @@ For building the project, please create (mkdir) a separate build directory. Chan
     
 In order to make use of SIMD instruction AVX2 or AVX512 build with -DAVX_2=ON or -DAVX_512=ON compiler flag. Check if your CPU supports these. If necessary adjust CMakeList.txt according to the preferences of your CPU.
 
-Optionally, export the directory where *mistle* was build to executable PATH in the *~/.bashrc* file. Add line
+Optionally, export the directory where *mistle* was built as an executable PATH in the *~/.bashrc* file. Add line
     
     export PATH="/home/$USER/path/to/mistle/build:$PATH"
 
@@ -38,34 +38,34 @@ Search experimental mass spectra in Mistle's fragment ion index.
 
     mistle-search [OPTION...] [optional args]
 
-Use *-h* flag to print the help message. Refer to the example [README](example/README.md) and directory to see an example usage and to test the program.
+Use *-h* flag to print the help message. Refer to the [EXAMPLE README](example/README.md) and the example directory to test the program.
 
 ## Output format
 
 Peptide spectrum matches (PSMs) are provided in tab separated format. 
-First line is a commend tagged by # name the exact command and parameters used to produce the output. 
+First line (comment tagged by #) names the exact shell command and parameters used to produce the output. 
 
-Next line is the header listing all tracked attributes (tab separated).
+The next line is the header listing all tracked attributes (tab separated).
 
     id	spectrum	charge	hit_rank	match	peptide	isomers	similarity	bias    [...]
 
 
-Below, all matched experimental spetra are listed and indexed by their scan name and the rank of the matched library spectrum. (Rank R is append with /R to the name). See example [output](example/index/example_results_control.csv).
+Below, all matched experimental spetra are listed and indexed by their scan name and the rank of the matched library spectrum. (Rank R is appended with /R to the scan name). See example [output](example/index/example_results_control.csv).
 
 
 
 
-
-
-
-
-## Important for usage on Linux
 
 
 ## Known issues
 
-Input files coming from Windows distribution may have a line ending with \r\n (carriage return). Linux requires \n as line end only.
+### On linux
+
+Input files coming from Windows distributions may have a line ending with \r\n (carriage return). Linux and Mistle require \n as the exclusive line ending.
 Remove \r character (char 13) using the following commad line
 * *tr -d '\r' < FILE.mgf > FILE_FIXED.mgf*
 
-Similarity is the preferred score baseline. For the dot product certain properties (e.g. bias, lgamma score) are not defined or ill-defined
+### Scores 
+
+Similarity is the preferred baseline score. For the dot product certain properties (e.g. bias, lgamma score) are not defined or defined based on the similarity.
+

@@ -18,7 +18,7 @@ For building the project, please create (mkdir) a separate build directory. Chan
     
 In order to make use of SIMD instruction AVX2 or AVX512 build with -DAVX_2=ON or -DAVX_512=ON compiler flag. Check if your CPU supports these. If necessary adjust CMakeList.txt according to the preferences of your CPU.
 
-Optionally, export the directory where *mistle* was build to executable PATH in *~/.bashrc* file. Add line
+Optionally, export the directory where *mistle* was build to executable PATH in the *~/.bashrc* file. Add line
     
     export PATH="/home/$USER/path/to/mistle/build:$PATH"
 

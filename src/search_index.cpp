@@ -29,7 +29,10 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
                 ("p,ppm_tolerance", "precursor mz tolerance given in ppm", cxxopts::value<float>()->default_value("10"), "NUM")
                 ("m,mz_tolerance", "precursor mz tolerance (absolut value in Da)", cxxopts::value<float>(), "NUM")
                 ("b,bin_size", "bin size for fragment ion binning (in Da)", cxxopts::value<float>()->default_value("1"), "NUM")
-                ("hits_per_spectrum", "number of output matches per input spectrum", cxxopts::value<int>()->default_value("1"), "NUM");
+                ("hits_per_spectrum", "number of output matches per input spectrum", cxxopts::value<int>()->default_value("1"), "NUM")
+                ("reduce_noise_in_window", "Apply noise reduction with the top X peaks in window w approach (Default: off)", cxxopts::value<bool>()->default_value("false"))
+                ("peaks_per_window", "number of peaks per window", cxxopts::value<int>()->default_value("5"), "NUM")
+                ("window_size", "window size", cxxopts::value<float>()->default_value("100.0"), "NUM");
                 //("neighbors", "number of neighboring bins intensity is carried over (on search spectrum peaks)", cxxopts::value<int>()->default_value("0"), "NUM")
                 //("neighbors_intensity_factor", "fraction [0, 1] of intensity carried over to neighboring bin(s)", cxxopts::value<float>()->default_value("0.5"), "NUM")
                 //("B,batch_size", "number of mass spectra loaded in a batch", cxxopts::value<int>(), "NUM");
@@ -87,6 +90,12 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
         if (result.count("bin_size")) {
             settings::bin_size = result["bin_size"].as<float>();
         }
+        if (result.count("reduce_noise_in_window")) {
+            settings::apply_topX_in_window_denoising = true;
+            settings::peaks_per_window = result["peaks_per_window"].as<int>();
+            settings::window_size = result["window_size"].as<float>();
+        }
+
         /*if (result.count("neighbors")) {
             settings::neighbors = result["neighbors"].as<int>();
             settings::neighbors_intensity_factor = result["neighbors_intensity_factor"].as<float>();

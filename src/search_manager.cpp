@@ -20,7 +20,7 @@ search_manager::search_manager(std::string search_file_path, std::string index_d
     pool = std::make_shared<thread_pool>(settings::num_threads);
 
     //Setting up scoring parameters
-    sigma = settings::bin_size / 2.f;
+    sigma = settings::bin_size; // Alternative: / 2.f;
     max_normal = normal_pdf(0,0, sigma);
 
 }

@@ -119,7 +119,6 @@ shared_ptr<spectrum> msp_reader::read_spectrum_from_buffer(const string& buffer)
         if (ss.eof())
             return nullptr;
         getline(ss, line);
-
         // split up line to identify comment tags
         size_t colon_pos = line.find(':');
 
@@ -142,11 +141,16 @@ shared_ptr<spectrum> msp_reader::read_spectrum_from_buffer(const string& buffer)
     int num_peaks = stoi(value);
     for (int i = 0; i < num_peaks; ++i) {
         getline(ss, value, '\t');
-        float peak = stof(value);
-        getline(ss, value, '\t');
-        float intensity = stof(value);
+        //std::cout << "X" << value << "X" << std::endl;
 
-        getline(ss, value);
+        float peak = stof(value);
+        getline(ss, value, '\n');
+
+        //std::cout << "X" << value << "X" << std::endl;
+        float intensity = stof(value);
+        //std::cout << intensity << std::endl;
+
+        //getline(ss, value);
 
 
 

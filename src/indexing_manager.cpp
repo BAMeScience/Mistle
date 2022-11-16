@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <fstream>
 #include "msp_reader.h"
+#include "mgf_reader.h"
 #include "index_file_writer.h"
 #include "DefineConstants.h"
 #include "fragment_ion_index.h"
@@ -73,6 +74,10 @@ indexing_manager::indexing_manager(std::vector<std::string> &input_paths, std::s
         } else {
             std::filesystem::path file_path = path;
             if (file_path.extension() == ".msp") {
+                file_format = MSP;
+                lib_files.push_back(file_path);
+            } else if (file_path.extension() == ".mgf") {
+                file_format = MGF;
                 lib_files.push_back(file_path);
             } else {
                 std::cerr << "Unsupported file extension" << std::endl;
@@ -173,9 +178,23 @@ bool indexing_manager::parse_file(unsigned int file_num) {
     while (!f.eof()) {
 
         //Read spectrum from file and pre-processing
-        msp_reader::read_next_entry_into_buffer(f, buffer);
+        bool read_successfully = false;
+        if (file_format == MSP) {
+            read_successfully = msp_reader::read_next_entry_into_buffer(f, buffer);
+        } else if (file_format == MGF) {
+            read_successfully = mgf_reader::read_next_entry_into_buffer(f, buffer);
+        }
+        if (!read_successfully)
+            continue;
+
         auto read_and_stream = [this, buffer]() {
-            shared_ptr<spectrum> tmp_spectrum = msp_reader::read_spectrum_from_buffer(buffer);
+
+            shared_ptr<spectrum> tmp_spectrum;
+            if (file_format == MSP) {
+                tmp_spectrum = msp_reader::read_spectrum_from_buffer(buffer);
+            } else if (file_format == MGF) {
+                tmp_spectrum = mgf_reader::read_spectrum_from_buffer(buffer);
+            }
 
             if (tmp_spectrum->peptide.length() < config->minimum_peptide_length) {
                 return;
@@ -189,9 +208,13 @@ bool indexing_manager::parse_file(unsigned int file_num) {
             precursor &bookmark = precursorIndex->record_new_precursor(tmp_spectrum);
 
             //Stream (binned) peaks into corresponding sub-index file
+
             unsigned int idx_num = config->assign_to_index(bookmark.mz);
             index_file_writer::stream_peaks_to_binary_file(output_streams[idx_num], bookmark.id, tmp_spectrum);
+            //std::cout << bookmark.mz << std::endl;
+
         };
+
 
         if (pool->get_size() > 0) {
             pool->enqueue(read_and_stream);

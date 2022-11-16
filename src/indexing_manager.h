@@ -9,11 +9,15 @@
 #include "precursor_index.h"
 #include "thread_pool.h"
 
+enum FILE_FORMAT {
+    MSP, MGF
+};
 
 class indexing_manager {
 
     std::vector<std::string> input_paths;
     std::vector<std::filesystem::path> lib_files;
+    FILE_FORMAT file_format;
 
 
     //Precursor Index

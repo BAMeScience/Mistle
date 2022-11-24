@@ -173,7 +173,7 @@ shared_ptr<spectrum> mgf_reader::read_spectrum_from_buffer(const string& buffer)
             if (line.empty())
                 continue;
 
-            std::size_t space_pos = line.find(' ');
+            std::size_t space_pos = line.find_first_of(" \t"); //Finds space or tab
             if (space_pos == string::npos)
                 continue;
 

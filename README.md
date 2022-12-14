@@ -7,7 +7,7 @@ Tested only on linux (debian) for the specified versions:
 
 * C++20
 * Cmake (version 3.19.3)
-* gcc (10.2.0)
+* g++ (10.2.1)
 
 ## Build
 

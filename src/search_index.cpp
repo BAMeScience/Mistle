@@ -156,8 +156,9 @@ int main(int argc, const char* argv[]) {
 
     if (settings::output_path.ends_with(".pin")) {
         sm.save_search_results_in_pin_format(settings::output_path);
+    } else {
+        sm.save_search_results_to_file(settings::output_path);
     }
-    sm.save_search_results_to_file(settings::output_path);
 
 
     cout << "Inner search time elapsed: " << sm.get_time_spent_in_inner_search() << " seconds" << endl;

@@ -23,6 +23,7 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::vector<std::st
                 ("o,output", "output directory where indices will be generated", cxxopts::value<std::string>(), "PATH")
                 ("n,num_indices", "number of buckets the fragment ion index will be split in", cxxopts::value<unsigned int>()->default_value("64"), "NUM")
                 ("min_pep_length", "Minimum peptide length for the reference spectrum to be loaded into the index", cxxopts::value<unsigned int>()->default_value("7"), "NUM")
+                ("label", "Give the library a label (1: target; 0: decoy)", cxxopts::value<unsigned int>()->default_value("1"), "NUM")
                 ("t,threads", "number of threads (experimental)\n - 1 thread for reading, other threads for processing. Has increased RAM costs (try using more threads or GLIBC_TUNABLES=glibc.malloc.tcache_count=0 for compensation)", cxxopts::value<int>()->default_value("1"), "NUM");
 
         options.parse_positional({"input", "output"});
@@ -57,6 +58,7 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::vector<std::st
             config->idx_path = result["output"].as<std::string>();
         }
         config->minimum_peptide_length = result["min_pep_length"].as<unsigned int>();
+        config->label = result["label"].as<unsigned int>();
 
 
         return result;

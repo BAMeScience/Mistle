@@ -18,7 +18,7 @@ public:
     std::string idx_path = "./test/";
     std::string precursor_index_path;
     unsigned int num_indices = 24;
-    unsigned int label = 999;
+    unsigned int label = 1;
 
 
     unsigned int sub_idx_range;

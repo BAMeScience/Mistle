@@ -811,6 +811,41 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
     return true;
 }
 
+
+bool search_manager::save_search_results_in_pin_format(const std::string &file_path) {
+    std::ofstream outfile;
+    std::string delim = "\t";
+
+    outfile.open(file_path, std::ios::out);
+    if (!outfile.good())
+        return false;
+
+    // Add header
+    //Percolator format SpecId	Label	ScanNr	lnrSp	deltLCn	deltCn	Xcorr	Sp	IonFrac	Mass	PepLen	Charge1	Charge2	Charge3	enzN	enzC	enzInt	lnNumSP	dM	absdM	Peptide	Proteins
+    outfile << "PSMId" + delim + "Label" + delim + "ScanNr" + delim + "charge" + delim + "similarity" + delim + "bias" + delim + "annotation_similarity"+ delim + "annotation_bias" + delim + "dot_product" + delim + "delta_dot" + delim + "delta_similarity" + delim + "delta_sim2" + delim + "mass_difference" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "sim2" + delim + "x_score" + delim + "x_score_dot" + delim + "x_lgamma" + delim + "x_lgamma_dot" + delim + "st_score" + delim + "st_score_dot" + delim + "Peptide" + delim + "Proteins" + "\n";
+
+    // Go through matches and parse relevant information for each
+    for (int i = 0; i < matches.size(); ++i) {
+        match &psm = matches[i];
+        if (psm.hit_rank <= 1) { // Only output rank-1 psms for percolator
+            precursor &target = precursor_idx->get_precursor(psm.target_id);
+            std::string name = search_library.spectrum_list[psm.query_id]->name;
+            std::string id = name + "/" + std::to_string(psm.hit_rank);
+            std::string iso;
+            for (std::string &s : psm.isomers) {
+                iso += s + ";";
+            }
+            if (!iso.empty())
+                iso.pop_back();
+            outfile << target.id << delim << config->label << delim << name << delim << psm.charge << delim << psm.similarity << delim << psm.bias << delim << psm.annotation_similarity << delim << psm.annotation_bias << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.delta_sim2 << delim << psm.mass_difference << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.x_lgamma << delim << psm.x_lgamma_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << delim << target.peptide << delim << "Unknown" << "\n";
+        }
+
+    }
+
+    outfile.close();
+    return true;
+}
+
 //__m256 _mini_vector = {ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity}; //_mm256_set_ps(ion_bin[k].intensity, ion_bin[k+1].intensity, ion_bin[k+2].intensity, ion_bin[k+3].intensity, ion_bin[k+4].intensity, ion_bin[k+5].intensity, ion_bin[k+6].intensity, ion_bin[k+7].intensity);//_mm256_load_ps(&vec[i]);
 
 

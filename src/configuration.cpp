@@ -26,6 +26,7 @@ bool configuration::save_configuration_to_file(const std::string& config_file_pa
         f << lim << delimiter;
     }
     f << "\n";
+    f << "Label: " << build_command << "\n";
     f << "Min peptide length: " << minimum_peptide_length << "\n";
     f << "Build command: " << build_command << "\n";
     f.close();
@@ -63,6 +64,14 @@ bool configuration::load_configuration_from_file(const std::string& config_file_
     } else {
         std::cerr << "Wrong config format" << std::endl;
         return false;
+    }
+
+    //Third line (Label)
+    getline(f, line);
+    if(line.rfind("Label: ", 0) == 0) {
+        label = std::stoi(line.substr(7, std::string::npos));
+    } else {
+        label = 1;
     }
 
     f.close();

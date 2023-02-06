@@ -56,6 +56,7 @@ public:
     bool perform_searches_parallel();
     bool merge_matches(); //todo probably going over ids back to front and popping matches in the back
     bool save_search_results_to_file(const std::string &file_path);
+    bool save_search_results_in_pin_format(const std::string &file_path);
 
     long get_time_spent_in_inner_search();
 

@@ -840,7 +840,7 @@ bool search_manager::save_search_results_in_pin_format(const std::string &file_p
             }
             if (!iso.empty())
                 iso.pop_back();
-            outfile << target.id << delim << config->label << delim << scannum << delim << psm.charge << delim << psm.similarity << delim << psm.bias << delim << psm.annotation_similarity << delim << psm.annotation_bias << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.delta_sim2 << delim << psm.mass_difference << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.x_lgamma << delim << psm.x_lgamma_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << delim << peptide << delim << "Unknown" << "\n";
+            outfile << i << delim << config->label << delim << scannum << delim << psm.charge << delim << psm.similarity << delim << psm.bias << delim << psm.annotation_similarity << delim << psm.annotation_bias << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.delta_sim2 << delim << psm.mass_difference << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.x_lgamma << delim << psm.x_lgamma_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << delim << peptide << delim << "Unknown" << "\n";
         }
 
     }
@@ -1116,7 +1116,6 @@ bool search_manager::rescore_match(match &psm) {
         annotation_score += peak_score;
         annotation_bias += (peak_score * peak_score); //TODO dot bias
         ++i;
-
     }
 
 

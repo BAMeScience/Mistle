@@ -831,13 +831,16 @@ bool search_manager::save_search_results_in_pin_format(const std::string &file_p
             precursor &target = precursor_idx->get_precursor(psm.target_id);
             std::string name = search_library.spectrum_list[psm.query_id]->name;
             std::string id = name + "/" + std::to_string(psm.hit_rank);
+            std::string name_cropped = name.substr(0, name.rfind('.'));
+            std::string scannum = name_cropped.substr(name_cropped.rfind('.') + 1, std::string::npos);
+            std::string peptide = "X." + target.peptide + ".X"; //Placeholders for flanking amino acids (needed in pin-tab format)
             std::string iso;
             for (std::string &s : psm.isomers) {
                 iso += s + ";";
             }
             if (!iso.empty())
                 iso.pop_back();
-            outfile << target.id << delim << config->label << delim << name << delim << psm.charge << delim << psm.similarity << delim << psm.bias << delim << psm.annotation_similarity << delim << psm.annotation_bias << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.delta_sim2 << delim << psm.mass_difference << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.x_lgamma << delim << psm.x_lgamma_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << delim << target.peptide << delim << "Unknown" << "\n";
+            outfile << target.id << delim << config->label << delim << scannum << delim << psm.charge << delim << psm.similarity << delim << psm.bias << delim << psm.annotation_similarity << delim << psm.annotation_bias << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.delta_sim2 << delim << psm.mass_difference << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.x_lgamma << delim << psm.x_lgamma_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << delim << peptide << delim << "Unknown" << "\n";
         }
 
     }

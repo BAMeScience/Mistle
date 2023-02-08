@@ -13,6 +13,8 @@ public:
     unsigned int target_id;
 
     float mass_difference;
+    float abs_mass_difference;
+    float ppm_difference;
     unsigned int charge;
     std::vector<std::string> isomers; //tracking homologous peptides
 
@@ -20,20 +22,29 @@ public:
     float similarity;
     float bias;
     float dot_product;
+    
 
     //Annotation scores
     float annotation_similarity;
     float annotation_bias;
+    float annotation_sim2;
+
+    //Contrast angles
+    float dot_contrast_angle;
+    float similarity_contrast_angle;
+    float annotation_contrast_angle;
 
     //Additional score
     float delta_dot;
     float delta_similarity;
+    float delta_annotation_sim;
     float delta_sim2;
     int peak_count_query;
     int peak_count_target;
 
 
     //Advanced scores
+    float avg_bias_adj_similarity;
     float sim2;
     float spectraST_score;
     float spectraST_score_dot;

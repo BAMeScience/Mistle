@@ -1,16 +1,24 @@
-charge	similarity	bias	annotation_similarity	annotation_bias	dot_product	delta_dot	delta_similarity	delta_sim2	mass_difference	peak_count_query	peak_count_ref	sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	m0
-0.08	0.2617	0.0291	1.2673	0.0292	-0.5131	0.2172	0.3356	0.3573	-0.0211	0.0000	3.1542	0.4515	-0.0148	0.0346	-1.6704	-0.0369	-0.6217	0.7200	1.6990
-0.1596	1.8413	0.2542	7.1560	0.2554	-3.4855	1.8281	2.6223	3.7741	-11.1867	0.0000	0.4228	4.6348	-0.0000	0.0000	-0.0760	-0.0006	-3.3315	4.0440	-11.5222
+charge	similarity	bias	delta_similarity	annotation_similarity	annotation_bias	annotation_sim2	delta_annotation_similarity	peak_count_ref	abs_mass_difference	peptide_length	m0
+-0.182	0.2595	-0.3682	1.4719	1.5244	-0.3682	-0.6635	0.0287	1.5210	-1.7459	0.1121	2.7066
+
+charge	annotation_similarity	annotation_bias	annotation_sim2	delta_annotation_similarity	peak_count_ref	abs_mass_difference peptide_length	m0
+-0.125	1.1506	0.0296	0.4286	0.7390	1.6997	-1.2373	0.3297	1.7481
+
+charge	similarity	bias	annotation_similarity	annotation_bias	dot_product	delta_dot	delta_similarity	delta_annotation_similarity	delta_sim2	mass_difference	abs_mass_difference	peptide_length	peak_count_query	peak_count_ref	sim2	annotation_sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	m0
+-0.016	-0.2761	-0.2704	1.6387	-0.2700	0.3252	1.0032	-0.0788	0.1137	1.1968	-6.7394	-7.3185	0.1718	0.0000	-0.8981	0.1980	-0.7468	0.5617	-0.5039	5.6408	-2.9497	0.5421	-0.6754	0.9323
+
+
+
+charge	similarity	bias	annotation_similarity	annotation_bias	dot_product	delta_dot	delta_similarity	delta_annotation_similarity	delta_sim2	mass_difference	abs_mass_difference	peptide_length	peak_count_query	peak_count_ref	sim2	annotation_sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	m0
+-0.0603	-0.0623	0.1233	0.5440	0.1234	0.3248	0.7368	-0.3231	0.0847	0.4362	-3.9362	-4.4369	0.4362	0.0000	-1.5574	-0.2552	0.9583	-0.4251	0.2917	2.2743	1.1921	1.0171	-1.0908	0.5508
+-0.1203	-0.4382	1.0779	3.0721	1.0790	2.2067	6.2010	-2.5245	0.5338	4.6078	-2090.9659	-2805.3682	0.0889	0.0000	-0.2088	-2.6194	7.0996	-0.0000	0.0000	0.1034	0.0544	5.4501	-6.1265	-7.5438
+
+
+
+
+charge	similarity	bias	annotation_similarity	annotation_bias	dot_product	delta_dot	delta_similarity	delta_annotation_similarity	delta_sim2	mass_difference	abs_mass_difference	peptide_length	peak_count_query	peak_count_ref	sim2	annotation_sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	m0
+-0.016	-0.2761	-0.2704	1.6387	-0.2700	0.3252	1.0032	-0.0788	0.1137	1.1968	-6.7394	-7.3185	0.1718	0.0000	-0.8981	0.1980	-0.7468	0.5617	-0.5039	5.6408	-2.9497	0.5421	-0.6754	0.9323
 
 
 ExpMass	retentiontime	rank	abs_ppm	isotope_errors	log10_evalue	hyperscore	delta_hyperscore	matched_ion_num	complementary_ions	ion_series	weighted_average_abs_fragment_ppm	peptide_length	ntt	nmc	m0
 -0.225	0.0000	0.0000	-1.9317	-0.2341	-0.8961	0.5042	2.7810	0.5575	-0.9055	0.4107	-0.0797	-0.3056	0.0000	-0.2006	3.6603
-
-
-charge	similarity	bias	annotation_similarity	annotation_bias	dot_product	delta_dot	delta_similarity	delta_sim2	mass_difference	peak_count_query	peak_count_ref	sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	m0
-0.0812	0.2516	0.0291	1.2601	0.0292	-0.5012	0.2360	0.3084	0.3607	-0.0218	0.0000	3.0678	0.4559	-0.0141	0.0253	-1.5815	-0.0368	-0.5811	0.6865	1.6964
-
-
-
-
-DefaultDirection    -   -   0   0.5  -0.5    0.5    -0.5    0.5 0.5 0.5 0.5 0   0   0.5 1   0.5 0.5 0.5 0.5 0.5 0.5

@@ -88,7 +88,7 @@ def merge_files(args):
     #df = df[cols]
     
     if args.main_features:
-        features = ["charge", "similarity", "bias", "delta_similarity", "annotation_similarity", "annotation_bias", "annotation_sim2", "delta_annotation_similarity", "peak_count_ref", "abs_mass_difference", "peptide_length"]
+        features = ["charge", "similarity", "bias", "delta_similarity", "sim2", "delta_sim2", "annotation_similarity", "annotation_bias", "annotation_sim2", "delta_annotation_similarity", "peak_count_ref", "avg_bias_adjusted_similarity", "delta_avg", "abs_mass_difference", "ppm_difference", "peptide_length", "precursor_mz"]
         col = ["PSMId", "Label", "ScanNr"] + features + ["Peptide", "Proteins"]
         df = df[col]
     df.to_csv(args.output, sep="\t", index=False)

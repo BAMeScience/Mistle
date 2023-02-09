@@ -41,7 +41,8 @@ public:
     float delta_sim2;
     int peak_count_query;
     int peak_count_target;
-
+    float peak_mz_standard_deviation;
+    float peak_mz_weighted_standard_deviation;
 
     //Advanced scores
     float avg_bias_adj_similarity;

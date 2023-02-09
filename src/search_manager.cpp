@@ -782,8 +782,15 @@ bool search_manager::merge_matches() {
             std::sort(start, end+1, [](match &a, match &b) {
                 return a.avg_bias_adj_similarity > b.avg_bias_adj_similarity || (a.avg_bias_adj_similarity == b.avg_bias_adj_similarity && a.similarity > b.similarity);
             });
+
+            float reference_avg = 0.f;
+            if (start != end) {
+                reference_avg = (start + 1)->avg_bias_adj_similarity; //2nd of the same query id
+            }
+
             int rank = 1;
             for (auto iiter=start; iiter != end+1; ++iiter) {
+                iiter->delta_avg = iiter->avg_bias_adj_similarity - reference_avg;
                 iiter->hit_rank = rank;
                 ++rank;
             }
@@ -807,7 +814,7 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
     if (settings::save_search_command) {
         outfile << "#" << settings::search_command << "\n";
     }
-    outfile << "id" + delim + "spectrum" + delim + "charge" + delim + "hit_rank" + delim + "match" + delim + "peptide" + delim + "isomers" + delim + "similarity" + delim + "bias" + delim + "annotation_similarity"+ delim + "annotation_bias" + delim + "avg_bias_adjusted_similarity" + delim + "dot_product" + delim + "delta_dot" + delim + "delta_similarity" + delim + "delta_annotaion_similarity" + delim + "delta_sim2" + delim + "dot_contrast_angle" + delim + "similarity_contrast_angle" + delim + "annotation_contrast_angle" + delim + "mass_difference" + delim + "abs_mass_difference" + delim + "ppm_difference" + delim + "peptide_length" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "sim2" + delim + "annotation_sim2" + delim + "x_score" + delim + "x_score_dot" + delim + "x_lgamma" + delim + "x_lgamma_dot" + delim + "st_score" + delim + "st_score_dot\n";
+    outfile << "id" + delim + "spectrum" + delim + "charge" + delim + "hit_rank" + delim + "match" + delim + "peptide" + delim + "isomers" + delim + "similarity" + delim + "bias" + delim + "annotation_similarity"+ delim + "annotation_bias" + delim + "avg_bias_adjusted_similarity" + delim + "dot_product" + delim + "delta_dot" + delim + "delta_similarity" + delim + "delta_annotaion_similarity" + delim + "delta_sim2" + delim + "delta_avg" + delim + "dot_contrast_angle" + delim + "similarity_contrast_angle" + delim + "annotation_contrast_angle" + delim + "mass_difference" + delim + "abs_mass_difference" + delim + "ppm_difference" + delim + "peptide_length" + delim + "precursor_mz" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "sim2" + delim + "annotation_sim2" + delim + "x_score" + delim + "x_score_dot" + delim + "x_lgamma" + delim + "x_lgamma_dot" + delim + "st_score" + delim + "st_score_dot\n";
 
     // Go through matches and parse relevant information for each
     for (int i = 0; i < matches.size(); ++i) {
@@ -822,7 +829,7 @@ bool search_manager::save_search_results_to_file(const std::string &file_path) {
             }
             if (!iso.empty())
                 iso.pop_back();
-            outfile << id << delim << name << delim << psm.charge << delim << psm.hit_rank << delim << target.id << delim << target.peptide << delim << iso << delim << psm.similarity << delim << psm.bias << delim << psm.annotation_similarity << delim << psm.annotation_bias << delim << psm.avg_bias_adj_similarity << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.delta_annotation_sim << delim << psm.delta_sim2 << delim << psm.dot_contrast_angle << delim << psm.similarity_contrast_angle << delim << psm.annotation_contrast_angle << delim << psm.mass_difference << delim << psm.abs_mass_difference << delim << psm.ppm_difference << delim << target.peptide.length() << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.annotation_sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.x_lgamma << delim << psm.x_lgamma_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << "\n";
+            outfile << id << delim << name << delim << psm.charge << delim << psm.hit_rank << delim << target.id << delim << target.peptide << delim << iso << delim << psm.similarity << delim << psm.bias << delim << psm.annotation_similarity << delim << psm.annotation_bias << delim << psm.avg_bias_adj_similarity << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.delta_annotation_sim << delim << psm.delta_sim2 << delim << psm.delta_avg << delim << psm.dot_contrast_angle << delim << psm.similarity_contrast_angle << delim << psm.annotation_contrast_angle << delim << psm.mass_difference << delim << psm.abs_mass_difference << delim << psm.ppm_difference << delim << target.peptide.length() << delim << search_library.spectrum_list[psm.query_id]->precursor_mass << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.annotation_sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.x_lgamma << delim << psm.x_lgamma_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << "\n";
         }
 
     }
@@ -842,7 +849,7 @@ bool search_manager::save_search_results_in_pin_format(const std::string &file_p
 
     // Add header
     //Percolator format SpecId	Label	ScanNr	lnrSp	deltLCn	deltCn	Xcorr	Sp	IonFrac	Mass	PepLen	Charge1	Charge2	Charge3	enzN	enzC	enzInt	lnNumSP	dM	absdM	Peptide	Proteins
-    outfile << "PSMId" + delim + "Label" + delim + "ScanNr" + delim + "charge" + delim + "similarity" + delim + "bias" + delim + "annotation_similarity"+ delim + "annotation_bias" + delim + "avg_bias_adjusted_similarity" + delim + "dot_product" + delim + "delta_dot" + delim + "delta_similarity" + delim + "delta_annotation_similarity" + delim + "delta_sim2" + delim + "dot_contrast_angle" + delim + "similarity_contrast_angle" + delim + "annotation_contrast_angle" + delim + "mass_difference" + delim + "abs_mass_difference" + delim + "ppm_difference" + delim + "peptide_length" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "sim2" + delim + "annotation_sim2" + delim + "x_score" + delim + "x_score_dot" + delim + "x_lgamma" + delim + "x_lgamma_dot" + delim + "st_score" + delim + "st_score_dot" + delim + "Peptide" + delim + "Proteins" + "\n";
+    outfile << "PSMId" + delim + "Label" + delim + "ScanNr" + delim + "charge" + delim + "similarity" + delim + "bias" + delim + "annotation_similarity"+ delim + "annotation_bias" + delim + "avg_bias_adjusted_similarity" + delim + "dot_product" + delim + "delta_dot" + delim + "delta_similarity" + delim + "delta_annotation_similarity" + delim + "delta_sim2" + delim + "delta_avg" + delim + "dot_contrast_angle" + delim + "similarity_contrast_angle" + delim + "annotation_contrast_angle" + delim + "mass_difference" + delim + "abs_mass_difference" + delim + "ppm_difference" + delim + "peptide_length" + delim + "precursor_mz" + delim + "peak_count_query" + delim + "peak_count_ref" + delim + "sim2" + delim + "annotation_sim2" + delim + "x_score" + delim + "x_score_dot" + delim + "x_lgamma" + delim + "x_lgamma_dot" + delim + "st_score" + delim + "st_score_dot" + delim + "Peptide" + delim + "Proteins" + "\n";
 
     // Go through matches and parse relevant information for each
     for (int i = 0; i < matches.size(); ++i) {
@@ -860,7 +867,7 @@ bool search_manager::save_search_results_in_pin_format(const std::string &file_p
             }
             if (!iso.empty())
                 iso.pop_back();
-            outfile << i << delim << config->label << delim << scannum << delim << psm.charge << delim << psm.similarity << delim << psm.bias << delim << psm.annotation_similarity << delim << psm.annotation_bias << delim << psm.avg_bias_adj_similarity << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.delta_annotation_sim << delim << psm.delta_sim2 << delim << psm.dot_contrast_angle << delim << psm.similarity_contrast_angle << delim << psm.annotation_contrast_angle << delim << psm.mass_difference << delim << psm.abs_mass_difference << delim << psm.ppm_difference << delim << target.peptide.length() << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.annotation_sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.x_lgamma << delim << psm.x_lgamma_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << delim << peptide << delim << "Unknown" << "\n";
+            outfile << i << delim << config->label << delim << scannum << delim << psm.charge << delim << psm.similarity << delim << psm.bias << delim << psm.annotation_similarity << delim << psm.annotation_bias << delim << psm.avg_bias_adj_similarity << delim << psm.dot_product << delim << psm.delta_dot << delim << psm.delta_similarity << delim << psm.delta_annotation_sim << delim << psm.delta_sim2 << delim << psm.delta_avg << delim << psm.dot_contrast_angle << delim << psm.similarity_contrast_angle << delim << psm.annotation_contrast_angle << delim << psm.mass_difference << delim << psm.abs_mass_difference << delim << psm.ppm_difference << delim << target.peptide.length() << delim << search_library.spectrum_list[psm.query_id]->precursor_mass << delim << psm.peak_count_query << delim << psm.peak_count_target << delim << psm.sim2 << delim << psm.annotation_sim2 << delim << psm.x_hunter_score << delim << psm.x_hunter_score_dot << delim << psm.x_lgamma << delim << psm.x_lgamma_dot << delim << psm.spectraST_score << delim << psm.spectraST_score_dot << delim << peptide << delim << "Unknown" << "\n";
         }
 
     }
@@ -1078,6 +1085,7 @@ bool search_manager::rescore_match(match &psm) {
      */
 
     std::vector<std::pair<float, float>> paired_query_peaks(target_peaks.size());
+    std::vector<bool> is_paired(target_peaks.size(), false);
     int i = 0;
     int peak_count_ref = 0;
     for (auto &peak : target_peaks) {
@@ -1096,6 +1104,7 @@ bool search_manager::rescore_match(match &psm) {
                 float new_score = intensity * spec->intensities[j] * normal_factor;
                 if (new_score > peak_score) {
                     paired_query_peaks[i] = std::make_pair(spec->peak_positions[j], spec->intensities[j]);
+                    is_paired[i] = true;
                     peak_score = new_score;
                 }
                 if (abs(distance) < sigma && new_score >= min_counter_score) {
@@ -1126,15 +1135,17 @@ bool search_manager::rescore_match(match &psm) {
     float annotation_bias = 0.f;
 
     for (auto &peak : target_peaks) {
-        float mz = peak.first;
-        float intensity = peak.second;
-        float distance = mz - paired_query_peaks[i].first;
+        if (is_paired[i]) {
+            float mz = peak.first;
+            float intensity = peak.second;
+            float distance = mz - paired_query_peaks[i].first;
 
-        float normal_factor = normal_pdf_scaled(distance, 0, sigma);
-        float peak_score = intensity * paired_query_peaks[i].second * normal_factor;
+            float normal_factor = normal_pdf_scaled(distance, 0, sigma);
+            float peak_score = intensity * paired_query_peaks[i].second * normal_factor;
 
-        annotation_score += peak_score;
-        annotation_bias += (peak_score * peak_score); //TODO dot bias
+            annotation_score += peak_score;
+            annotation_bias += (peak_score * peak_score); //TODO dot bias
+        }
         ++i;
     }
 

@@ -45,6 +45,7 @@ public:
 
     //Advanced scores
     float avg_bias_adj_similarity;
+    float delta_avg;
     float sim2;
     float spectraST_score;
     float spectraST_score_dot;

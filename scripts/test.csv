@@ -1,24 +1,23 @@
-charge	similarity	bias	delta_similarity	annotation_similarity	annotation_bias	annotation_sim2	delta_annotation_similarity	peak_count_ref	abs_mass_difference	peptide_length	m0
--0.182	0.2595	-0.3682	1.4719	1.5244	-0.3682	-0.6635	0.0287	1.5210	-1.7459	0.1121	2.7066
 
-charge	annotation_similarity	annotation_bias	annotation_sim2	delta_annotation_similarity	peak_count_ref	abs_mass_difference peptide_length	m0
--0.125	1.1506	0.0296	0.4286	0.7390	1.6997	-1.2373	0.3297	1.7481
+PSMId	Label	ScanNr	charge	similarity	bias	annotation_similarity	annotation_bias	avg_bias_adjusted_similarity	dot_product	delta_dot	delta_similarity	delta_annotation_similarity	delta_sim2	delta_avg	dot_contrast_angle	similarity_contrast_angle	annotation_contrast_angle	mass_difference	abs_mass_difference	ppm_difference	peptide_length	precursor_mz	peak_count_query	peak_count_ref	sim2	annotation_sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	Peptide	Proteins
+0	1	226	3	0.0311971	0.652261	0.142049	0.652261	0.0301222	0.0224509	0.00434769	0.0114987	0	0.00930778	0.0214825	0.0142939	0.0198639	0.0907381	-3.05176e-05	3.05176e-05	0.0738448	10	413.267	1000	2	0.0108485	0.0493959	0.0623943	0.0449018	-3.46743	-3.79642	-1e-05	-1e-05	X.VNLLTRIPRR.X	Unknown
+2	1	404	3	0.00252246	0.923642	0.0281351	0.923642	0.00117048	0.00256294	0	0	0	0.000190809	0.00116071	0.00163163	0.00160583	0.0179137	-0.00161743	0.00161743	3.91378	10	413.266	1000	1	0.00019261	0.00214835	0.00252246	0.00256294	-5.98252	-5.9666	-1e-05	-1e-05	X.HIFKLKNPIK.X	Unknown
+4	1	2175	3	0.0149015	0.540314	0.0710644	0.540314	0.0197587	0.0025299	0	0	0	0.00398374	0.00152243	0.00161061	0.00948688	0.0452792	0.000488281	0.000488281	1.18152	10	413.266	1000	1	0.00684999	0.0326673	0.0149015	0.0025299	-4.2063	-5.97958	-1e-05	-1e-05	X.VNLLTRIPRR.X	Unknown
+6	1	2907	3	0.00274973	1	0.0702726	1	0	0.00275207	0.00157578	0.00165073	0.0426102	0	0	0.00175199	0.00175055	0.0447738	-0.00195312	0.00195312	1.56839	29	1245.3	1000	1	0	0	0.00274973	0.00275207	-5.89625	-5.8954	-1e-05	-1e-05	X.QLEEEQRHLEVLQQQLLQEQAMLLECRWR.X	Unknown
 
-charge	similarity	bias	annotation_similarity	annotation_bias	dot_product	delta_dot	delta_similarity	delta_annotation_similarity	delta_sim2	mass_difference	abs_mass_difference	peptide_length	peak_count_query	peak_count_ref	sim2	annotation_sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	m0
--0.016	-0.2761	-0.2704	1.6387	-0.2700	0.3252	1.0032	-0.0788	0.1137	1.1968	-6.7394	-7.3185	0.1718	0.0000	-0.8981	0.1980	-0.7468	0.5617	-0.5039	5.6408	-2.9497	0.5421	-0.6754	0.9323
-
-
-
-charge	similarity	bias	annotation_similarity	annotation_bias	dot_product	delta_dot	delta_similarity	delta_annotation_similarity	delta_sim2	mass_difference	abs_mass_difference	peptide_length	peak_count_query	peak_count_ref	sim2	annotation_sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	m0
--0.0603	-0.0623	0.1233	0.5440	0.1234	0.3248	0.7368	-0.3231	0.0847	0.4362	-3.9362	-4.4369	0.4362	0.0000	-1.5574	-0.2552	0.9583	-0.4251	0.2917	2.2743	1.1921	1.0171	-1.0908	0.5508
--0.1203	-0.4382	1.0779	3.0721	1.0790	2.2067	6.2010	-2.5245	0.5338	4.6078	-2090.9659	-2805.3682	0.0889	0.0000	-0.2088	-2.6194	7.0996	-0.0000	0.0000	0.1034	0.0544	5.4501	-6.1265	-7.5438
+PSMId	Label	ScanNr	charge	similarity	bias	annotation_similarity	annotation_bias	avg_bias_adjusted_similarity	dot_product	delta_dot	delta_similarity	delta_annotation_similarity	delta_sim2	delta_avg	dot_contrast_angle	similarity_contrast_angle	annotation_contrast_angle	mass_difference	abs_mass_difference	ppm_difference	peptide_length	precursor_mz	peak_count_query	peak_count_ref	sim2	annotation_sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	Peptide	Proteins
+0	1	226	3	0.0311971	0.652261	0.142049	0.652261	0.0301222	0.0224509	0.00434769	0.0114987	0	0.00930778	0.0214825	0.0142939	0.0198639	0.0907381	-3.05176e-05	3.05176e-05	0.0738448	10	413.267	1000	2	0.0108485	0.0493959	0.0623943	0.0449018	-3.46743	-3.79642	-1e-05	-1e-05	X.VNLLTRIPRR.X	Unknown
+2	1	404	3	0.00252246	0.923642	0.0281351	0.923642	0.00117048	0.00256294	0	0	0	0.000190809	0.00116071	0.00163163	0.00160583	0.0179137	-0.00161743	0.00161743	3.91378	10	413.266	1000	1	0.00019261	0.00214835	0.00252246	0.00256294	-5.98252	-5.9666	-1e-05	-1e-05	X.HIFKLKNPIK.X	Unknown
+4	1	2175	3	0.0149015	0.540314	0.0710644	0.540314	0.0197587	0.0025299	0	0	0	0.00398374	0.00152243	0.00161061	0.00948688	0.0452792	0.000488281	0.000488281	1.18152	10	413.266	1000	1	0.00684999	0.0326673	0.0149015	0.0025299	-4.2063	-5.97958	-1e-05	-1e-05	X.VNLLTRIPRR.X	Unknown
+6	1	2907	3	0.00274973	1	0.0702726	1	0	0.00275207	0.00157578	0.00165073	0.0426102	0	0	0.00175199	0.00175055	0.0447738	-0.00195312	0.00195312	1.56839	29	1245.3	1000	1	0	0	0.00274973	0.00275207	-5.89625	-5.8954	-1e-05	-1e-05	X.QLEEEQRHLEVLQQQLLQEQAMLLECRWR.X	Unknown
 
 
+PSMId	Label	ScanNr	charge	similarity	bias	annotation_similarity	annotation_bias	avg_bias_adjusted_similarity	dot_product	delta_dot	delta_similarity	delta_annotation_similarity	delta_sim2	delta_avg	dot_contrast_angle	similarity_contrast_angle	annotation_contrast_angle	mass_difference	abs_mass_difference	ppm_difference	peptide_length	precursor_mz	peak_count_query	peak_count_ref	sim2	annotation_sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	Peptide	Proteins
+59966	1	45408	3	0.0	0.0		0.0		0.0	0.0	0.0		0.0		-2.78275e-08	-2.78275e-08	-0.0118408	0.0118408	9.22446	29	1283.63	1000	0	0.0		0.0	0.0	-100.0	-100.0	-1e-05	-1e-05	X.RWSDIQKDSFWLYFSQEQEILWEFHDIFR.X	Unknown
+60737	1	46181	2	0.0	0.0		0.0		0.0	0.0	0.0		0.0		-2.78275e-08	-2.78275e-08		0.00170898	0.00170898	1.09981	28	1553.89	1000	0	0.0		0.0	0.0	-100.0	-100.0	-1e-05	-1e-05	X.TSATVPVLCLLAIIFILTAALSYVLCKR.X	Unknown
+60737	1	46181	2	0	0	-nan	0	-nan	0	0	0	-nan	0	-nan	-2.78275e-08	-2.78275e-08	-nan	0.00170898	0.00170898	1.09981	28	1553.89	1000	0	0	-nan	0	0	-100	-100	-1e-05	-1e-05	X.TSATVPVLCLLAIIFILTAALSYVLCKR.X	Unknown
 
 
-charge	similarity	bias	annotation_similarity	annotation_bias	dot_product	delta_dot	delta_similarity	delta_annotation_similarity	delta_sim2	mass_difference	abs_mass_difference	peptide_length	peak_count_query	peak_count_ref	sim2	annotation_sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	m0
--0.016	-0.2761	-0.2704	1.6387	-0.2700	0.3252	1.0032	-0.0788	0.1137	1.1968	-6.7394	-7.3185	0.1718	0.0000	-0.8981	0.1980	-0.7468	0.5617	-0.5039	5.6408	-2.9497	0.5421	-0.6754	0.9323
+# Missing annotation_similarity and dot_contrast_angle WHY -> is -nan
 
-
-ExpMass	retentiontime	rank	abs_ppm	isotope_errors	log10_evalue	hyperscore	delta_hyperscore	matched_ion_num	complementary_ions	ion_series	weighted_average_abs_fragment_ppm	peptide_length	ntt	nmc	m0
--0.225	0.0000	0.0000	-1.9317	-0.2341	-0.8961	0.5042	2.7810	0.5575	-0.9055	0.4107	-0.0797	-0.3056	0.0000	-0.2006	3.6603
+# TODO IF ScanNr == 46181 -> why is annotation_similarity nan???? WHAT happens

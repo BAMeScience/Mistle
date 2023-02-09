@@ -17,7 +17,7 @@ def parse_args():
 						type=str, required=True)
 	parser.add_argument("--score",
 						help="discriminant score for target decoy competition",
-						type=str, default="sim2")
+						type=str, default="avg_bias_adjusted_similarity")
 	parser.add_argument("--update_delta_scores",
 						help="Update delta scores when target/decoy are 1st and 2nd ranked hit",
 						action='store_true')
@@ -32,20 +32,19 @@ def parse_args():
 
 
 def update_delta_scores(df1, idx1, df2, idx2):
-    if df1.at[idx1, "delta_similarity"] > df1.at[idx1, "similarity"] - df2.at[idx2, "similarity"]:
+    if df1.at[idx1, "delta_avg"] > df1.at[idx1, "avg_bias_adjusted_similarity"] - df2.at[idx2, "avg_bias_adjusted_similarity"]:
         df1.at[idx1, "delta_similarity"] = df1.at[idx1, "similarity"] - df2.at[idx2, "similarity"]
-    if df1.at[idx1, "delta_dot"] > df1.at[idx1, "dot_product"] - df2.at[idx2, "dot_product"]:
         df1.at[idx1, "delta_dot"] = df1.at[idx1, "dot_product"] - df2.at[idx2, "dot_product"]
-    if df1.at[idx1, "delta_annotation_similarity"] > df1.at[idx1, "annotation_similarity"] - df2.at[idx2, "annotation_similarity"]:
         df1.at[idx1, "delta_annotation_similarity"] = df1.at[idx1, "annotation_similarity"] - df2.at[idx2, "annotation_similarity"]
-    if df1.at[idx1, "delta_sim2"] > df1.at[idx1, "sim2"] - df2.at[idx2, "sim2"]:
         df1.at[idx1, "delta_sim2"] = df1.at[idx1, "sim2"] - df2.at[idx2, "sim2"]
+        df1.at[idx1, "delta_avg"] = df1.at[idx1, "avg_bias_adjusted_similarity"] - df2.at[idx2, "avg_bias_adjusted_similarity"]
     return
 
 def merge_files(args):
     df = pd.read_csv(args.target, sep='\t', comment='#', low_memory=False)
+    #df.dropna(inplace=True)
     df_decoy = pd.read_csv(args.decoy, sep='\t', comment='#', low_memory=False)
-
+    #df_decoy.dropna(inplace=True)
     scans = df["ScanNr"].unique()
     
     for num in scans:

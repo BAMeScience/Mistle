@@ -1089,6 +1089,7 @@ bool search_manager::rescore_match(match &psm) {
     std::vector<bool> is_paired(target_peaks.size(), false);
     int i = 0;
     int peak_count_ref = 0;
+    int peak_count_ref_high_prec = 0;
     for (auto &peak : target_peaks) {
         float mz = peak.first;
         float intensity = peak.second;
@@ -1134,14 +1135,16 @@ bool search_manager::rescore_match(match &psm) {
 
     i = 0;
     int c = 0;
+    float s = 0;
     float annotation_score = 0.f;
     float annotation_bias = 0.f;
     float mz_standard_deviation = 0.f;
+    //float mz_precision_standard_deviation = 0.f; //TODO 
     float mz_weighted_standard_deviation = 0.f;
 
     for (auto &peak : target_peaks) {
         if (is_paired[i]) {
-            c += 1;
+            
             float mz = peak.first;
             float intensity = peak.second;
             float distance = mz - paired_query_peaks[i].first;
@@ -1152,13 +1155,21 @@ bool search_manager::rescore_match(match &psm) {
             annotation_score += peak_score;
             annotation_bias += (peak_score * peak_score); //TODO dot bias
 
-            mz_standard_deviation += mz_distances[i] * mz_distances[i];
+            if (mz_distances[i] <= sigma) {
+                mz_standard_deviation += mz_distances[i] * mz_distances[i];
+                ++c;
+            }
             mz_weighted_standard_deviation += peak_score * mz_distances[i] * mz_distances[i];
         }
         ++i;
     }
-    mz_standard_deviation /= c;
-    mz_weighted_standard_deviation /= (c - 1 / c) *  annotation_score;
+    if (c > 0 && annotation_score > 0) {
+        mz_standard_deviation = sqrt(mz_standard_deviation/c); // should this be c - 1?
+        mz_weighted_standard_deviation = sqrt(mz_weighted_standard_deviation / annotation_score); // should this be / (c-1/c * annotation_score)
+    } else {
+        mz_standard_deviation = 999.f;
+        mz_weighted_standard_deviation = 999.f;
+    }
 
     /*
      * Update Match

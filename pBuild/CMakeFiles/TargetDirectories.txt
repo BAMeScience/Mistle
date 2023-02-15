@@ -1,4 +1,0 @@
-/home/ynowatzk/repos/mistle/pBuild/CMakeFiles/rebuild_cache.dir
-/home/ynowatzk/repos/mistle/pBuild/CMakeFiles/mistle-search.dir
-/home/ynowatzk/repos/mistle/pBuild/CMakeFiles/edit_cache.dir
-/home/ynowatzk/repos/mistle/pBuild/CMakeFiles/mistle-build.dir

@@ -1,6 +1,7 @@
 
 import pandas as pd
 import argparse
+import random
 from matplotlib import pyplot as plt
 
 def parse_args():
@@ -91,6 +92,9 @@ def merge_files(args):
         features = ["charge", "similarity", "bias", "delta_similarity", "sim2", "delta_sim2", "annotation_similarity", "annotation_bias", "annotation_sim2", "delta_annotation_similarity", "peak_count_ref", "avg_bias_adjusted_similarity", "delta_avg", "abs_mass_difference", "ppm_difference", "peptide_length", "precursor_mz"]
         col = ["PSMId", "Label", "ScanNr"] + features + ["Peptide", "Proteins"]
         df = df[col]
+    #if args.experimental:
+    #    df["exp1"] = 
+    df.drop(columns=["x_score", "x_score_dot"], inplace=True)
     df.to_csv(args.output, sep="\t", index=False)
 	
     num_targets = sum(df["Label"] == 1)

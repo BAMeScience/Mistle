@@ -18,7 +18,7 @@ For building the project, please create (mkdir) a separate build directory. Chan
     
 In order to make use of SIMD instruction AVX2 or AVX512 build with -DAVX_2=ON or -DAVX_512=ON compiler flag. Check if your CPU supports these. If necessary adjust CMakeList.txt according to the preferences of your CPU.
 
-Optionally, export the directory where *mistle* was built as an executable PATH in the *~/.bashrc* file. Add line
+Optionally, export the directory where *mistle* was built as an executable PATH in the *~/.bashrc* file. Add the following line:
     
     export PATH="/home/$USER/path/to/mistle/build:$PATH"
 
@@ -29,16 +29,18 @@ Optionally, export the directory where *mistle* was built as an executable PATH 
 
 Build Mistle's fragment ion index from spectral library.
 
-    mistle-build [OPTION...] [optional args]
+    mistle-build -i /path/to/library/ -o /path/to/index/ [optional args]
+
+Required arguments are the input directory, which must contain spectral library files (.msp format), and the output directory for the fragment index. 
 
 ### Mistle search
 
 Search experimental mass spectra in Mistle's fragment ion index.
 
 
-    mistle-search [OPTION...] [optional args]
+    mistle-search -s /path/to/search_file.mgf -i /path/to/index/ [optional args]
 
-Use *-h* flag to print the help message. Refer to the [EXAMPLE README](example/README.md) and the example directory to test the program.
+Required arguments are the search file (.mgf or .msp format) and the path to the fragment index. Additionally, output directory and formats can be specified as well as various search parameters. Use *-h* flag to print the help message for more information. Also, refer to the [EXAMPLE README](example/README.md) and the example directory to test the program.
 
 ## Output format
 

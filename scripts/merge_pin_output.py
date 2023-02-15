@@ -42,10 +42,20 @@ def update_delta_scores(df1, idx1, df2, idx2):
     return
 
 def merge_files(args):
+    
+    print("+++ Merging target and decoy results (.pin format) +++")
     df = pd.read_csv(args.target, sep='\t', comment='#', low_memory=False)
     #df.dropna(inplace=True)
     df_decoy = pd.read_csv(args.decoy, sep='\t', comment='#', low_memory=False)
     #df_decoy.dropna(inplace=True)
+    
+    if not all(df["Label"].unique() == 1):
+        print("Warning: Not all target labels match expected value of 1.")
+    
+    if not all(df_decoy["Label"].unique() == -1):
+        print("Warning: Not all decoy labels match expected value of -1.")
+        
+    print(f"Detected {df.shape[0]} target and {df_decoy.shape[0]} decoy matches.")
     scans = df["ScanNr"].unique()
     
     for num in scans:
@@ -101,7 +111,7 @@ def merge_files(args):
     num_decoys = sum(df["Label"] == -1)
     
     
-    print(f"Files merged successfully! {num_targets} targets and {num_decoys} decoys remaining after competition")
+    print(f"Files merged successfully! {num_targets} targets and {num_decoys} decoys remaining after competition.")
 
 
 

@@ -51,6 +51,7 @@ The next line is the header listing all tracked attributes (tab separated).
 
     id	spectrum	charge	hit_rank	match	peptide	isomers	similarity	bias    [...]
 
+A large number of scores and statistics are appended as additional columns (marked [...]). The most important scores are ...  
 
 Below, all matched experimental spetra are listed and indexed by their scan name and the rank of the matched library spectrum. (Rank R is appended with /R to the scan name). See example [output](example/index/example_results_control.csv).
 

@@ -1155,7 +1155,7 @@ bool search_manager::rescore_match(match &psm) {
             annotation_score += peak_score;
             annotation_bias += (peak_score * peak_score); //TODO dot bias
 
-            if (mz_distances[i] <= sigma) {
+            if (abs(mz_distances[i]) <= sigma) {
                 mz_standard_deviation += mz_distances[i] * mz_distances[i];
                 ++c;
             }

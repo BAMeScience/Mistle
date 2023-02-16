@@ -1204,6 +1204,12 @@ bool search_manager::rescore_match(match &psm) {
     psm.x_hunter_score_dot = psm.dot_product * scp_factorial;
 
     // Spectral contrast angles
+    if (psm.similarity > 1.f) //Rarely rounding issues create values above 1.f, which lead to errors when computing the cosine
+        psm.similarity = 1.f;
+    if (psm.dot_product > 1.f)
+        psm.dot_product = 1.f;
+    if (psm.annotation_similarity > 1.f)
+        psm.annotation_similarity = 1.f;
     psm.similarity_contrast_angle = contrast_angle(psm.similarity);
     psm.dot_contrast_angle = contrast_angle(psm.dot_product);
     psm.annotation_contrast_angle = contrast_angle(psm.annotation_similarity);

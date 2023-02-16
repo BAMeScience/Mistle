@@ -25,6 +25,9 @@ def parse_args():
 	parser.add_argument("--main_features",
 						help="Track main features only. Otherwise all features will be tracked, which can reduce separation performance.",
 						action='store_true')
+	parser.add_argument("--drop_redundant_features",
+						help="Track main features only. Otherwise all features will be tracked, which can reduce separation performance.",
+						action='store_true')
  
 
 
@@ -45,9 +48,14 @@ def merge_files(args):
     
     print("+++ Merging target and decoy results (.pin format) +++")
     df = pd.read_csv(args.target, sep='\t', comment='#', low_memory=False)
-    #df.dropna(inplace=True)
     df_decoy = pd.read_csv(args.decoy, sep='\t', comment='#', low_memory=False)
-    #df_decoy.dropna(inplace=True)
+    
+    target_nans = df.isnull().any(axis=1).sum()
+    decoy_nans = df_decoy.isnull().any(axis=1).sum()
+    if target_nans > 0 or decoy_nans > 0:
+        print(f"Waring: NaN values detected. Dropping {target_nans} target and {decoy_nans} decoy matches.")
+        df.dropna(inplace=True)
+        df_decoy.dropna(inplace=True)
     
     if not all(df["Label"].unique() == 1):
         print("Warning: Not all target labels match expected value of 1.")
@@ -102,9 +110,13 @@ def merge_files(args):
         features = ["charge", "similarity", "bias", "delta_similarity", "sim2", "delta_sim2", "annotation_similarity", "annotation_bias", "annotation_sim2", "delta_annotation_similarity", "peak_count_ref", "avg_bias_adjusted_similarity", "delta_avg", "abs_mass_difference", "ppm_difference", "peptide_length", "precursor_mz"]
         col = ["PSMId", "Label", "ScanNr"] + features + ["Peptide", "Proteins"]
         df = df[col]
+    if args.drop_redundant_features:
+        df.drop(columns=["x_score", "x_score_dot"], inplace=True)
+        #df.drop(columns=["fragment_standard_deviation", "fragment_weighted_standard_deviation"], inplace=True)
     #if args.experimental:
     #    df["exp1"] = 
-    df.drop(columns=["x_score", "x_score_dot"], inplace=True)
+    #df.drop(columns=["x_score", "x_score_dot"], inplace=True)
+    #df.drop(columns=["fragment_standard_deviation", "fragment_weighted_standard_deviation"], inplace=True)
     df.to_csv(args.output, sep="\t", index=False)
 	
     num_targets = sum(df["Label"] == 1)

@@ -53,9 +53,15 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::vector<std::st
             }
 
             input_directories.push_back(dir_list.substr(start_pos));
+        } else {
+            std::cout << "Argument Error: Missing input directory." << std::endl;
+            exit(1);
         }
         if (result.count("output")) {
             config->idx_path = result["output"].as<std::string>();
+        } else {
+            std::cout << "Argument Error: Missing output directory." << std::endl;
+            exit(1);
         }
         config->minimum_peptide_length = result["min_pep_length"].as<unsigned int>();
         config->label = result["label"].as<int>();
@@ -65,7 +71,7 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[], std::vector<std::st
 
     }
     catch (const cxxopts::OptionException& e) {
-        std::cout << "error parsing options: " << e.what() << std::endl;
+        std::cout << "Error parsing options: " << e.what() << std::endl;
         exit(1);
     }
 }

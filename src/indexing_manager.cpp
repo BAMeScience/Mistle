@@ -69,6 +69,10 @@ indexing_manager::indexing_manager(std::vector<std::string> &input_paths, std::s
             for (const auto & entry : std::filesystem::directory_iterator(path)) {
                 if (entry.path().extension() == ".msp") {
                     lib_files.push_back(entry.path());
+                    file_format = MSP;
+                } else if (entry.path().extension() == ".mgf") {
+                    lib_files.push_back(entry.path());
+                    file_format = MGF;
                 }
             }
         } else {
@@ -87,6 +91,15 @@ indexing_manager::indexing_manager(std::vector<std::string> &input_paths, std::s
         }
 
     }
+    if (!std::filesystem::exists(config->idx_path) || !std::filesystem::is_directory(config->idx_path)) {
+        std:cerr << "Bad output directory" << std::endl;
+        std::cerr << config->idx_path << " is not a directory or does not exist!" << std::endl;
+        exit(1);
+    }
+    if (!config->idx_path.ends_with('/')) {
+        config->idx_path += "/";
+    }
+
 }
 
 
@@ -150,7 +163,7 @@ bool indexing_manager::build_indices() {
 }
 
 bool indexing_manager::set_up_output_streams() {
-
+    
     for (int i = 0; i < config->num_indices; ++i) {
         string file_name = config->idx_path + "frag_idx_" + to_string(i) + ".bin";
         //cout << file_name << endl;
@@ -169,7 +182,6 @@ bool indexing_manager::parse_file(unsigned int file_num) {
     //f.precision(FLOAT_OUTPUT_PRECISION);
 
     string buffer;
-
 
     /*
      * Main loop reading library and creating preliminary indices on the fly

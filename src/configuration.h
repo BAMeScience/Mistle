@@ -15,9 +15,11 @@
 class configuration {
 public:
 
-    std::string idx_path = "./test/";
+    std::string idx_path = "";
     std::string precursor_index_path;
     unsigned int num_indices = 24;
+    int label = 1;
+
 
     unsigned int sub_idx_range;
     std::vector<unsigned int> sub_idx_limits;

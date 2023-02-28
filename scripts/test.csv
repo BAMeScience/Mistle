@@ -1,0 +1,8 @@
+
+PSMId	Label	ScanNr	charge	similarity	bias	annotation_similarity	annotation_bias	avg_bias_adjusted_similarity	dot_product	delta_dot	delta_similarity	delta_annotation_similarity	delta_sim2	delta_avg	dot_contrast_angle	similarity_contrast_angle	annotation_contrast_angle	mass_difference	abs_mass_difference	ppm_difference	peptide_length	precursor_mz	peak_count_query	peak_count_ref	fragment_standard_deviation	fragment_weighted_standard_deviation	sim2	annotation_sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	Peptide	Proteins
+64	1	189	2	1.00149	0.220921	0.823551	0.220921	0.710924	0.873902	0.444778	0.342503	0.202489	0.304451	0.248828	0.676836		0.61602	-0.000854492	0.000854492	1.30494	11	654.814	1000	142	0.408765	0.421254	0.780238	0.641611	0.0	0.0	560.171	560.034	0.73769	0.727923	X.YGRPPDSHHSR.X	Unknown
+
+
+charge	similarity	bias	annotation_similarity	annotation_bias	avg_bias_adjusted_similarity	dot_product	delta_dot	delta_similarity	delta_annotation_similarity	delta_sim2delta_avg	dot_contrast_angle	similarity_contrast_angle	annotation_contrast_angle	mass_difference	abs_mass_difference	ppm_difference	peptide_length	precursor_mz	peak_count_query	peak_count_ref	fragment_standard_deviation	fragment_weighted_standard_deviation	sim2	annotation_sim2	x_score	x_score_dot	x_lgamma	x_lgamma_dot	st_score	st_score_dot	m0
+-0.0833	-0.2382	-0.1786	2.4159	-0.1786	-0.0354	1.3627	0.3950	-0.4690	-0.1501	0.1838	0.9446	0.0305	-1.3467	-0.4678	-0.0915	-0.0932	-0.4207	0.0715	0.1952	0.0000	1.7078	0.0120	0.0322	-0.7453	0.3660	0.1577	0.1706	0.0408	0.1718	0.3820	0.4089	-0.9830
+

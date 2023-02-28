@@ -18,7 +18,7 @@ float settings::neighbors_intensity_factor = 0.5f;
 
 std::string settings::search_path;
 std::string settings::index_path;
-std::string settings::output_name;
+std::string settings::output_path;
 
 
 /*

@@ -56,6 +56,7 @@ public:
     bool perform_searches_parallel();
     bool merge_matches(); //todo probably going over ids back to front and popping matches in the back
     bool save_search_results_to_file(const std::string &file_path);
+    bool save_search_results_in_pin_format(const std::string &file_path);
 
     long get_time_spent_in_inner_search();
 
@@ -75,6 +76,7 @@ private:
     float max_normal;
     static float normal_pdf(float x, float mean, float standard_deviation);
     static float normal_pdf_scaled(float x, float mean, float standard_deviation);
+    static float contrast_angle(float dot);
     static long long unsigned int factorial(int n);
     static bool is_peptide_isomer(std::string &peptide, std::string &other);
 };

@@ -24,7 +24,7 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
                 ("h, help", "Print this help message")
                 ("s,search", "search file or directory ", cxxopts::value<std::string>(), "PATH")
                 ("i,index", "index directory (must contain config.txt and binary index files)", cxxopts::value<std::string>(), "PATH")
-                ("o,output", "output name (will be saved to the index directory)", cxxopts::value<std::string>()->default_value("results.csv"), "NAME")
+                ("o,output", "output path", cxxopts::value<std::string>()->default_value("./results.csv"), "NAME")
                 ("t,threads", "number of threads", cxxopts::value<int>()->default_value("1"), "NUM")
                 ("p,ppm_tolerance", "precursor mz tolerance given in ppm", cxxopts::value<float>()->default_value("10"), "NUM")
                 ("m,mz_tolerance", "precursor mz tolerance (absolut value in Da)", cxxopts::value<float>(), "NUM")
@@ -62,7 +62,7 @@ cxxopts::ParseResult parseArgs(int argc, const char* argv[]) {
             std::cerr << "Missing input: -i/--index" << std::endl;
             exit(1);
         }
-        settings::output_name = result["output"].as<std::string>();
+        settings::output_path = result["output"].as<std::string>();
 
         if (result.count("threads")) {
             settings::num_threads = result["threads"].as<int>();
@@ -153,7 +153,12 @@ int main(int argc, const char* argv[]) {
     std::cout << "Merging overlapping results" << std::endl;
     sm.merge_matches();
     //std::cout << "Writing results to file" << std::endl;
-    sm.save_search_results_to_file(settings::index_path + settings::output_name);
+
+    if (settings::output_path.ends_with(".pin")) {
+        sm.save_search_results_in_pin_format(settings::output_path);
+    } else {
+        sm.save_search_results_to_file(settings::output_path);
+    }
 
 
     cout << "Inner search time elapsed: " << sm.get_time_spent_in_inner_search() << " seconds" << endl;

@@ -33,7 +33,7 @@ public:
     //Names and strings
     static std::string search_path;
     static std::string index_path;
-    static std::string output_name;
+    static std::string output_path;
 
     /*
      * Debugging and testing

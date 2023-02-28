@@ -59,9 +59,9 @@ Alternatively, a pin-tab format that is readable by Percolator (Käll *et al.*, 
 
 ## Scores 
 
-*Similarity* is the preferred baseline score, which is a refined version of the normalized dot product based on square root transformed peak intensities. A bias measurement highlights how biased the *similarity* is on a few matching peaks, and a *delta_similarity* score describes the *similarity* difference between the top hit and second-best hit. Additionally, an *annotation_similarity* version of these scores exists, which accounts only for peak intensities matching reference peaks. This is useful when the library consists of fewer annotated or predicted peaks and is less noisy than the query spectra. 
+*Similarity* is the preferred baseline score, which is a refined version of the normalized dot product based on square root transformed peak intensities. A *bias* measurement highlights how biased the *similarity* is on a few matching peaks, and a *delta_similarity* score describes the *similarity* difference between the top hit and second-best hit. Additionally, an *annotation_similarity* version of these scores exists, which accounts only for peak intensities matching reference peaks. This is useful when the library consists of fewer annotated or predicted peaks and is less noisy than the query spectra. 
 
-As a high-quality discriminant scoring function the authors suggest the *avg_bias_adjusted_similarity*, which is composed equally of the *similarity* and *annotation similarity* metrics. Specifically, a bias-adjusted similarity (*sim2*) is calculated by the product of *similarity* and *(1-bias)* and the average is between standard and annotation version is taken. This scoring function provides excellent discrimination between target and decoy matches.
+As a high-quality discriminant scoring function we suggest the *avg_bias_adjusted_similarity*, which is composed equally of the *similarity* and *annotation similarity* metrics. Specifically, a *bias-adjusted similarity* (*sim2*) is calculated by the product of *similarity* and *(1-bias)* and is averaged between standard and annotation version. This scoring function provides excellent discrimination between target and decoy matches.
 
 
 

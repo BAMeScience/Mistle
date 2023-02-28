@@ -14,7 +14,7 @@ Next, perform example searches
     
     mistle-search -s yeast_exp.mgf -i index/ -o example_results.csv -p 10 -b 0.2 -t 1 --hits_per_spectrum 1
 
-This should produce an *example_results.csv* file in the index/ directory. Compare the output to the *example_results_control.csv*, which is already present in the index/ directory. If they align, *mistle* is configured correctly and is read to use. (Note that floating-point inaccuracy may occur when using different hardware or advanced vector extensions. Results and scores may deviate from the control in the last digit(s)).
+This should produce an *example_results.csv* file in the current directory. Compare the output to the *example_results_control.csv*, which already resides in this directory. If they align, *mistle* is configured correctly and is read to use. (Note that floating-point inaccuracy may occur when using different hardware or advanced vector extensions. Results and scores may deviate from the control in the last digit(s)).
 
 Below, the first match of the list is displayed by a mirror plot (experimental spectrum top; matched simulated spectrum bottom) generated using the python *spectrum_utils* package.
 

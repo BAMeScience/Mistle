@@ -53,7 +53,7 @@ The next line is the header listing all tracked attributes (tab separated).
 
 A large number of scores and statistics are appended as additional columns (marked [...]). A detailed explanation of the scores can be found in the next section.
 
-Below the header, all matched experimental spetra are listed and indexed by their scan name and the rank of the matched library spectrum. (Rank R is appended with /R to the scan name). See example [output](example/index/example_results_control.csv).
+Below the header, all matched experimental spetra are listed and indexed by their scan name and the rank of the matched library spectrum. (Rank R is appended with /R to the scan name). See example [output](example/example_results_control.csv).
 
 Alternatively, a pin-tab format that is readable by Percolator (Käll *et al.*, 2007) can be produced, listing the same scores as features. To obtain this output format, the user needs to specify the output path (*-o*) during mistle-search with the file extension *.pin*. Note that the library label needs to be set correctly at index construction (1: target, -1: decoy libary) and the *results.pin* files of target and decoy search need to be concatenated or merged before using Percolator. It's recommended to use the this python [script](scripts/merge_pin_output.py) to merge the query results and correctly update delta scores.
 

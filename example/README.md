@@ -4,11 +4,11 @@ A toy example is provided to test the program. A library of 1000 simulated mass 
 
 ## Running the test
 
-Open terminal or change into this directory (path/to/mistle/example). To construct the fragment index from the example spectral library, run
+Open terminal or change into this directory (path/to/mistle/example). Create a new directory for the index with *mkdir index*. To construct the fragment index from the example spectral library, run
 
     mistle-build -i yeast_1000.msp -o index/ -n 4 -t 1
     
-This should create 4 index partitions (binary format) in the index directory, a precursor index file, and a human-readable config.txt.
+This should create 4 index partitions (binary format) in the index directory, a precursor index file, and a human-readable config.txt. Note that if the PATH to mistle-build and mistle-search is not exported, the user is required to specify the executables (e.g. */path/to/mistle/build/mistle-build [...]*).
 
 Next, perform example searches
     

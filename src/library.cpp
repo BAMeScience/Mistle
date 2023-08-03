@@ -78,6 +78,7 @@ bool library::load_spectra_from_file(string path) {
         cout << "Unknown file extension" << endl;
         return false;
     }
+    std::cout << "\t" << spectrum_list.size() << " scans loaded" << std::endl;
 
     return true;
 }

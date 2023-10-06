@@ -1,6 +1,12 @@
 # Mistle
 
-Mistle is a fast spectral search engine. It uses a fragment-indexing technique and SIMD intrinsics to match experimental MS2 spectra to large spectral libraries at a high performance.
+Mistle is a fast spectral search engine. It uses a fragment-indexing technique and SIMD intrinsics to match experimental MS2 spectra to large spectral libraries at a high performance. Find out more about Mistle in our publication:
+
+>**Mistle: bringing spectral library predictions to metaproteomics with an efficient search index**  
+> Yannek Nowatzky, Philipp Benner, Knut Reinert, Thilo Muth  
+> Bioinformatics, Volume 39, Issue 6, June 2023, btad376, https://doi.org/10.1093/bioinformatics/btad376 
+
+Please use the above citation, if you are using Mistle.
 
 ## Requirements
 Tested only on linux (debian) for the specified versions:
